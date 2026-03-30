@@ -14,6 +14,16 @@
 
 ---
 
+<br />
+
+<div align="center">
+  <picture>
+    <img src="preview.gif" alt="phantom-ui demo" width="400" />
+  </picture>
+</div>
+
+<br />
+
 Stop building skeleton screens by hand. Wrap your real UI in `<phantom-ui>` and it generates shimmer placeholders automatically by measuring your actual DOM at runtime.
 
 No separate skeleton components to maintain. No copy-pasting layouts. The real component _is_ the skeleton template.
