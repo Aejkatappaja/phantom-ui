@@ -63,8 +63,6 @@
 	},
 	"customElements": "custom-elements.json",
 	"lint-staged": {
-		"*.{ts,mjs}": [
-			"biome check --write --no-errors-on-unmatched"
-		]
+		"*.{ts,mjs}": ["biome check --write --no-errors-on-unmatched"]
 	}
 }

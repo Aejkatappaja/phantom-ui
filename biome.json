@@ -24,6 +24,17 @@
 		}
 	},
 	"files": {
-		"ignore": ["dist", "node_modules", "storybook-static", "examples", ".*"]
+		"ignore": [
+			"dist",
+			"node_modules",
+			"storybook-static",
+			"examples",
+			".husky",
+			".github",
+			".storybook",
+			".claude",
+			"docs",
+			"custom-elements.json"
+		]
 	}
 }
