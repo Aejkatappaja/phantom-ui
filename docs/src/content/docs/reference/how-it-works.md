@@ -1,0 +1,61 @@
+---
+title: How It Works
+description: The internal mechanics of phantom-ui's DOM measurement engine.
+---
+
+## The algorithm
+
+When `loading` is set, phantom-ui runs through these steps:
+
+### 1. Render content invisibly
+
+The real content is rendered in the DOM but styled to be invisible:
+
+- `color: transparent` hides text while preserving layout
+- `opacity: 0` hides images, SVGs, videos, and canvases
+- `pointer-events: none` prevents interaction
+- Container backgrounds and borders remain visible, giving a natural card outline
+
+### 2. Walk the DOM tree
+
+The component recursively walks all slotted children. For each element, it determines whether it is a "leaf" -- a terminal content node that should become a shimmer block.
+
+An element is a leaf if it is one of these tags: `img`, `svg`, `video`, `canvas`, `iframe`, `input`, `textarea`, `button`, `hr`. Or if it has no child elements (only text nodes).
+
+Container elements like `div`, `section`, `ul` are recursed into, not captured.
+
+### 3. Measure positions
+
+Each leaf element is measured with `getBoundingClientRect()` relative to the host component. The computed `borderRadius` is read from `getComputedStyle()`.
+
+Table cells (`td`, `th`) get special handling: a temporary `<span>` is inserted to measure actual text width rather than the full cell width.
+
+### 4. Render shimmer overlay
+
+An absolutely-positioned overlay is rendered with one div per measured element. Each div is positioned at the exact `{x, y, width, height}` with the correct border radius. A CSS animation sweeps a gradient across each block.
+
+### 5. Re-measure on changes
+
+A `ResizeObserver` and `MutationObserver` watch for layout changes. When the container resizes or the DOM mutates, measurement is re-triggered on the next animation frame.
+
+### 6. Reveal
+
+When `loading` is removed, the overlay is destroyed. The invisible styles are removed and real content appears.
+
+## Special behaviors
+
+### `data-shimmer-ignore`
+
+If an element has this attribute, it and all descendants are skipped entirely during the DOM walk. The element stays visible during loading.
+
+### `data-shimmer-no-children`
+
+If an element has this attribute, it is captured as a single block without recursing into children. Useful for dense groups that should appear as one placeholder.
+
+### Zero-dimension elements
+
+Elements with `width: 0` or `height: 0` (collapsed, `display: none`) are skipped.
+
+### SVG
+
+Only the outer `<svg>` bounding box is captured, not individual paths or shapes within.

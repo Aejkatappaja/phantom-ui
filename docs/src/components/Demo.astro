@@ -1,0 +1,592 @@
+---
+---
+<div class="demo-root">
+  <!-- Controls -->
+  <div class="controls">
+    <div class="control-row">
+      <button id="toggle-btn" class="toggle-btn loading">
+        <span class="toggle-dot"></span>
+        <span class="toggle-label">Loading</span>
+      </button>
+    </div>
+
+    <div class="control-group">
+      <label>Shimmer color</label>
+      <div class="color-swatches" data-prop="shimmerColor">
+        <button class="swatch active" data-value="rgba(122,162,247,0.35)" style="background:#7aa2f7" title="Tokyo Blue"></button>
+        <button class="swatch" data-value="rgba(187,154,247,0.35)" style="background:#bb9af7" title="Tokyo Purple"></button>
+        <button class="swatch" data-value="rgba(158,206,106,0.35)" style="background:#9ece6a" title="Tokyo Green"></button>
+        <button class="swatch" data-value="rgba(224,175,104,0.35)" style="background:#e0af68" title="Tokyo Orange"></button>
+        <button class="swatch" data-value="rgba(247,118,142,0.35)" style="background:#f7768e" title="Tokyo Red"></button>
+        <button class="swatch" data-value="rgba(255,255,255,0.3)" style="background:#ffffff" title="White"></button>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label>Block background</label>
+      <div class="color-swatches" data-prop="bgColor">
+        <button class="swatch active" data-value="rgba(122,162,247,0.08)" style="background:#7aa2f7" title="Tokyo Blue"></button>
+        <button class="swatch" data-value="rgba(187,154,247,0.08)" style="background:#bb9af7" title="Tokyo Purple"></button>
+        <button class="swatch" data-value="rgba(158,206,106,0.08)" style="background:#9ece6a" title="Tokyo Green"></button>
+        <button class="swatch" data-value="rgba(224,175,104,0.08)" style="background:#e0af68" title="Tokyo Orange"></button>
+        <button class="swatch" data-value="rgba(247,118,142,0.08)" style="background:#f7768e" title="Tokyo Red"></button>
+        <button class="swatch" data-value="rgba(255,255,255,0.08)" style="background:#ffffff" title="White"></button>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label>Duration <span id="duration-val">1.5s</span></label>
+      <input type="range" id="duration" min="0.5" max="4" step="0.1" value="1.5" />
+    </div>
+
+    <div class="control-group">
+      <label>Border radius <span id="radius-val">4px</span></label>
+      <input type="range" id="radius" min="0" max="24" step="1" value="4" />
+    </div>
+  </div>
+
+  <!-- Cards grid -->
+  <div class="demo-grid">
+    <!-- Profile card -->
+    <phantom-ui loading shimmer-color="rgba(122,162,247,0.35)" background-color="rgba(122,162,247,0.08)">
+      <div class="card">
+        <div class="card-header">
+          <img class="avatar" src="https://i.pravatar.cc/96?img=12" alt="" />
+          <div>
+            <h3>Sarah Chen</h3>
+            <p class="subtitle">Senior Engineer at Vercel</p>
+          </div>
+        </div>
+        <p class="body">Building scalable distributed systems and mentoring junior engineers on cloud-native architecture.</p>
+        <div class="tags">
+          <span class="tag">Rust</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Go</span>
+        </div>
+      </div>
+    </phantom-ui>
+
+    <!-- Stats -->
+    <phantom-ui loading shimmer-color="rgba(122,162,247,0.35)" background-color="rgba(122,162,247,0.08)">
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-value">$48.2k</div>
+          <div class="stat-label">Revenue</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">2,847</div>
+          <div class="stat-label">Users</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">42ms</div>
+          <div class="stat-label">Latency</div>
+        </div>
+      </div>
+    </phantom-ui>
+
+    <!-- Notifications -->
+    <phantom-ui loading shimmer-color="rgba(122,162,247,0.35)" background-color="rgba(122,162,247,0.08)">
+      <div class="card">
+        <div class="list-item">
+          <div class="avatar-sm"></div>
+          <div class="list-text">
+            <strong>New deployment</strong>
+            <span>Production v2.4.1 deployed</span>
+          </div>
+          <span class="badge">New</span>
+        </div>
+        <div class="list-item">
+          <div class="avatar-sm"></div>
+          <div class="list-text">
+            <strong>PR merged</strong>
+            <span>Fix auth timeout #342</span>
+          </div>
+        </div>
+        <div class="list-item">
+          <div class="avatar-sm"></div>
+          <div class="list-text">
+            <strong>Alert resolved</strong>
+            <span>CPU back to normal on api-3</span>
+          </div>
+        </div>
+      </div>
+    </phantom-ui>
+
+    <!-- Article -->
+    <phantom-ui loading shimmer-color="rgba(122,162,247,0.35)" background-color="rgba(122,162,247,0.08)">
+      <div class="card article">
+        <div class="article-cover"></div>
+        <h3>Building Resilient Microservices</h3>
+        <p class="meta">March 28, 2026 - 8 min read</p>
+        <p class="body">A practical guide to circuit breakers and retry patterns that keep services running.</p>
+      </div>
+    </phantom-ui>
+
+    <!-- Pricing -->
+    <phantom-ui loading shimmer-color="rgba(122,162,247,0.35)" background-color="rgba(122,162,247,0.08)">
+      <div class="pricing">
+        <div class="plan">Pro Plan</div>
+        <div class="price">$29<span>/mo</span></div>
+        <ul>
+          <li>Unlimited projects</li>
+          <li>Priority support</li>
+          <li>Custom domains</li>
+          <li>Analytics dashboard</li>
+        </ul>
+        <button class="cta">Get Started</button>
+      </div>
+    </phantom-ui>
+
+    <!-- Comments -->
+    <phantom-ui loading shimmer-color="rgba(122,162,247,0.35)" background-color="rgba(122,162,247,0.08)">
+      <div class="card">
+        <div class="comment">
+          <div class="avatar-sm"></div>
+          <div class="comment-body">
+            <strong>Alex Rivera</strong><span class="time">2h ago</span>
+            <p>Have you considered using a service mesh for the retry logic?</p>
+          </div>
+        </div>
+        <div class="comment">
+          <div class="avatar-sm"></div>
+          <div class="comment-body">
+            <strong>Priya Sharma</strong><span class="time">4h ago</span>
+            <p>We tried this pattern last quarter. Reduced p99 latency by 40%.</p>
+          </div>
+        </div>
+      </div>
+    </phantom-ui>
+  </div>
+</div>
+
+<script is:inline src="/phantom-ui.cdn.js"></script>
+<script is:inline>
+  document.addEventListener("DOMContentLoaded", function () {
+    var els = document.querySelectorAll("phantom-ui");
+    var btn = document.getElementById("toggle-btn");
+    var isLoading = true;
+
+    // Toggle
+    btn.addEventListener("click", function () {
+      isLoading = !isLoading;
+      els.forEach(function (el) {
+        if (isLoading) el.setAttribute("loading", "");
+        else el.removeAttribute("loading");
+      });
+      btn.classList.toggle("loading", isLoading);
+      btn.querySelector(".toggle-label").textContent = isLoading ? "Loading" : "Loaded";
+    });
+
+    // Color swatches
+    document.querySelectorAll(".color-swatches").forEach(function (group) {
+      var prop = group.dataset.prop;
+      group.querySelectorAll(".swatch").forEach(function (swatch) {
+        swatch.addEventListener("click", function () {
+          group.querySelectorAll(".swatch").forEach(function (s) { s.classList.remove("active"); });
+          swatch.classList.add("active");
+          var val = swatch.dataset.value;
+          els.forEach(function (el) {
+            if (prop === "shimmerColor") el.setAttribute("shimmer-color", val);
+            if (prop === "bgColor") el.setAttribute("background-color", val);
+          });
+        });
+      });
+    });
+
+    // Duration slider
+    var durSlider = document.getElementById("duration");
+    var durVal = document.getElementById("duration-val");
+    durSlider.addEventListener("input", function () {
+      durVal.textContent = durSlider.value + "s";
+      els.forEach(function (el) { el.setAttribute("duration", durSlider.value); });
+    });
+
+    // Radius slider
+    var radSlider = document.getElementById("radius");
+    var radVal = document.getElementById("radius-val");
+    radSlider.addEventListener("input", function () {
+      radVal.textContent = radSlider.value + "px";
+      els.forEach(function (el) { el.setAttribute("fallback-radius", radSlider.value); });
+    });
+  });
+</script>
+
+<style>
+  .demo-root {
+    --card-bg: var(--sl-color-gray-5);
+    --card-border: var(--sl-color-gray-4);
+    --text: var(--sl-color-white);
+    --text-muted: var(--sl-color-gray-2);
+    --accent: var(--sl-color-accent);
+    --tag-bg: var(--sl-color-gray-4);
+    --tag-color: var(--sl-color-accent);
+    --badge-bg: #f7768e;
+  }
+
+  .controls {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: flex-start;
+  }
+
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .control-group label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .control-group label span {
+    color: var(--accent);
+    font-family: monospace;
+  }
+
+  /* Toggle button */
+  .toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--card-border);
+    border: none;
+    border-radius: 24px;
+    padding: 8px 20px 8px 8px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    transition: background 0.2s;
+  }
+
+  .toggle-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: background 0.2s;
+  }
+
+  .toggle-btn.loading .toggle-dot {
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(122, 162, 247, 0.5);
+  }
+
+  /* Color swatches */
+  .color-swatches {
+    display: flex;
+    gap: 6px;
+  }
+
+  .swatch {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.15s, transform 0.15s;
+    opacity: 0.6;
+    padding: 0;
+  }
+
+  .swatch:hover {
+    opacity: 0.9;
+    transform: scale(1.1);
+  }
+
+  .swatch.active {
+    border-color: var(--text);
+    opacity: 1;
+    transform: scale(1.15);
+  }
+
+  /* Sliders */
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--card-border);
+    outline: none;
+    width: 140px;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+  }
+
+  /* Demo grid */
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  /* Card styles */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 20px;
+    color: var(--text);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--card-border);
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .avatar-sm {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--card-border);
+    flex-shrink: 0;
+  }
+
+  .card-header h3 {
+    margin: 0 0 2px;
+    font-size: 15px;
+  }
+
+  .subtitle {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .body {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+    margin: 0 0 8px;
+  }
+
+  .tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    background: var(--tag-bg);
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    color: var(--tag-color);
+  }
+
+  /* Stats */
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  .stat {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    color: var(--text);
+  }
+
+  .stat-value {
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* List */
+  .list-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .list-item:last-child {
+    border-bottom: none;
+  }
+
+  .list-text {
+    flex: 1;
+  }
+
+  .list-text strong {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .list-text span {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .badge {
+    background: var(--badge-bg);
+    color: white;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+
+  /* Article */
+  .article-cover {
+    width: 100%;
+    height: 120px;
+    background: var(--card-border);
+    border-radius: 8px;
+    margin-bottom: 12px;
+  }
+
+  .article h3 {
+    font-size: 16px;
+    margin: 0 0 4px;
+  }
+
+  .meta {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0 0 8px;
+  }
+
+  /* Pricing */
+  .pricing {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    color: var(--text);
+  }
+
+  .plan {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+  }
+
+  .price {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 6px 0;
+  }
+
+  .price span {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+
+  .pricing ul {
+    list-style: none;
+    text-align: left;
+    margin: 14px 0;
+    padding: 0;
+  }
+
+  .pricing li {
+    font-size: 12px;
+    padding: 5px 0;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .pricing li:last-child {
+    border-bottom: none;
+  }
+
+  .cta {
+    background: var(--accent);
+    color: var(--card-bg);
+    border: none;
+    border-radius: 8px;
+    padding: 10px 32px;
+    font-size: 13px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+    font-weight: 600;
+  }
+
+  /* Comment */
+  .comment {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .comment:last-child {
+    border-bottom: none;
+  }
+
+  .comment-body {
+    flex: 1;
+  }
+
+  .comment-body strong {
+    font-size: 13px;
+  }
+
+  .time {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-left: 6px;
+  }
+
+  .comment-body p {
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 4px 0 0;
+    color: var(--text-muted);
+  }
+</style>

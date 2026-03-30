@@ -1,0 +1,63 @@
+---
+title: Solid
+description: Using phantom-ui with SolidJS.
+---
+
+## Setup
+
+```bash
+bun add phantom-ui
+```
+
+The `postinstall` script generates a `phantom-ui.d.ts` file for JSX types automatically.
+
+## Usage
+
+Solid uses the `attr:` prefix to set HTML attributes on custom elements:
+
+```tsx
+import { createSignal, createResource } from "solid-js";
+import "phantom-ui";
+
+function UserCard() {
+  const [user] = createResource(fetchUser);
+
+  return (
+    <phantom-ui attr:loading={user.loading || undefined}>
+      <div class="card">
+        <img src={user()?.avatar ?? "/placeholder.png"} class="avatar" />
+        <h3>{user()?.name ?? "Placeholder Name"}</h3>
+        <p>{user()?.bio ?? "A short bio goes here."}</p>
+      </div>
+    </phantom-ui>
+  );
+}
+```
+
+## Important: `attr:` prefix
+
+Solid treats unknown props as DOM properties by default. Use `attr:loading` to set it as an HTML attribute:
+
+```tsx
+// Correct
+<phantom-ui attr:loading={loading() || undefined}>
+
+// Wrong - sets as DOM property, not attribute
+<phantom-ui loading={loading()}>
+```
+
+## TypeScript
+
+If the postinstall did not generate `src/phantom-ui.d.ts`, create it manually:
+
+```typescript
+import type { SolidPhantomUiAttributes } from "phantom-ui";
+
+declare module "solid-js" {
+  namespace JSX {
+    interface IntrinsicElements {
+      "phantom-ui": SolidPhantomUiAttributes;
+    }
+  }
+}
+```

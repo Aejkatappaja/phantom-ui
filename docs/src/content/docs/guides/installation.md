@@ -1,0 +1,39 @@
+---
+title: Installation
+description: How to install phantom-ui in your project.
+---
+
+## Package manager
+
+```bash
+bun add phantom-ui     # bun
+npm install phantom-ui # npm
+pnpm add phantom-ui    # pnpm
+yarn add phantom-ui    # yarn
+```
+
+A `postinstall` script automatically detects your framework (React, Solid, Qwik) and generates a TypeScript declaration file in your `src/` directory. Vue, Svelte, and Angular need no extra setup.
+
+## CDN
+
+No build step needed. Drop in a script tag:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/phantom-ui/dist/phantom-ui.cdn.js"></script>
+```
+
+This bundles Lit and the component into a single ~8kb gzipped file. The `<phantom-ui>` tag is available immediately.
+
+## What gets installed
+
+```
+node_modules/phantom-ui/
+  dist/
+    phantom-ui.js        # ES module (Lit as external)
+    phantom-ui.cdn.js    # IIFE standalone (Lit included)
+    phantom-ui.d.ts      # TypeScript declarations
+  custom-elements.json   # IDE/Storybook manifest
+  package.json
+  LICENSE
+  README.md
+```

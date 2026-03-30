@@ -1,0 +1,35 @@
+---
+title: phantom-ui
+description: Structure-aware skeleton loader. One Web Component. Every framework.
+template: splash
+hero:
+  image:
+    file: ../../assets/hero.svg
+  tagline: Stop building skeleton screens by hand. Wrap your real UI and get perfect shimmer placeholders automatically.
+  actions:
+    - text: Get Started
+      link: /guides/introduction/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/aejkatappaja/phantom-ui
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Zero skeleton maintenance" icon="pencil">
+    No separate skeleton components to build or keep in sync. The real component _is_ the skeleton template.
+  </Card>
+  <Card title="Every framework" icon="puzzle">
+    One Web Component that works in React, Vue, Svelte, Angular, Solid, Qwik, and plain HTML. No adapters needed.
+  </Card>
+  <Card title="Runtime DOM measurement" icon="magnifier">
+    Measures every leaf element with `getBoundingClientRect()` and generates shimmer blocks at the exact same positions.
+  </Card>
+  <Card title="~8kb gzipped" icon="rocket">
+    Tiny CDN bundle with Lit included. Even smaller as an ES module when your app already uses Lit.
+  </Card>
+</CardGrid>
