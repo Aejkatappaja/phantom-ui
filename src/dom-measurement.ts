@@ -1,0 +1,132 @@
+/**
+ * Core DOM measurement engine.
+ * Walks the slotted DOM tree and extracts leaf element positions/sizes
+ * to generate shimmer overlay blocks.
+ */
+
+export interface ElementInfo {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	tag: string;
+	borderRadius: string;
+}
+
+const ALWAYS_LEAF_TAGS = new Set([
+	"IMG",
+	"SVG",
+	"VIDEO",
+	"CANVAS",
+	"IFRAME",
+	"INPUT",
+	"TEXTAREA",
+	"BUTTON",
+	"HR",
+]);
+
+const VOID_TAGS = new Set(["BR", "WBR", "HR"]);
+
+function isLeafElement(element: Element): boolean {
+	if (ALWAYS_LEAF_TAGS.has(element.tagName)) {
+		return true;
+	}
+
+	for (const child of element.children) {
+		if (!VOID_TAGS.has(child.tagName)) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function hasTextContent(element: Element): boolean {
+	for (const node of element.childNodes) {
+		if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
+			return true;
+		}
+	}
+	return false;
+}
+
+export function extractElementInfo(element: Element, parentRect: DOMRect): ElementInfo[] {
+	const results: ElementInfo[] = [];
+
+	function walk(el: Element): void {
+		const rect = el.getBoundingClientRect();
+
+		if (rect.width === 0 || rect.height === 0) {
+			return;
+		}
+
+		if (el.hasAttribute("data-shimmer-ignore")) {
+			return;
+		}
+
+		const shouldCapture = el.hasAttribute("data-shimmer-no-children") || isLeafElement(el);
+
+		if (shouldCapture) {
+			const style = getComputedStyle(el);
+			const borderRadius = style.borderRadius;
+
+			// For table cells with text, measure actual text width
+			if ((el.tagName === "TD" || el.tagName === "TH") && hasTextContent(el)) {
+				const span = document.createElement("span");
+				span.style.visibility = "hidden";
+				span.style.position = "absolute";
+				span.textContent = el.textContent;
+				el.appendChild(span);
+				const spanRect = span.getBoundingClientRect();
+				el.removeChild(span);
+
+				results.push({
+					x: rect.left - parentRect.left,
+					y: rect.top - parentRect.top,
+					width: Math.min(spanRect.width, rect.width),
+					height: rect.height,
+					tag: el.tagName.toLowerCase(),
+					borderRadius: borderRadius === "0px" ? "" : borderRadius,
+				});
+				return;
+			}
+
+			results.push({
+				x: rect.left - parentRect.left,
+				y: rect.top - parentRect.top,
+				width: rect.width,
+				height: rect.height,
+				tag: el.tagName.toLowerCase(),
+				borderRadius: borderRadius === "0px" ? "" : borderRadius,
+			});
+			return;
+		}
+
+		for (const child of el.children) {
+			walk(child);
+		}
+	}
+
+	for (const child of element.children) {
+		walk(child);
+	}
+
+	return results;
+}
+
+export function createResizeObserver(element: Element, callback: () => void): ResizeObserver {
+	let rafId: number | null = null;
+
+	const observer = new ResizeObserver(() => {
+		if (rafId !== null) {
+			cancelAnimationFrame(rafId);
+		}
+		rafId = requestAnimationFrame(() => {
+			rafId = null;
+			callback();
+		});
+	});
+
+	observer.observe(element);
+	return observer;
+}
