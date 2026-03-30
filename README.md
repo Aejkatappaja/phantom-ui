@@ -357,6 +357,10 @@ bun run lint:fix        # biome auto-fix
 
 The `examples/` directory contains test apps for React, Vue, Solid, Angular, and Qwik, each wired to the local package.
 
+## Acknowledgements
+
+The structure-aware approach is inspired by [shimmer-from-structure](https://github.com/darula-hpp/shimmer-from-structure), which pioneered the idea of measuring real DOM to generate skeleton placeholders. phantom-ui reimagines this concept as a single universal Web Component instead of framework-specific adapters.
+
 ## License
 
 MIT
