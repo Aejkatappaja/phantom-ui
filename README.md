@@ -3,22 +3,19 @@
 <custom-element-demo>
   <template>
     <script src="https://cdn.jsdelivr.net/npm/@aejkatappaja/phantom-ui/dist/phantom-ui.cdn.js"></script>
-    <phantom-ui loading>
-      <div style="background:#16213e;border-radius:12px;padding:20px;width:320px;color:#e0e0e0;font-family:system-ui">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-          <div style="width:48px;height:48px;border-radius:50%;background:#0f3460"></div>
-          <div>
-            <h3 style="margin:0 0 4px">Sarah Chen</h3>
-            <p style="margin:0;font-size:13px;color:#8899aa">Senior Engineer</p>
-          </div>
-        </div>
-        <p style="font-size:14px;line-height:1.5">Building scalable distributed systems and mentoring junior engineers.</p>
-      </div>
-    </phantom-ui>
+    <next-code-block></next-code-block>
   </template>
 </custom-element-demo>
 ```
 -->
+```html
+<phantom-ui loading>
+  <div style="background:#16213e;border-radius:12px;padding:20px;width:320px;color:#e0e0e0;font-family:system-ui">
+    <h3 style="margin:0 0 8px">Sarah Chen</h3>
+    <p style="margin:0;font-size:13px;color:#8899aa">Senior Engineer</p>
+  </div>
+</phantom-ui>
+```
 
 <p align="center">
   <img src="logo-phantom.svg" alt="phantom-ui" width="200" />
