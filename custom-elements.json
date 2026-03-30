@@ -1,0 +1,228 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/phantom-ui.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "`<phantom-ui>` — A structure-aware shimmer skeleton loader.\n\nWraps real content and, when `loading` is true, measures the DOM structure\nof the slotted children to generate perfectly-aligned shimmer overlay blocks.",
+          "name": "PhantomUi",
+          "slots": [
+            {
+              "description": "The real content to show (or measure for skeleton generation)",
+              "name": ""
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "loading",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether to show the shimmer overlay or the real content",
+              "attribute": "loading",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "shimmerColor",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"rgba(255, 255, 255, 0.3)\"",
+              "description": "Color of the animated shimmer gradient wave",
+              "attribute": "shimmer-color"
+            },
+            {
+              "kind": "field",
+              "name": "backgroundColor",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"rgba(255, 255, 255, 0.08)\"",
+              "description": "Background color of each shimmer block",
+              "attribute": "background-color"
+            },
+            {
+              "kind": "field",
+              "name": "duration",
+              "type": {
+                "text": "number"
+              },
+              "default": "1.5",
+              "description": "Animation cycle duration in seconds",
+              "attribute": "duration"
+            },
+            {
+              "kind": "field",
+              "name": "fallbackRadius",
+              "type": {
+                "text": "number"
+              },
+              "default": "4",
+              "description": "Border radius (px) for elements with border-radius: 0",
+              "attribute": "fallback-radius"
+            },
+            {
+              "kind": "field",
+              "name": "_blocks",
+              "type": {
+                "text": "ElementInfo[]"
+              },
+              "privacy": "private",
+              "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "_resizeObserver",
+              "type": {
+                "text": "ResizeObserver | null"
+              },
+              "privacy": "private",
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "_mutationObserver",
+              "type": {
+                "text": "MutationObserver | null"
+              },
+              "privacy": "private",
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "_measureScheduled",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
+            },
+            {
+              "kind": "method",
+              "name": "_scheduleMeasure",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_measure",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_setupObservers",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_teardownObservers",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_renderBlocks",
+              "privacy": "private"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "loading",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Whether to show the shimmer overlay or the real content",
+              "fieldName": "loading"
+            },
+            {
+              "name": "shimmer-color",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"rgba(255, 255, 255, 0.3)\"",
+              "description": "Color of the animated shimmer gradient wave",
+              "fieldName": "shimmerColor"
+            },
+            {
+              "name": "background-color",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"rgba(255, 255, 255, 0.08)\"",
+              "description": "Background color of each shimmer block",
+              "fieldName": "backgroundColor"
+            },
+            {
+              "name": "duration",
+              "type": {
+                "text": "number"
+              },
+              "default": "1.5",
+              "description": "Animation cycle duration in seconds",
+              "fieldName": "duration"
+            },
+            {
+              "name": "fallback-radius",
+              "type": {
+                "text": "number"
+              },
+              "default": "4",
+              "description": "Border radius (px) for elements with border-radius: 0",
+              "fieldName": "fallbackRadius"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "phantom-ui",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "PhantomUi",
+          "declaration": {
+            "name": "PhantomUi",
+            "module": "src/phantom-ui.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "phantom-ui",
+          "declaration": {
+            "name": "PhantomUi",
+            "module": "src/phantom-ui.ts"
+          }
+        }
+      ]
+    }
+  ]
+}
