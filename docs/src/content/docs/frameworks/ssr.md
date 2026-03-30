@@ -17,7 +17,7 @@ export default function UserCard() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    import("phantom-ui");
+    import("@aejkatappaja/phantom-ui");
     fetchUser().then(setUser);
   }, []);
 
@@ -32,7 +32,7 @@ export default function UserCard() {
 }
 ```
 
-The `"use client"` directive is required. The dynamic `import("phantom-ui")` ensures the Web Component only registers in the browser.
+The `"use client"` directive is required. The dynamic `import("@aejkatappaja/phantom-ui")` ensures the Web Component only registers in the browser.
 
 ## Nuxt
 
@@ -44,7 +44,7 @@ const user = ref(null);
 const loading = ref(true);
 
 onMounted(async () => {
-  import("phantom-ui");
+  import("@aejkatappaja/phantom-ui");
   user.value = await fetchUser();
   loading.value = false;
 });
@@ -74,7 +74,7 @@ Wrap in `<ClientOnly>` and import in `onMounted`.
   let loading = $state(true);
 
   onMount(async () => {
-    import("phantom-ui");
+    import("@aejkatappaja/phantom-ui");
     user = await fetchUser();
     loading = false;
   });
@@ -99,7 +99,7 @@ export default function UserCard() {
   const data = useLoaderData();
 
   useEffect(() => {
-    import("phantom-ui").then(() => setReady(true));
+    import("@aejkatappaja/phantom-ui").then(() => setReady(true));
   }, []);
 
   return (

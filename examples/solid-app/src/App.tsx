@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 function App() {
   const [loading, setLoading] = createSignal(true);

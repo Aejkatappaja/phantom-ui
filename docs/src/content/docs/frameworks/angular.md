@@ -6,7 +6,7 @@ description: Using phantom-ui with Angular.
 ## Setup
 
 ```bash
-bun add phantom-ui
+bun add @aejkatappaja/phantom-ui
 ```
 
 No extra TypeScript setup needed. Angular uses `CUSTOM_ELEMENTS_SCHEMA`.
@@ -17,7 +17,7 @@ Add `CUSTOM_ELEMENTS_SCHEMA` to your component and import the package:
 
 ```typescript
 import { Component, signal, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 @Component({
   selector: "app-user-card",

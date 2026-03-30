@@ -7,9 +7,9 @@
 </p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/phantom-ui"><img src="https://img.shields.io/npm/v/phantom-ui.svg?style=flat-square" alt="npm version" /></a>
-  <a href="https://bundlephobia.com/package/phantom-ui"><img src="https://img.shields.io/bundlephobia/minzip/phantom-ui?style=flat-square" alt="bundle size" /></a>
-  <a href="https://github.com/anthropics/phantom-ui/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/phantom-ui?style=flat-square" alt="license" /></a>
+  <a href="https://www.npmjs.com/package/@aejkatappaja/phantom-ui"><img src="https://img.shields.io/npm/v/@aejkatappaja/phantom-ui.svg?style=flat-square" alt="npm version" /></a>
+  <a href="https://bundlephobia.com/package/@aejkatappaja/phantom-ui"><img src="https://img.shields.io/bundlephobia/minzip/@aejkatappaja/phantom-ui?style=flat-square" alt="bundle size" /></a>
+  <a href="https://github.com/anthropics/phantom-ui/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@aejkatappaja/phantom-ui?style=flat-square" alt="license" /></a>
 </p>
 
 ---
@@ -29,16 +29,16 @@ Because it is a standard Web Component (built with Lit), it works in React, Vue,
 ## Install
 
 ```bash
-bun add phantom-ui     # bun
-npm install phantom-ui # npm
-pnpm add phantom-ui    # pnpm
-yarn add phantom-ui    # yarn
+bun add @aejkatappaja/phantom-ui     # bun
+npm install @aejkatappaja/phantom-ui # npm
+pnpm add @aejkatappaja/phantom-ui    # pnpm
+yarn add @aejkatappaja/phantom-ui    # yarn
 ```
 
 Or drop in a script tag with no build step:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/phantom-ui/dist/phantom-ui.cdn.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@aejkatappaja/phantom-ui/dist/phantom-ui.cdn.js"></script>
 ```
 
 ## Quick start
@@ -60,7 +60,7 @@ Set `loading` to show the shimmer. Remove it to reveal the real content.
 ### React
 
 ```tsx
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 function ProfileCard({ user, isLoading }: Props) {
   return (
@@ -79,7 +79,7 @@ function ProfileCard({ user, isLoading }: Props) {
 
 ```vue
 <script setup lang="ts">
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 const props = defineProps<{ loading: boolean }>();
 </script>
@@ -99,7 +99,7 @@ const props = defineProps<{ loading: boolean }>();
 
 ```svelte
 <script lang="ts">
-  import "phantom-ui";
+  import "@aejkatappaja/phantom-ui";
 
   export let loading = true;
 </script>
@@ -117,7 +117,7 @@ const props = defineProps<{ loading: boolean }>();
 
 ```typescript
 import { Component, signal, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 @Component({
   selector: "app-profile",
@@ -141,7 +141,7 @@ export class ProfileComponent {
 
 ```tsx
 import { createSignal } from "solid-js";
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 function ProfileCard() {
   const [loading, setLoading] = createSignal(true);
@@ -168,7 +168,7 @@ The component needs browser APIs to measure the DOM. Import it client-side only:
 import { useEffect } from "react";
 
 export default function Page() {
-  useEffect(() => { import("phantom-ui"); }, []);
+  useEffect(() => { import("@aejkatappaja/phantom-ui"); }, []);
   return <phantom-ui loading>...</phantom-ui>;
 }
 ```
@@ -176,7 +176,7 @@ export default function Page() {
 ```vue
 <!-- Nuxt -->
 <script setup>
-onMounted(() => import("phantom-ui"));
+onMounted(() => import("@aejkatappaja/phantom-ui"));
 </script>
 
 <template>
@@ -190,7 +190,7 @@ onMounted(() => import("phantom-ui"));
 <!-- SvelteKit -->
 <script>
   import { onMount } from "svelte";
-  onMount(() => import("phantom-ui"));
+  onMount(() => import("@aejkatappaja/phantom-ui"));
 </script>
 ```
 
@@ -205,10 +205,10 @@ Vue, Svelte, and Angular work out of the box without any type declaration.
 If the postinstall did not run (CI, monorepos, `--ignore-scripts`), you can generate it manually:
 
 ```bash
-npx phantom-ui init    # npm
-bunx phantom-ui init   # bun
-pnpx phantom-ui init   # pnpm
-yarn dlx phantom-ui init  # yarn
+npx @aejkatappaja/phantom-ui init    # npm
+bunx @aejkatappaja/phantom-ui init   # bun
+pnpx @aejkatappaja/phantom-ui init   # pnpm
+yarn dlx @aejkatappaja/phantom-ui init  # yarn
 ```
 
 <details>
@@ -217,7 +217,7 @@ yarn dlx phantom-ui init  # yarn
 **React**
 
 ```typescript
-import type { PhantomUiAttributes } from "phantom-ui";
+import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "react/jsx-runtime" {
   export namespace JSX {
@@ -231,7 +231,7 @@ declare module "react/jsx-runtime" {
 **Solid**
 
 ```typescript
-import type { SolidPhantomUiAttributes } from "phantom-ui";
+import type { SolidPhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "solid-js" {
   namespace JSX {
@@ -245,7 +245,7 @@ declare module "solid-js" {
 **Qwik**
 
 ```typescript
-import type { PhantomUiAttributes } from "phantom-ui";
+import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "@builder.io/qwik" {
   namespace QwikJSX {

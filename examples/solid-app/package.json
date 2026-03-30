@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "phantom-ui": "file:../..",
+    "@aejkatappaja/phantom-ui": "file:../..",
     "solid-js": "^1.9.11"
   },
   "devDependencies": {

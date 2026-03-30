@@ -6,7 +6,7 @@ description: Using phantom-ui with Vue.
 ## Setup
 
 ```bash
-bun add phantom-ui
+bun add @aejkatappaja/phantom-ui
 ```
 
 No extra TypeScript setup needed. Vue picks up types from `HTMLElementTagNameMap` automatically.
@@ -16,7 +16,7 @@ No extra TypeScript setup needed. Vue picks up types from `HTMLElementTagNameMap
 ```vue
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 const user = ref(null);
 const loading = ref(true);

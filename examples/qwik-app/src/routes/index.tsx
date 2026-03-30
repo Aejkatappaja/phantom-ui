@@ -7,7 +7,7 @@ export default component$(() => {
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
-    import("phantom-ui");
+    import("@aejkatappaja/phantom-ui");
     ready.value = true;
   });
 

@@ -6,7 +6,7 @@ import { dirname, join, resolve } from "node:path";
 const FILENAME = "phantom-ui.d.ts";
 
 const templates = {
-	react: `import type { PhantomUiAttributes } from "phantom-ui";
+	react: `import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "react/jsx-runtime" {
 \texport namespace JSX {
@@ -16,7 +16,7 @@ declare module "react/jsx-runtime" {
 \t}
 }
 `,
-	solid: `import type { SolidPhantomUiAttributes } from "phantom-ui";
+	solid: `import type { SolidPhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "solid-js" {
 \tnamespace JSX {
@@ -26,7 +26,7 @@ declare module "solid-js" {
 \t}
 }
 `,
-	qwik: `import type { PhantomUiAttributes } from "phantom-ui";
+	qwik: `import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "@builder.io/qwik" {
 \tnamespace QwikJSX {

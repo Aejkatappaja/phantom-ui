@@ -6,7 +6,7 @@ description: Using phantom-ui with React.
 ## Setup
 
 ```bash
-bun add phantom-ui
+bun add @aejkatappaja/phantom-ui
 ```
 
 The `postinstall` script generates a `phantom-ui.d.ts` file for JSX types automatically.
@@ -15,7 +15,7 @@ The `postinstall` script generates a `phantom-ui.d.ts` file for JSX types automa
 
 ```tsx
 import { useState, useEffect } from "react";
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 function UserCard() {
   const [user, setUser] = useState(null);
@@ -53,7 +53,7 @@ React passes `loading={true}` as the string `"true"`, which works. But `loading=
 If the postinstall did not generate `src/phantom-ui.d.ts`, create it manually:
 
 ```typescript
-import type { PhantomUiAttributes } from "phantom-ui";
+import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "react/jsx-runtime" {
   export namespace JSX {
@@ -67,5 +67,5 @@ declare module "react/jsx-runtime" {
 Or run:
 
 ```bash
-npx phantom-ui init
+npx @aejkatappaja/phantom-ui init
 ```

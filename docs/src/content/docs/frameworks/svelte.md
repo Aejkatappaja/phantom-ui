@@ -6,7 +6,7 @@ description: Using phantom-ui with Svelte.
 ## Setup
 
 ```bash
-bun add phantom-ui
+bun add @aejkatappaja/phantom-ui
 ```
 
 No extra TypeScript setup needed. Svelte picks up types from `HTMLElementTagNameMap` automatically.
@@ -15,7 +15,7 @@ No extra TypeScript setup needed. Svelte picks up types from `HTMLElementTagName
 
 ```svelte
 <script lang="ts">
-  import "phantom-ui";
+  import "@aejkatappaja/phantom-ui";
   import { onMount } from "svelte";
 
   let user = $state(null);

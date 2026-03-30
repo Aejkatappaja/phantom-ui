@@ -39,6 +39,6 @@
     "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {
-    "phantom-ui": "file:../.."
+    "@aejkatappaja/phantom-ui": "file:../.."
   }
 }

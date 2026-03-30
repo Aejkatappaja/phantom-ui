@@ -1,5 +1,5 @@
 import { Component, signal, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 @Component({
   selector: "app-root",

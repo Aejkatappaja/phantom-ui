@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 function App() {
   const [loading, setLoading] = useState(true);

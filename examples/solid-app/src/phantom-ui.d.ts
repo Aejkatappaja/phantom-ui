@@ -1,4 +1,4 @@
-import type { SolidPhantomUiAttributes } from "phantom-ui";
+import type { SolidPhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "solid-js" {
 	namespace JSX {

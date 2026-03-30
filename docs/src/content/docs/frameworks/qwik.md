@@ -6,7 +6,7 @@ description: Using phantom-ui with Qwik.
 ## Setup
 
 ```bash
-bun add phantom-ui
+bun add @aejkatappaja/phantom-ui
 ```
 
 The `postinstall` script generates a `phantom-ui.d.ts` file for JSX types automatically.
@@ -24,7 +24,7 @@ export default component$(() => {
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(async () => {
-    import("phantom-ui");
+    import("@aejkatappaja/phantom-ui");
     ready.value = true;
 
     const data = await fetchUser();
@@ -53,7 +53,7 @@ export default component$(() => {
 If the postinstall did not generate `src/phantom-ui.d.ts`, create it manually:
 
 ```typescript
-import type { PhantomUiAttributes } from "phantom-ui";
+import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "@builder.io/qwik" {
   namespace QwikJSX {

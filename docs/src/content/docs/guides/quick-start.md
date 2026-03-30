@@ -6,19 +6,19 @@ description: Get shimmer loading in 30 seconds.
 ## 1. Install
 
 ```bash
-bun add phantom-ui
+bun add @aejkatappaja/phantom-ui
 ```
 
 ## 2. Import
 
 ```js
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 ```
 
 Or use the CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/phantom-ui/dist/phantom-ui.cdn.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@aejkatappaja/phantom-ui/dist/phantom-ui.cdn.js"></script>
 ```
 
 ## 3. Wrap your content

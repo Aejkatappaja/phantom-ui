@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import "phantom-ui";
+import "@aejkatappaja/phantom-ui";
 
 const loading = ref(true);
 </script>

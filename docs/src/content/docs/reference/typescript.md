@@ -17,7 +17,7 @@ The `postinstall` script detects your framework and generates a `phantom-ui.d.ts
 If it did not run (CI, monorepos, `--ignore-scripts`), generate it manually:
 
 ```bash
-npx phantom-ui init
+npx @aejkatappaja/phantom-ui init
 ```
 
 ## Frameworks that need no setup
@@ -31,7 +31,7 @@ npx phantom-ui init
 ### React
 
 ```typescript
-import type { PhantomUiAttributes } from "phantom-ui";
+import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "react/jsx-runtime" {
   export namespace JSX {
@@ -45,7 +45,7 @@ declare module "react/jsx-runtime" {
 ### Solid
 
 ```typescript
-import type { SolidPhantomUiAttributes } from "phantom-ui";
+import type { SolidPhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "solid-js" {
   namespace JSX {
@@ -59,7 +59,7 @@ declare module "solid-js" {
 ### Qwik
 
 ```typescript
-import type { PhantomUiAttributes } from "phantom-ui";
+import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "@builder.io/qwik" {
   namespace QwikJSX {

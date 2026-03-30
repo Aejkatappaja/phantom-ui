@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "phantom-ui": "file:../..",
+    "@aejkatappaja/phantom-ui": "file:../..",
     "vue": "^3.5.30"
   },
   "devDependencies": {
