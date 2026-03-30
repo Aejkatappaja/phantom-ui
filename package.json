@@ -1,0 +1,70 @@
+{
+	"name": "phantom-ui",
+	"version": "0.1.0",
+	"description": "Structure-aware shimmer skeleton loader as a universal Web Component built with Lit. Works with React, Vue, Svelte, Angular, Solid, or vanilla JS.",
+	"type": "module",
+	"main": "dist/phantom-ui.js",
+	"module": "dist/phantom-ui.js",
+	"types": "dist/phantom-ui.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/phantom-ui.js",
+			"types": "./dist/phantom-ui.d.ts"
+		}
+	},
+	"bin": {
+		"phantom-ui": "./src/cli/init.mjs"
+	},
+	"files": [
+		"dist/phantom-ui.js",
+		"dist/phantom-ui.cdn.js",
+		"dist/phantom-ui.d.ts",
+		"src/cli/init.mjs",
+		"custom-elements.json"
+	],
+	"postinstall": "node ./src/cli/init.mjs || true",
+	"scripts": {
+		"build": "npm run build:esm && npm run build:cdn && npm run build:types && cem analyze",
+		"build:esm": "esbuild src/phantom-ui.ts --bundle --format=esm --outfile=dist/phantom-ui.js --minify --target=es2022 --packages=external",
+		"build:cdn": "esbuild src/phantom-ui.ts --bundle --format=iife --outfile=dist/phantom-ui.cdn.js --minify --target=es2022",
+		"build:types": "tsc --emitDeclarationOnly --declaration --outDir dist",
+		"dev": "tsc --watch",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"format": "biome format --write .",
+		"storybook": "storybook dev -p 6006",
+		"build-storybook": "storybook build",
+		"prepare": "husky"
+	},
+	"keywords": [
+		"skeleton",
+		"shimmer",
+		"loading",
+		"placeholder",
+		"web-component",
+		"custom-element",
+		"lit",
+		"framework-agnostic"
+	],
+	"license": "MIT",
+	"dependencies": {
+		"lit": "^3.2.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.0",
+		"@custom-elements-manifest/analyzer": "^0.11.0",
+		"@storybook/addon-essentials": "^8.4.0",
+		"@storybook/web-components": "^8.4.0",
+		"@storybook/web-components-vite": "^8.4.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.4.0",
+		"storybook": "^8.4.0",
+		"typescript": "^5.7.0"
+	},
+	"customElements": "custom-elements.json",
+	"lint-staged": {
+		"*.{ts,mjs}": [
+			"biome check --write"
+		]
+	}
+}
