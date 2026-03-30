@@ -2,6 +2,10 @@
  * Core DOM measurement engine.
  * Walks the slotted DOM tree and extracts leaf element positions/sizes
  * to generate shimmer overlay blocks.
+ *
+ * Based on a well-established technique (getBoundingClientRect overlay skeletons)
+ * with prior art from page-skeleton-webpack-plugin (2018),
+ * @findify/skeleton-generator (~2019), and shimmer-from-structure (2026).
  */
 
 export interface ElementInfo {
