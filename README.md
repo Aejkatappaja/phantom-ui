@@ -1,22 +1,3 @@
-<!--
-```
-<custom-element-demo>
-  <template>
-    <script src="https://cdn.jsdelivr.net/npm/@aejkatappaja/phantom-ui/dist/phantom-ui.cdn.js"></script>
-    <next-code-block></next-code-block>
-  </template>
-</custom-element-demo>
-```
--->
-```html
-<phantom-ui loading>
-  <div style="background:#16213e;border-radius:12px;padding:20px;width:320px;color:#e0e0e0;font-family:system-ui">
-    <h3 style="margin:0 0 8px">Sarah Chen</h3>
-    <p style="margin:0;font-size:13px;color:#8899aa">Senior Engineer</p>
-  </div>
-</phantom-ui>
-```
-
 <p align="center">
   <img src="logo-phantom.svg" alt="phantom-ui" width="200" />
 </p>
