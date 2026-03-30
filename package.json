@@ -64,7 +64,7 @@
 	"customElements": "custom-elements.json",
 	"lint-staged": {
 		"*.{ts,mjs}": [
-			"biome check --write"
+			"biome check --write --no-errors-on-unmatched"
 		]
 	}
 }
