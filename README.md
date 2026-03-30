@@ -8,8 +8,8 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@aejkatappaja/phantom-ui"><img src="https://img.shields.io/npm/v/@aejkatappaja/phantom-ui.svg?style=flat-square" alt="npm version" /></a>
-  <a href="https://bundlephobia.com/package/@aejkatappaja/phantom-ui"><img src="https://img.shields.io/bundlephobia/minzip/@aejkatappaja/phantom-ui?style=flat-square" alt="bundle size" /></a>
-  <a href="https://github.com/anthropics/phantom-ui/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@aejkatappaja/phantom-ui?style=flat-square" alt="license" /></a>
+  <img src="https://img.shields.io/badge/minzipped-~8kb-blue?style=flat-square" alt="bundle size" />
+  <a href="https://github.com/Aejkatappaja/phantom-ui/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@aejkatappaja/phantom-ui?style=flat-square" alt="license" /></a>
 </p>
 
 ---
