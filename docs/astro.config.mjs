@@ -7,6 +7,8 @@ const tokyoNight = (await bundledThemes["tokyo-night"]()).default;
 const githubLight = (await bundledThemes["github-light"]()).default;
 
 export default defineConfig({
+	site: "https://aejkatappaja.github.io",
+	base: "/phantom-ui",
 	integrations: [
 		starlight({
 			expressiveCode: {
