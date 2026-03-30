@@ -13,6 +13,11 @@
   <a href="https://www.webcomponents.org/element/@aejkatappaja/phantom-ui"><img src="https://img.shields.io/badge/webcomponents.org-published-blue.svg?style=flat-square" alt="Published on webcomponents.org" /></a>
 </p>
 
+<p align="center">
+  <a href="https://aejkatappaja.github.io/phantom-ui/">Documentation</a> &middot;
+  <a href="https://aejkatappaja.github.io/phantom-ui/demo/">Live Demo</a>
+</p>
+
 ---
 
 <br />
