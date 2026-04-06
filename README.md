@@ -24,7 +24,7 @@
 
 <div align="center">
   <picture>
-    <img src="preview.gif" alt="phantom-ui demo" width="400" />
+    <img src="preview.gif" alt="phantom-ui demo" width="640" />
   </picture>
 </div>
 
