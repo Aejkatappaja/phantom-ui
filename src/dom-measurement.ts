@@ -111,9 +111,7 @@ export function extractElementInfo(element: Element, parentRect: DOMRect): Eleme
 		}
 	}
 
-	for (const child of element.children) {
-		walk(child);
-	}
+	walk(element);
 
 	return results;
 }
