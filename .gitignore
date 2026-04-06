@@ -3,3 +3,4 @@ dist
 storybook-static
 *.tsbuildinfo
 tmp
+.DS_Store
