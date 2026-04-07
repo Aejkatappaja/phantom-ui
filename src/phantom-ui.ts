@@ -6,23 +6,28 @@ import { createResizeObserver, extractElementInfo } from "./dom-measurement.js";
 import type { ElementInfo } from "./dom-measurement.js";
 import { phantomUiStyles } from "./phantom-ui.styles.js";
 
+type Animation = "shimmer" | "pulse" | "breathe" | "solid";
+
 /**
- * `<phantom-ui>` — A structure-aware shimmer skeleton loader.
+ * `<phantom-ui>` -- A structure-aware shimmer skeleton loader.
  *
  * Wraps real content and, when `loading` is true, measures the DOM structure
  * of the slotted children to generate perfectly-aligned shimmer overlay blocks.
  *
  * @slot - The real content to show (or measure for skeleton generation)
  *
- * @property {boolean} loading - Whether to show the shimmer overlay or the real content
- * @property {string} shimmerColor - Color of the animated shimmer gradient wave
- * @property {string} backgroundColor - Background color of each shimmer block
- * @property {number} duration - Animation cycle duration in seconds
- * @property {number} fallbackRadius - Border radius (px) for elements with border-radius: 0
+ * @attr {boolean} loading - Show the shimmer overlay or real content
+ * @attr {string} shimmer-color - Color of the animated gradient wave
+ * @attr {string} background-color - Background color of each shimmer block
+ * @attr {number} duration - Animation cycle duration in seconds
+ * @attr {number} fallback-radius - Border radius (px) for elements with no radius
+ * @attr {Animation} animation - Animation mode: shimmer, pulse, breathe, or solid
+ * @attr {number} stagger - Delay in seconds between each block's animation start
+ * @attr {number} reveal - Fade-out duration in seconds when loading ends (0 = instant)
  *
  * @example
  * ```html
- * <phantom-ui loading>
+ * <phantom-ui loading animation="pulse" stagger="0.05">
  *   <div class="card">
  *     <img src="avatar.png" width="48" height="48" />
  *     <h3>User Name</h3>
@@ -55,23 +60,52 @@ export class PhantomUi extends LitElement {
 	@property({ type: Number, attribute: "fallback-radius" })
 	fallbackRadius = 4;
 
+	/** Animation mode: "shimmer" (gradient sweep), "pulse" (opacity), "breathe" (scale + fade), or "solid" (static) */
+	@property({ reflect: true })
+	animation: Animation = "shimmer";
+
+	/** Delay in seconds between each block's animation start (0 = no stagger) */
+	@property({ type: Number })
+	stagger = 0;
+
+	/** Fade-out duration in seconds when loading ends (0 = instant) */
+	@property({ type: Number })
+	reveal = 0;
+
 	@state()
 	private _blocks: ElementInfo[] = [];
+
+	@state()
+	private _revealing = false;
 
 	private _resizeObserver: ResizeObserver | null = null;
 	private _mutationObserver: MutationObserver | null = null;
 	private _measureScheduled = false;
+	private _revealTimeout: ReturnType<typeof setTimeout> | null = null;
 
 	override disconnectedCallback(): void {
 		super.disconnectedCallback();
 		this._teardownObservers();
+		this._clearRevealTimeout();
 	}
 
 	override updated(changedProperties: Map<PropertyKey, unknown>): void {
 		if (changedProperties.has("loading")) {
+			this.setAttribute("aria-busy", String(this.loading));
+
 			if (this.loading) {
+				this._revealing = false;
+				this._clearRevealTimeout();
 				this._scheduleMeasure();
 				this._setupObservers();
+			} else if (this.reveal > 0 && this._blocks.length > 0) {
+				this._revealing = true;
+				this._teardownObservers();
+				this._revealTimeout = setTimeout(() => {
+					this._revealing = false;
+					this._blocks = [];
+					this._revealTimeout = null;
+				}, this.reveal * 1000);
 			} else {
 				this._blocks = [];
 				this._teardownObservers();
@@ -84,20 +118,27 @@ export class PhantomUi extends LitElement {
 			"--shimmer-color": this.shimmerColor,
 			"--shimmer-duration": `${this.duration}s`,
 			"--shimmer-bg": this.backgroundColor,
+			"--reveal-duration": `${this.reveal}s`,
 		});
 
+		const showOverlay = this.loading || this._revealing;
+
 		return html`
-			<slot></slot>
-			${
-				this.loading
+      <slot></slot>
+      ${
+				showOverlay
 					? html`
-						<div class="shimmer-overlay" style=${overlayStyles} aria-hidden="true">
-							${this._renderBlocks()}
-						</div>
-					`
+            <div
+              class="shimmer-overlay ${this._revealing ? "revealing" : ""}"
+              style=${overlayStyles}
+              aria-hidden="true"
+            >
+              ${this._renderBlocks()}
+            </div>
+          `
 					: ""
 			}
-		`;
+    `;
 	}
 
 	private _scheduleMeasure(): void {
@@ -159,9 +200,18 @@ export class PhantomUi extends LitElement {
 		}
 	}
 
+	private _clearRevealTimeout(): void {
+		if (this._revealTimeout !== null) {
+			clearTimeout(this._revealTimeout);
+			this._revealTimeout = null;
+		}
+	}
+
 	private _renderBlocks() {
-		return this._blocks.map((block) => {
+		return this._blocks.map((block, index) => {
 			const radius = block.borderRadius || `${this.fallbackRadius}px`;
+			const staggerDelay = this.stagger;
+			const delay = staggerDelay > 0 ? `animation-delay: ${index * staggerDelay}s;` : "";
 			return html`
         <div
           class="shimmer-block"
@@ -172,6 +222,7 @@ export class PhantomUi extends LitElement {
 						height: ${block.height}px;
 						border-radius: ${radius};
 						background: var(--shimmer-bg, ${this.backgroundColor});
+						${delay}
 					"
         ></div>
       `;
@@ -185,6 +236,9 @@ export interface PhantomUiAttributes {
 	"background-color"?: string;
 	duration?: number;
 	"fallback-radius"?: number;
+	animation?: "shimmer" | "pulse" | "breathe" | "solid";
+	stagger?: number;
+	reveal?: number;
 	children?: unknown;
 	class?: string;
 	id?: string;

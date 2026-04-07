@@ -28,6 +28,11 @@ export const phantomUiStyles = css`
 		inset: 0;
 		pointer-events: none;
 		overflow: hidden;
+		transition: opacity var(--reveal-duration, 0s) ease-out;
+	}
+
+	.shimmer-overlay.revealing {
+		opacity: 0;
 	}
 
 	.shimmer-block {
@@ -35,6 +40,7 @@ export const phantomUiStyles = css`
 		overflow: hidden;
 	}
 
+	/* Shimmer mode (default) */
 	.shimmer-block::after {
 		content: "";
 		position: absolute;
@@ -56,5 +62,50 @@ export const phantomUiStyles = css`
 		100% {
 			background-position: -200% 0;
 		}
+	}
+
+	/* Pulse mode */
+	:host([animation="pulse"]) .shimmer-block {
+		animation: phantom-pulse var(--shimmer-duration, 1.5s) ease-in-out infinite;
+	}
+
+	:host([animation="pulse"]) .shimmer-block::after {
+		display: none;
+	}
+
+	@keyframes phantom-pulse {
+		0%,
+		100% {
+			opacity: 1;
+		}
+		50% {
+			opacity: 0.4;
+		}
+	}
+
+	/* Breathe mode - subtle scale + fade */
+	:host([animation="breathe"]) .shimmer-block {
+		animation: phantom-breathe var(--shimmer-duration, 1.5s) ease-in-out infinite;
+	}
+
+	:host([animation="breathe"]) .shimmer-block::after {
+		display: none;
+	}
+
+	@keyframes phantom-breathe {
+		0%,
+		100% {
+			opacity: 0.6;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 1;
+			transform: scale(1.02);
+		}
+	}
+
+	/* Solid mode */
+	:host([animation="solid"]) .shimmer-block::after {
+		display: none;
 	}
 `;
