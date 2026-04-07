@@ -280,9 +280,12 @@ declare module "@builder.io/qwik" {
 | Attribute | Type | Default | Description |
 | --- | --- | --- | --- |
 | `loading` | `boolean` | `false` | Show shimmer overlay or real content |
+| `animation` | `string` | `shimmer` | Animation mode: `shimmer`, `pulse`, `breathe`, or `solid` |
 | `shimmer-color` | `string` | `rgba(255,255,255,0.3)` | Color of the animated gradient sweep |
 | `background-color` | `string` | `rgba(255,255,255,0.08)` | Background of each shimmer block |
 | `duration` | `number` | `1.5` | Animation cycle in seconds |
+| `stagger` | `number` | `0` | Delay in seconds between each block's animation start |
+| `reveal` | `number` | `0` | Fade-out duration in seconds when loading ends |
 | `fallback-radius` | `number` | `4` | Border radius (px) for flat elements like text |
 
 ## Fine-grained control
