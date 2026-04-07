@@ -39,29 +39,22 @@ export const phantomUiStyles = css`
 		content: "";
 		position: absolute;
 		inset: 0;
-		animation: shimmer-sweep var(--shimmer-duration, 1.5s) ease-in-out infinite;
+		background: linear-gradient(
+			90deg,
+			var(--shimmer-bg) 30%,
+			var(--shimmer-color) 50%,
+			var(--shimmer-bg) 70%
+		);
+		background-size: 200% 100%;
+		animation: shimmer-sweep var(--shimmer-duration, 1.5s) linear infinite;
 	}
 
 	@keyframes shimmer-sweep {
 		0% {
-			background: linear-gradient(
-				90deg,
-				transparent 0%,
-				var(--shimmer-color) 50%,
-				transparent 100%
-			);
-			background-size: 200% 100%;
-			background-position: -100% 0;
+			background-position: 200% 0;
 		}
 		100% {
-			background: linear-gradient(
-				90deg,
-				transparent 0%,
-				var(--shimmer-color) 50%,
-				transparent 100%
-			);
-			background-size: 200% 100%;
-			background-position: 200% 0;
+			background-position: -200% 0;
 		}
 	}
 `;
