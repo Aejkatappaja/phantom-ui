@@ -8,7 +8,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "`<phantom-ui>` — A structure-aware shimmer skeleton loader.\n\nWraps real content and, when `loading` is true, measures the DOM structure\nof the slotted children to generate perfectly-aligned shimmer overlay blocks.",
+          "description": "`<phantom-ui>` -- A structure-aware shimmer skeleton loader.\n\nWraps real content and, when `loading` is true, measures the DOM structure\nof the slotted children to generate perfectly-aligned shimmer overlay blocks.",
           "name": "PhantomUi",
           "slots": [
             {
@@ -35,7 +35,7 @@
                 "text": "string"
               },
               "default": "\"rgba(255, 255, 255, 0.3)\"",
-              "description": "Color of the animated shimmer gradient wave",
+              "description": "Color of the animationd shimmer gradient wave",
               "attribute": "shimmer-color"
             },
             {
@@ -70,12 +70,52 @@
             },
             {
               "kind": "field",
+              "name": "animation",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"shimmer\"",
+              "description": "Animation mode: \"shimmer\", \"pulse\", or \"solid\"",
+              "attribute": "animation",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "stagger",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "Delay in seconds between each block's animation start",
+              "attribute": "stagger"
+            },
+            {
+              "kind": "field",
+              "name": "reveal",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "Fade-out duration in seconds when loading ends (0 = instant)",
+              "attribute": "reveal"
+            },
+            {
+              "kind": "field",
               "name": "_blocks",
               "type": {
                 "text": "ElementInfo[]"
               },
               "privacy": "private",
               "default": "[]"
+            },
+            {
+              "kind": "field",
+              "name": "_revealing",
+              "type": {
+                "text": "boolean"
+              },
+              "privacy": "private",
+              "default": "false"
             },
             {
               "kind": "field",
@@ -103,6 +143,15 @@
               },
               "privacy": "private",
               "default": "false"
+            },
+            {
+              "kind": "field",
+              "name": "_revealTimeout",
+              "type": {
+                "text": "ReturnType<typeof setTimeout> | null"
+              },
+              "privacy": "private",
+              "default": "null"
             },
             {
               "kind": "method",
@@ -146,6 +195,16 @@
             },
             {
               "kind": "method",
+              "name": "_clearRevealTimeout",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
               "name": "_renderBlocks",
               "privacy": "private"
             }
@@ -166,7 +225,7 @@
                 "text": "string"
               },
               "default": "\"rgba(255, 255, 255, 0.3)\"",
-              "description": "Color of the animated shimmer gradient wave",
+              "description": "Color of the animationd shimmer gradient wave",
               "fieldName": "shimmerColor"
             },
             {
@@ -195,6 +254,33 @@
               "default": "4",
               "description": "Border radius (px) for elements with border-radius: 0",
               "fieldName": "fallbackRadius"
+            },
+            {
+              "name": "animation",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"shimmer\"",
+              "description": "Animation mode: \"shimmer\", \"pulse\", or \"solid\"",
+              "fieldName": "animation"
+            },
+            {
+              "name": "stagger",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "Delay in seconds between each block's animation start",
+              "fieldName": "stagger"
+            },
+            {
+              "name": "reveal",
+              "type": {
+                "text": "number"
+              },
+              "default": "0",
+              "description": "Fade-out duration in seconds when loading ends (0 = instant)",
+              "fieldName": "reveal"
             }
           ],
           "superclass": {
