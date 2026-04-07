@@ -35,8 +35,28 @@
     </div>
 
     <div class="control-group">
+      <label>Animation</label>
+      <div class="mode-btns">
+        <button class="mode-btn active" data-mode="shimmer">shimmer</button>
+        <button class="mode-btn" data-mode="pulse">pulse</button>
+        <button class="mode-btn" data-mode="breathe">breathe</button>
+        <button class="mode-btn" data-mode="solid">solid</button>
+      </div>
+    </div>
+
+    <div class="control-group">
       <label>Duration <span id="duration-val">1.5s</span></label>
       <input type="range" id="duration" min="0.5" max="4" step="0.1" value="1.5" />
+    </div>
+
+    <div class="control-group">
+      <label>Stagger <span id="stagger-val">0s</span></label>
+      <input type="range" id="stagger" min="0" max="0.2" step="0.01" value="0" />
+    </div>
+
+    <div class="control-group">
+      <label>Reveal <span id="reveal-val">0s</span></label>
+      <input type="range" id="reveal" min="0" max="1" step="0.05" value="0" />
     </div>
 
     <div class="control-group">
@@ -201,6 +221,31 @@
       els.forEach(function (el) { el.setAttribute("duration", durSlider.value); });
     });
 
+    // Animation mode buttons
+    document.querySelectorAll(".mode-btn").forEach(function (mbtn) {
+      mbtn.addEventListener("click", function () {
+        document.querySelectorAll(".mode-btn").forEach(function (b) { b.classList.remove("active"); });
+        mbtn.classList.add("active");
+        els.forEach(function (el) { el.setAttribute("animation", mbtn.dataset.mode); });
+      });
+    });
+
+    // Stagger slider
+    var stagSlider = document.getElementById("stagger");
+    var stagVal = document.getElementById("stagger-val");
+    stagSlider.addEventListener("input", function () {
+      stagVal.textContent = stagSlider.value + "s";
+      els.forEach(function (el) { el.setAttribute("stagger", stagSlider.value); });
+    });
+
+    // Reveal slider
+    var revSlider = document.getElementById("reveal");
+    var revVal = document.getElementById("reveal-val");
+    revSlider.addEventListener("input", function () {
+      revVal.textContent = revSlider.value + "s";
+      els.forEach(function (el) { el.setAttribute("reveal", revSlider.value); });
+    });
+
     // Radius slider
     var radSlider = document.getElementById("radius");
     var radVal = document.getElementById("radius-val");
@@ -212,6 +257,16 @@
 </script>
 
 <style>
+  /* Hide nested images during loading */
+  phantom-ui[loading] img,
+  phantom-ui[loading] svg,
+  phantom-ui[loading] video {
+    opacity: 0 !important;
+  }
+  phantom-ui[loading] .badge {
+    opacity: 0 !important;
+  }
+
   .demo-root {
     --card-bg: var(--sl-color-gray-5);
     --card-border: var(--sl-color-gray-4);
@@ -287,6 +342,38 @@
   .toggle-btn.loading .toggle-dot {
     background: var(--accent);
     box-shadow: 0 0 12px rgba(122, 162, 247, 0.5);
+  }
+
+  /* Mode buttons */
+  .mode-btns {
+    display: flex;
+    gap: 4px;
+  }
+
+  .mode-btn {
+    all: unset;
+    font-size: 11px;
+    padding: 4px 10px;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    font-family: monospace;
+    line-height: 1;
+    box-sizing: border-box;
+  }
+
+  .mode-btn:hover {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
+  .mode-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--card-bg);
   }
 
   /* Color swatches */

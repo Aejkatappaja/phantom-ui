@@ -19,6 +19,49 @@ Show the shimmer overlay when present. Remove to reveal real content.
 <phantom-ui>...</phantom-ui>
 ```
 
+## `animation`
+
+| Type | Default | Reflects |
+| --- | --- | --- |
+| `string` | `shimmer` | Yes |
+
+Animation mode for the shimmer blocks. Four modes available:
+
+- `shimmer` -- gradient sweep moving across each block (default)
+- `pulse` -- opacity oscillation between full and faded
+- `breathe` -- subtle scale and opacity breathing effect
+- `solid` -- static blocks with no animation
+
+```html
+<phantom-ui loading animation="pulse">...</phantom-ui>
+<phantom-ui loading animation="breathe">...</phantom-ui>
+<phantom-ui loading animation="solid">...</phantom-ui>
+```
+
+## `stagger`
+
+| Type | Default |
+| --- | --- |
+| `number` | `0` |
+
+Delay in seconds between each block's animation start. Creates a wave effect where blocks animate one after another instead of all at once. Works with all animation modes.
+
+```html
+<phantom-ui loading stagger="0.05">...</phantom-ui>
+```
+
+## `reveal`
+
+| Type | Default |
+| --- | --- |
+| `number` | `0` |
+
+Fade-out duration in seconds when loading ends. Instead of an instant switch, the shimmer overlay fades out smoothly. Set to `0` for instant reveal (default).
+
+```html
+<phantom-ui loading reveal="0.3">...</phantom-ui>
+```
+
 ## `shimmer-color`
 
 | Type | Default |

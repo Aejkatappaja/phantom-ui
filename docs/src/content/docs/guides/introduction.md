@@ -27,5 +27,9 @@ When `loading` is removed, the shimmer disappears and real content is revealed i
 - **Framework-agnostic** -- one Web Component, every framework
 - **Responsive** -- re-measures on resize and DOM mutations
 - **Fine-grained control** -- `data-shimmer-ignore` and `data-shimmer-no-children` attributes
+- **Multiple animation modes** -- shimmer, pulse, breathe, or solid
+- **Stagger effect** -- blocks animate with progressive delay for a wave effect
+- **Smooth reveal** -- configurable fade-out transition when loading ends
+- **Accessible** -- `aria-busy` set automatically on the host element
 - **Dark mode friendly** -- default semi-transparent white colors work on any background
 - **~8kb gzipped** -- CDN bundle with Lit included

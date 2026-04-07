@@ -12,6 +12,7 @@ You can override the shimmer appearance globally or per-instance using CSS custo
 | `--shimmer-color` | `rgba(255, 255, 255, 0.3)` | Gradient sweep color |
 | `--shimmer-duration` | `1.5s` | Animation cycle |
 | `--shimmer-bg` | `rgba(255, 255, 255, 0.08)` | Block background |
+| `--reveal-duration` | `0s` | Fade-out transition when loading ends |
 
 ## Global override
 
