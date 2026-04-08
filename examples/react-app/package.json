@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@aejkatappaja/phantom-ui": "^0.1.1",
+    "@aejkatappaja/phantom-ui": "file:../..",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
