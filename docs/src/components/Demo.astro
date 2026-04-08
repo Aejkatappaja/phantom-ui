@@ -177,9 +177,58 @@
       </div>
     </phantom-ui>
   </div>
+
+  <!-- Count section -->
+  <div class="section-header">
+    <h3>Repeat mode</h3>
+    <p>Generate multiple skeleton rows from a single template with <code>count</code></p>
+  </div>
+
+  <div class="count-controls">
+    <div class="control-group">
+      <label>Count <span id="count-val">5</span></label>
+      <input type="range" id="count-slider" min="1" max="10" step="1" value="5" />
+    </div>
+    <div class="control-group">
+      <label>Gap <span id="gap-val">0px</span></label>
+      <input type="range" id="gap-slider" min="0" max="24" step="1" value="0" />
+    </div>
+  </div>
+
+  <div class="count-grid">
+    <div class="count-card">
+      <div class="table-header-row">
+        <span class="th" style="width:32px"></span>
+        <span class="th">Name</span>
+        <span class="th">Email</span>
+        <span class="th">Role</span>
+      </div>
+      <phantom-ui class="count-target" loading count="5" count-gap="0" shimmer-color="rgba(122,162,247,0.35)" background-color="rgba(122,162,247,0.08)">
+        <div class="table-row">
+          <div class="avatar-sm"></div>
+          <span>Sarah Chen</span>
+          <span>sarah@acme.io</span>
+          <span class="role-tag">Admin</span>
+        </div>
+      </phantom-ui>
+    </div>
+
+    <div class="count-card">
+      <div class="feed-title">Activity Feed</div>
+      <phantom-ui class="count-target" loading count="5" count-gap="0" shimmer-color="rgba(122,162,247,0.35)" background-color="rgba(122,162,247,0.08)">
+        <div class="feed-item">
+          <div class="avatar-sm"></div>
+          <div class="feed-text">
+            <strong>New deployment successful</strong>
+            <span>Production v2.4.1 deployed</span>
+          </div>
+        </div>
+      </phantom-ui>
+    </div>
+  </div>
 </div>
 
-<script is:inline src="https://cdn.jsdelivr.net/npm/@aejkatappaja/phantom-ui/dist/phantom-ui.cdn.js"></script>
+<script is:inline src="/phantom-ui/phantom-ui.cdn.js"></script>
 <script is:inline>
   document.addEventListener("DOMContentLoaded", function () {
     var els = document.querySelectorAll("phantom-ui");
@@ -252,6 +301,23 @@
     radSlider.addEventListener("input", function () {
       radVal.textContent = radSlider.value + "px";
       els.forEach(function (el) { el.setAttribute("fallback-radius", radSlider.value); });
+    });
+
+    // Count slider
+    var countEls = document.querySelectorAll(".count-target");
+    var countSlider = document.getElementById("count-slider");
+    var countValEl = document.getElementById("count-val");
+    countSlider.addEventListener("input", function () {
+      countValEl.textContent = countSlider.value;
+      countEls.forEach(function (el) { el.setAttribute("count", countSlider.value); });
+    });
+
+    // Gap slider
+    var gapSlider = document.getElementById("gap-slider");
+    var gapVal = document.getElementById("gap-val");
+    gapSlider.addEventListener("input", function () {
+      gapVal.textContent = gapSlider.value + "px";
+      countEls.forEach(function (el) { el.setAttribute("count-gap", gapSlider.value); });
     });
   });
 </script>
@@ -675,5 +741,136 @@
     line-height: 1.5;
     margin: 4px 0 0;
     color: var(--text-muted);
+  }
+
+  /* Count section */
+  .section-header {
+    margin: 40px 0 20px;
+  }
+
+  .section-header h3 {
+    font-size: 18px;
+    color: var(--text);
+    margin: 0 0 4px;
+  }
+
+  .section-header p {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0;
+  }
+
+  .section-header code {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  .count-controls {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 16px 20px;
+  }
+
+  .count-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .count-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  .demo-root {
+    overflow: hidden;
+  }
+
+  .table-header-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 1fr 60px;
+    gap: 12px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .th {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .table-row {
+    display: grid;
+    grid-template-columns: 32px 1fr 1fr 60px;
+    gap: 12px;
+    padding: 10px 16px;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .role-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: var(--tag-bg);
+    color: var(--tag-color);
+  }
+
+  phantom-ui[loading] .role-tag {
+    opacity: 0 !important;
+  }
+
+  .feed-title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--card-border);
+  }
+
+  .feed-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .feed-text {
+    flex: 1;
+  }
+
+  .feed-text strong {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .feed-text span {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 700px) {
+    .count-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
