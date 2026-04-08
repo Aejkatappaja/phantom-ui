@@ -75,11 +75,18 @@ export class PhantomUi extends LitElement {
 	reveal = 0;
 
 	/** Number of skeleton rows to generate from a single template element */
-	@property({ type: Number })
+	@property({
+		type: Number,
+		converter: (v) => Math.max(1, Math.round(Number(v) || 1)),
+	})
 	count = 1;
 
 	/** Gap in pixels between each repeated skeleton row (only used when count > 1) */
-	@property({ type: Number, attribute: "count-gap" })
+	@property({
+		type: Number,
+		attribute: "count-gap",
+		converter: (v) => Math.max(0, Number(v) || 0),
+	})
 	countGap = 0;
 
 	@state()
