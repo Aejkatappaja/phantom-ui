@@ -62,6 +62,41 @@ Fade-out duration in seconds when loading ends. Instead of an instant switch, th
 <phantom-ui loading reveal="0.3">...</phantom-ui>
 ```
 
+## `count`
+
+| Type | Default |
+| --- | --- |
+| `number` | `1` |
+
+Number of skeleton rows to generate from a single template element. The component measures your slotted content once, then duplicates the skeleton blocks vertically. Useful for lists, tables, or feeds where you don't have data yet to render multiple items.
+
+```html
+<phantom-ui loading count="5">
+  <div class="user-row">
+    <img src="avatar.png" width="32" height="32" />
+    <span>John Doe</span>
+    <span>john@acme.io</span>
+  </div>
+</phantom-ui>
+```
+
+## `count-gap`
+
+| Type | Default |
+| --- | --- |
+| `number` | `0` |
+
+Gap in pixels between each repeated skeleton row. Only applies when `count` is greater than 1.
+
+```html
+<phantom-ui loading count="5" count-gap="12">
+  <div class="feed-item">
+    <div class="avatar"></div>
+    <p>Activity description here</p>
+  </div>
+</phantom-ui>
+```
+
 ## `shimmer-color`
 
 | Type | Default |

@@ -286,6 +286,8 @@ declare module "@builder.io/qwik" {
 | `duration` | `number` | `1.5` | Animation cycle in seconds |
 | `stagger` | `number` | `0` | Delay in seconds between each block's animation start |
 | `reveal` | `number` | `0` | Fade-out duration in seconds when loading ends |
+| `count` | `number` | `1` | Number of skeleton rows to repeat from a single template |
+| `count-gap` | `number` | `0` | Gap in pixels between repeated rows |
 | `fallback-radius` | `number` | `4` | Border radius (px) for flat elements like text |
 
 ## Fine-grained control
@@ -308,6 +310,35 @@ Two data attributes let you control which elements get shimmer treatment:
     <div class="content">
       <p>Each leaf element here gets its own shimmer block.</p>
     </div>
+  </div>
+</phantom-ui>
+```
+
+## Repeat mode
+
+When loading a dynamic list or table, you often don't have the data yet to render N rows. The `count` attribute lets you define a single template element and generate multiple skeleton rows from it:
+
+```html
+<phantom-ui loading count="5" count-gap="8">
+  <div class="user-row">
+    <img src="avatar.png" width="32" height="32" />
+    <span>John Doe</span>
+    <span>john@acme.io</span>
+  </div>
+</phantom-ui>
+```
+
+The component measures the template once, then duplicates the skeleton blocks vertically for each count. `count-gap` adds spacing (in pixels) between repeated rows. When `loading` is removed, only the real template element is shown.
+
+This is useful with framework loops where the list is empty before data loads:
+
+```tsx
+// React
+<phantom-ui loading={!users} count={5} count-gap={8}>
+  <div className="row-template">
+    <img src="/placeholder.png" width="32" height="32" />
+    <span>Placeholder Name</span>
+    <span>placeholder@email.com</span>
   </div>
 </phantom-ui>
 ```
