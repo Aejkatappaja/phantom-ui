@@ -8,14 +8,8 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "`<phantom-ui>` -- A structure-aware shimmer skeleton loader.\n\nWraps real content and, when `loading` is true, measures the DOM structure\nof the slotted children to generate perfectly-aligned shimmer overlay blocks.",
+          "description": "",
           "name": "PhantomUi",
-          "slots": [
-            {
-              "description": "The real content to show (or measure for skeleton generation)",
-              "name": ""
-            }
-          ],
           "members": [
             {
               "kind": "field",
@@ -157,6 +151,15 @@
             },
             {
               "kind": "field",
+              "name": "_loadHandler",
+              "type": {
+                "text": "(() => void) | null"
+              },
+              "privacy": "private",
+              "default": "null"
+            },
+            {
+              "kind": "field",
               "name": "_measureScheduled",
               "type": {
                 "text": "boolean"
@@ -231,93 +234,93 @@
           ],
           "attributes": [
             {
+              "name": "loading",
               "type": {
                 "text": "boolean"
               },
-              "description": "Whether to show the shimmer overlay or the real content",
-              "name": "loading",
               "default": "false",
+              "description": "Whether to show the shimmer overlay or the real content",
               "fieldName": "loading"
             },
             {
+              "name": "shimmer-color",
               "type": {
                 "text": "string"
               },
-              "description": "Color of the animated shimmer gradient wave",
-              "name": "shimmer-color",
               "default": "\"rgba(255, 255, 255, 0.3)\"",
+              "description": "Color of the animated shimmer gradient wave",
               "fieldName": "shimmerColor"
             },
             {
+              "name": "background-color",
               "type": {
                 "text": "string"
               },
-              "description": "Background color of each shimmer block",
-              "name": "background-color",
               "default": "\"rgba(255, 255, 255, 0.08)\"",
+              "description": "Background color of each shimmer block",
               "fieldName": "backgroundColor"
             },
             {
+              "name": "duration",
               "type": {
                 "text": "number"
               },
-              "description": "Animation cycle duration in seconds",
-              "name": "duration",
               "default": "1.5",
+              "description": "Animation cycle duration in seconds",
               "fieldName": "duration"
             },
             {
+              "name": "fallback-radius",
               "type": {
                 "text": "number"
               },
-              "description": "Border radius applied to elements with border-radius: 0 (like text)",
-              "name": "fallback-radius",
               "default": "4",
+              "description": "Border radius applied to elements with border-radius: 0 (like text)",
               "fieldName": "fallbackRadius"
             },
             {
+              "name": "animation",
               "type": {
                 "text": "Animation"
               },
-              "description": "Animation mode: \"shimmer\" (gradient sweep), \"pulse\" (opacity), \"breathe\" (scale + fade), or \"solid\" (static)",
-              "name": "animation",
               "default": "\"shimmer\"",
+              "description": "Animation mode: \"shimmer\" (gradient sweep), \"pulse\" (opacity), \"breathe\" (scale + fade), or \"solid\" (static)",
               "fieldName": "animation"
             },
             {
+              "name": "stagger",
               "type": {
                 "text": "number"
               },
-              "description": "Delay in seconds between each block's animation start (0 = no stagger)",
-              "name": "stagger",
               "default": "0",
+              "description": "Delay in seconds between each block's animation start (0 = no stagger)",
               "fieldName": "stagger"
             },
             {
+              "name": "reveal",
               "type": {
                 "text": "number"
               },
-              "description": "Fade-out duration in seconds when loading ends (0 = instant)",
-              "name": "reveal",
               "default": "0",
+              "description": "Fade-out duration in seconds when loading ends (0 = instant)",
               "fieldName": "reveal"
             },
             {
+              "name": "count",
               "type": {
                 "text": "number"
               },
-              "description": "Number of skeleton rows to generate from a single template element",
-              "name": "count",
               "default": "1",
+              "description": "Number of skeleton rows to generate from a single template element",
               "fieldName": "count"
             },
             {
+              "name": "count-gap",
               "type": {
                 "text": "number"
               },
-              "description": "Gap in pixels between each repeated skeleton row (only used when count > 1)",
-              "name": "count-gap",
               "default": "0",
+              "description": "Gap in pixels between each repeated skeleton row (only used when count > 1)",
               "fieldName": "countGap"
             }
           ],

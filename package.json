@@ -42,7 +42,7 @@
 		"test": "web-test-runner",
 		"test:watch": "web-test-runner --watch",
 		"test:all": "web-test-runner --all-browsers",
-		"playground": "bunx --bun serve -l 3000 --no-clipboard"
+		"playground": "bunx --bun serve -l 4444 --no-clipboard"
 	},
 	"keywords": [
 		"skeleton",
