@@ -38,7 +38,11 @@
 		"format": "biome format --write .",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"prepare": "husky"
+		"prepare": "husky",
+		"test": "web-test-runner",
+		"test:watch": "web-test-runner --watch",
+		"test:all": "web-test-runner --all-browsers",
+		"playground": "bunx --bun serve -l 3000 --no-clipboard"
 	},
 	"keywords": [
 		"skeleton",
@@ -57,9 +61,13 @@
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.0",
 		"@custom-elements-manifest/analyzer": "^0.11.0",
-		"@storybook/addon-essentials": "^8.4.0",
+		"@open-wc/testing": "^4.0.0",
+"@storybook/addon-essentials": "^8.4.0",
 		"@storybook/web-components": "^8.4.0",
 		"@storybook/web-components-vite": "^8.4.0",
+		"@web/dev-server-esbuild": "^1.0.5",
+		"@web/test-runner": "^0.20.2",
+		"@web/test-runner-playwright": "^0.11.1",
 		"husky": "^9.1.7",
 		"lint-staged": "^16.4.0",
 		"storybook": "^8.4.0",
