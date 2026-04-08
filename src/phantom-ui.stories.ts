@@ -14,8 +14,8 @@ const meta: Meta = {
 	},
 	args: {
 		loading: true,
-		"shimmer-color": "rgba(255, 255, 255, 0.3)",
-		"background-color": "rgba(255, 255, 255, 0.08)",
+		"shimmer-color": "rgba(128, 128, 128, 0.3)",
+		"background-color": "rgba(128, 128, 128, 0.2)",
 		duration: 1.5,
 		"fallback-radius": 4,
 	},

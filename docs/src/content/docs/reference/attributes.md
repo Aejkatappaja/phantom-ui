@@ -101,7 +101,7 @@ Gap in pixels between each repeated skeleton row. Only applies when `count` is g
 
 | Type | Default |
 | --- | --- |
-| `string` | `rgba(255, 255, 255, 0.3)` |
+| `string` | `rgba(128, 128, 128, 0.3)` |
 
 Color of the animated gradient sweep that moves across each shimmer block.
 
@@ -115,7 +115,7 @@ Color of the animated gradient sweep that moves across each shimmer block.
 
 | Type | Default |
 | --- | --- |
-| `string` | `rgba(255, 255, 255, 0.08)` |
+| `string` | `rgba(128, 128, 128, 0.2)` |
 
 Background fill of each shimmer block.
 

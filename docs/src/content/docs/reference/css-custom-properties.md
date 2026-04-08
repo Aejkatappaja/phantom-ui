@@ -9,9 +9,9 @@ You can override the shimmer appearance globally or per-instance using CSS custo
 
 | Property | Default | Description |
 | --- | --- | --- |
-| `--shimmer-color` | `rgba(255, 255, 255, 0.3)` | Gradient sweep color |
+| `--shimmer-color` | `rgba(128, 128, 128, 0.3)` | Gradient sweep color |
 | `--shimmer-duration` | `1.5s` | Animation cycle |
-| `--shimmer-bg` | `rgba(255, 255, 255, 0.08)` | Block background |
+| `--shimmer-bg` | `rgba(128, 128, 128, 0.2)` | Block background |
 | `--reveal-duration` | `0s` | Fade-out transition when loading ends |
 
 ## Global override
@@ -36,14 +36,20 @@ phantom-ui {
 }
 ```
 
-## Light mode example
+## Theme customization
 
-The default colors are designed for dark backgrounds. For light themes:
+The defaults use neutral grays that work on both light and dark backgrounds. Override them to match your design system:
 
 ```css
-.light phantom-ui,
-[data-theme="light"] phantom-ui {
-  --shimmer-color: rgba(0, 0, 0, 0.06);
-  --shimmer-bg: rgba(0, 0, 0, 0.04);
+/* Dark theme */
+.dark phantom-ui {
+  --shimmer-color: rgba(255, 255, 255, 0.3);
+  --shimmer-bg: rgba(255, 255, 255, 0.08);
+}
+
+/* Light theme */
+.light phantom-ui {
+  --shimmer-color: rgba(0, 0, 0, 0.08);
+  --shimmer-bg: rgba(0, 0, 0, 0.06);
 }
 ```
