@@ -38,6 +38,29 @@ type Animation = "shimmer" | "pulse" | "breathe" | "solid";
  * </phantom-ui>
  * ```
  */
+const LIGHT_DOM_STYLE_ID = "phantom-ui-loading-styles";
+
+function injectLightDomStyles(): void {
+	if (document.getElementById(LIGHT_DOM_STYLE_ID)) return;
+	const style = document.createElement("style");
+	style.id = LIGHT_DOM_STYLE_ID;
+	style.textContent = `
+		phantom-ui[loading] * {
+			color: transparent !important;
+			-webkit-text-fill-color: transparent !important;
+			pointer-events: none;
+			user-select: none;
+		}
+		phantom-ui[loading] img,
+		phantom-ui[loading] svg,
+		phantom-ui[loading] video,
+		phantom-ui[loading] canvas {
+			opacity: 0 !important;
+		}
+	`;
+	document.head.appendChild(style);
+}
+
 @customElement("phantom-ui")
 export class PhantomUi extends LitElement {
 	static override styles: CSSResult = phantomUiStyles;
@@ -97,8 +120,14 @@ export class PhantomUi extends LitElement {
 
 	private _resizeObserver: ResizeObserver | null = null;
 	private _mutationObserver: MutationObserver | null = null;
+	private _loadHandler: (() => void) | null = null;
 	private _measureScheduled = false;
 	private _revealTimeout: ReturnType<typeof setTimeout> | null = null;
+
+	override connectedCallback(): void {
+		super.connectedCallback();
+		injectLightDomStyles();
+	}
 
 	override disconnectedCallback(): void {
 		super.disconnectedCallback();
@@ -232,6 +261,9 @@ export class PhantomUi extends LitElement {
 			subtree: true,
 			attributes: true,
 		});
+
+		this._loadHandler = () => this._scheduleMeasure();
+		this.addEventListener("load", this._loadHandler, true);
 	}
 
 	private _teardownObservers(): void {
@@ -242,6 +274,10 @@ export class PhantomUi extends LitElement {
 		if (this._mutationObserver) {
 			this._mutationObserver.disconnect();
 			this._mutationObserver = null;
+		}
+		if (this._loadHandler) {
+			this.removeEventListener("load", this._loadHandler, true);
+			this._loadHandler = null;
 		}
 	}
 
