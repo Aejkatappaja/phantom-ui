@@ -16,6 +16,8 @@ The real content is rendered in the DOM but styled to be invisible:
 - `pointer-events: none` prevents interaction
 - Container backgrounds and borders remain visible, giving a natural card outline
 
+This applies to all descendants, not just direct children. A light DOM stylesheet (`phantom-ui[loading] *`) ensures deeply nested media and text are hidden.
+
 ### 2. Walk the DOM tree
 
 The component recursively walks all slotted children. For each element, it determines whether it is a "leaf" -- a terminal content node that should become a shimmer block.
@@ -36,7 +38,7 @@ An absolutely-positioned overlay is rendered with one div per measured element. 
 
 ### 5. Re-measure on changes
 
-A `ResizeObserver` and `MutationObserver` watch for layout changes. When the container resizes or the DOM mutates, measurement is re-triggered on the next animation frame.
+A `ResizeObserver`, `MutationObserver`, and media `load` listener watch for layout changes. When the container resizes, the DOM mutates, or an image/video finishes loading, measurement is re-triggered on the next animation frame. This means images without explicit `width`/`height` attributes are picked up automatically once they load.
 
 ### 6. Reveal
 
