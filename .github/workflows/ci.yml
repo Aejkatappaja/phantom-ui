@@ -45,6 +45,11 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun add --no-save @rollup/rollup-linux-x64-gnu
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('bun.lock') }}
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: bun run test:all
 
