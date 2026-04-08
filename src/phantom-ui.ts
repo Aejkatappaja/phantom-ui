@@ -46,7 +46,6 @@ function injectLightDomStyles(): void {
 	style.id = LIGHT_DOM_STYLE_ID;
 	style.textContent = `
 		phantom-ui[loading] * {
-			color: transparent !important;
 			-webkit-text-fill-color: transparent !important;
 			pointer-events: none;
 			user-select: none;
@@ -71,11 +70,11 @@ export class PhantomUi extends LitElement {
 
 	/** Color of the animated shimmer gradient wave */
 	@property({ attribute: "shimmer-color" })
-	shimmerColor = "rgba(255, 255, 255, 0.3)";
+	shimmerColor = "rgba(128, 128, 128, 0.3)";
 
 	/** Background color of each shimmer block */
 	@property({ attribute: "background-color" })
-	backgroundColor = "rgba(255, 255, 255, 0.08)";
+	backgroundColor = "rgba(128, 128, 128, 0.2)";
 
 	/** Animation cycle duration in seconds */
 	@property({ type: Number })

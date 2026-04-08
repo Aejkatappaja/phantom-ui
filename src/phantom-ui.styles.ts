@@ -5,13 +5,12 @@ export const phantomUiStyles = css`
 		display: block;
 		position: relative;
 		overflow: hidden;
-		--shimmer-color: rgba(255, 255, 255, 0.3);
+		--shimmer-color: rgba(128, 128, 128, 0.3);
 		--shimmer-duration: 1.5s;
-		--shimmer-bg: rgba(255, 255, 255, 0.08);
+		--shimmer-bg: rgba(128, 128, 128, 0.2);
 	}
 
 	:host([loading]) ::slotted(*) {
-		color: transparent !important;
 		-webkit-text-fill-color: transparent !important;
 		pointer-events: none;
 		user-select: none;
