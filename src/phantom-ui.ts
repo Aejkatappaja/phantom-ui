@@ -53,7 +53,9 @@ function injectLightDomStyles(): void {
 		phantom-ui[loading] img,
 		phantom-ui[loading] svg,
 		phantom-ui[loading] video,
-		phantom-ui[loading] canvas {
+		phantom-ui[loading] canvas,
+		phantom-ui[loading] button,
+		phantom-ui[loading] [role="button"] {
 			opacity: 0 !important;
 		}
 	`;

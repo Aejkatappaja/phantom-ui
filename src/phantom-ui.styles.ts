@@ -19,7 +19,9 @@ export const phantomUiStyles = css`
 	:host([loading]) ::slotted(img),
 	:host([loading]) ::slotted(svg),
 	:host([loading]) ::slotted(video),
-	:host([loading]) ::slotted(canvas) {
+	:host([loading]) ::slotted(canvas),
+	:host([loading]) ::slotted(button),
+	:host([loading]) ::slotted([role="button"]) {
 		opacity: 0 !important;
 	}
 

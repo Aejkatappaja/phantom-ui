@@ -19,7 +19,9 @@
 	:host([loading]) ::slotted(img),
 	:host([loading]) ::slotted(svg),
 	:host([loading]) ::slotted(video),
-	:host([loading]) ::slotted(canvas) {
+	:host([loading]) ::slotted(canvas),
+	:host([loading]) ::slotted(button),
+	:host([loading]) ::slotted([role="button"]) {
 		opacity: 0 !important;
 	}
 
@@ -117,7 +119,9 @@
 		phantom-ui[loading] img,
 		phantom-ui[loading] svg,
 		phantom-ui[loading] video,
-		phantom-ui[loading] canvas {
+		phantom-ui[loading] canvas,
+		phantom-ui[loading] button,
+		phantom-ui[loading] [role="button"] {
 			opacity: 0 !important;
 		}
 	`,document.head.appendChild(r)}var p=class extends b{constructor(){super(...arguments);this.loading=!1;this.shimmerColor="rgba(128, 128, 128, 0.3)";this.backgroundColor="rgba(128, 128, 128, 0.2)";this.duration=1.5;this.fallbackRadius=4;this.animation="shimmer";this.stagger=0;this.reveal=0;this.count=1;this.countGap=0;this._blocks=[];this._revealing=!1;this._resizeObserver=null;this._mutationObserver=null;this._loadHandler=null;this._measureScheduled=!1;this._revealTimeout=null}connectedCallback(){super.connectedCallback(),Zt()}disconnectedCallback(){super.disconnectedCallback(),this._teardownObservers(),this._clearRevealTimeout()}willUpdate(e){e.has("loading")&&!this.loading&&this.reveal>0&&this._blocks.length>0&&(this._revealing=!0)}updated(e){(e.has("count")||e.has("countGap"))&&this.loading&&this._scheduleMeasure(),e.has("loading")&&(this.setAttribute("aria-busy",String(this.loading)),this.loading?(this._revealing=!1,this._clearRevealTimeout(),this._scheduleMeasure(),this._setupObservers()):this._revealing?(this._teardownObservers(),this._revealTimeout=setTimeout(()=>{this._revealing=!1,this._blocks=[],this._revealTimeout=null,this.style.minHeight=""},this.reveal*1e3)):(this._blocks=[],this._teardownObservers(),this.style.minHeight=""))}render(){let e=xt({"--shimmer-color":this.shimmerColor,"--shimmer-duration":`${this.duration}s`,"--shimmer-bg":this.backgroundColor,"--reveal-duration":`${this.reveal}s`}),s=this.loading||this._revealing;return j`
