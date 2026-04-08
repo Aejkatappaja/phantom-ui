@@ -135,6 +135,14 @@ export class PhantomUi extends LitElement {
 		this._clearRevealTimeout();
 	}
 
+	override willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
+		if (changedProperties.has("loading") && !this.loading) {
+			if (this.reveal > 0 && this._blocks.length > 0) {
+				this._revealing = true;
+			}
+		}
+	}
+
 	override updated(changedProperties: Map<PropertyKey, unknown>): void {
 		if ((changedProperties.has("count") || changedProperties.has("countGap")) && this.loading) {
 			this._scheduleMeasure();
@@ -148,8 +156,7 @@ export class PhantomUi extends LitElement {
 				this._clearRevealTimeout();
 				this._scheduleMeasure();
 				this._setupObservers();
-			} else if (this.reveal > 0 && this._blocks.length > 0) {
-				this._revealing = true;
+			} else if (this._revealing) {
 				this._teardownObservers();
 				this._revealTimeout = setTimeout(() => {
 					this._revealing = false;
