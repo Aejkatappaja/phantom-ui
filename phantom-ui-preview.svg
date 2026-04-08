@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 300" fill="none">
+  <defs>
+    <!-- Shimmer gradient for skeleton blocks -->
+    <linearGradient id="shimmer" x1="-100%" y1="0%" x2="200%" y2="0%">
+      <stop offset="0%" stop-color="#2a2f45"/>
+      <stop offset="40%" stop-color="#2a2f45"/>
+      <stop offset="50%" stop-color="#3d4566"/>
+      <stop offset="60%" stop-color="#2a2f45"/>
+      <stop offset="100%" stop-color="#2a2f45"/>
+      <animate attributeName="x1" values="-100%;200%" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="x2" values="0%;300%" dur="2s" repeatCount="indefinite"/>
+    </linearGradient>
+
+    <!-- Card rounded clip -->
+    <clipPath id="card-clip">
+      <rect x="40" y="24" width="560" height="252" rx="16"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect width="640" height="300" rx="12" fill="#1a1b26"/>
+
+  <!-- Card background -->
+  <rect x="40" y="24" width="560" height="252" rx="16" fill="#24283b"/>
+  <rect x="40" y="24" width="560" height="252" rx="16" fill="none" stroke="#292e42" stroke-width="1"/>
+
+  <!-- ===================== -->
+  <!-- SKELETON STATE        -->
+  <!-- ===================== -->
+  <g clip-path="url(#card-clip)">
+    <g>
+      <!-- Skeleton: Avatar circle -->
+      <circle cx="100" cy="80" r="28" fill="url(#shimmer)">
+        <animate attributeName="opacity" values="1;1;0;0" dur="6s" repeatCount="indefinite"/>
+      </circle>
+
+      <!-- Skeleton: Name bar -->
+      <rect x="148" y="62" width="140" height="16" rx="4" fill="url(#shimmer)">
+        <animate attributeName="opacity" values="1;1;0;0" dur="6s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Skeleton: Subtitle bar -->
+      <rect x="148" y="86" width="100" height="12" rx="4" fill="url(#shimmer)">
+        <animate attributeName="opacity" values="1;1;0;0" dur="6s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Skeleton: Description line 1 -->
+      <rect x="68" y="132" width="504" height="12" rx="4" fill="url(#shimmer)">
+        <animate attributeName="opacity" values="1;1;0;0" dur="6s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Skeleton: Description line 2 -->
+      <rect x="68" y="154" width="380" height="12" rx="4" fill="url(#shimmer)">
+        <animate attributeName="opacity" values="1;1;0;0" dur="6s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Skeleton: Tag 1 -->
+      <rect x="68" y="192" width="72" height="28" rx="14" fill="url(#shimmer)">
+        <animate attributeName="opacity" values="1;1;0;0" dur="6s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Skeleton: Tag 2 -->
+      <rect x="150" y="192" width="56" height="28" rx="14" fill="url(#shimmer)">
+        <animate attributeName="opacity" values="1;1;0;0" dur="6s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Skeleton: Tag 3 -->
+      <rect x="216" y="192" width="64" height="28" rx="14" fill="url(#shimmer)">
+        <animate attributeName="opacity" values="1;1;0;0" dur="6s" repeatCount="indefinite"/>
+      </rect>
+
+      <!-- Skeleton: Action button -->
+      <rect x="432" y="192" width="140" height="34" rx="8" fill="url(#shimmer)">
+        <animate attributeName="opacity" values="1;1;0;0" dur="6s" repeatCount="indefinite"/>
+      </rect>
+    </g>
+
+    <!-- ===================== -->
+    <!-- REVEALED CONTENT      -->
+    <!-- ===================== -->
+    <g>
+      <!-- Avatar -->
+      <circle cx="100" cy="80" r="28" fill="#3b4261">
+        <animate attributeName="opacity" values="0;0;1;1" dur="6s" repeatCount="indefinite"/>
+      </circle>
+      <text x="100" y="86" text-anchor="middle" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="22" font-weight="600" fill="#7aa2f7">
+        AL
+        <animate attributeName="opacity" values="0;0;1;1" dur="6s" repeatCount="indefinite"/>
+      </text>
+
+      <!-- Name -->
+      <text x="148" y="76" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="16" font-weight="600" fill="#c0caf5">
+        Ada Lovelace
+        <animate attributeName="opacity" values="0;0;1;1" dur="6s" repeatCount="indefinite"/>
+      </text>
+
+      <!-- Subtitle -->
+      <text x="148" y="96" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="12" fill="#565f89">
+        Software Engineer
+        <animate attributeName="opacity" values="0;0;1;1" dur="6s" repeatCount="indefinite"/>
+      </text>
+
+      <!-- Description -->
+      <text x="68" y="143" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="13" fill="#a9b1d6">
+        Building accessible, performant interfaces for the modern web.
+        <animate attributeName="opacity" values="0;0;1;1" dur="6s" repeatCount="indefinite"/>
+      </text>
+      <text x="68" y="163" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="13" fill="#a9b1d6">
+        First computer programmer, probably.
+        <animate attributeName="opacity" values="0;0;1;1" dur="6s" repeatCount="indefinite"/>
+      </text>
+
+      <!-- Tags -->
+      <g>
+        <animate attributeName="opacity" values="0;0;1;1" dur="6s" repeatCount="indefinite"/>
+        <rect x="68" y="192" width="72" height="28" rx="14" fill="#292e42"/>
+        <text x="104" y="210" text-anchor="middle" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="11" font-weight="500" fill="#7aa2f7">TypeScript</text>
+
+        <rect x="150" y="192" width="44" height="28" rx="14" fill="#292e42"/>
+        <text x="172" y="210" text-anchor="middle" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="11" font-weight="500" fill="#7aa2f7">Lit</text>
+
+        <rect x="204" y="192" width="48" height="28" rx="14" fill="#292e42"/>
+        <text x="228" y="210" text-anchor="middle" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="11" font-weight="500" fill="#7aa2f7">CSS</text>
+      </g>
+
+      <!-- Button -->
+      <g>
+        <animate attributeName="opacity" values="0;0;1;1" dur="6s" repeatCount="indefinite"/>
+        <rect x="432" y="192" width="140" height="34" rx="8" fill="#7aa2f7"/>
+        <text x="502" y="213" text-anchor="middle" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="13" font-weight="600" fill="#1a1b26">View Profile</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Divider line between header and body -->
+  <line x1="68" y1="118" x2="572" y2="118" stroke="#292e42" stroke-width="1">
+    <animate attributeName="opacity" values="0.3;0.3;1;1" dur="6s" repeatCount="indefinite"/>
+  </line>
+
+  <!-- Label: loading / loaded indicator -->
+  <g>
+    <rect x="484" y="40" width="88" height="24" rx="12" fill="#1a1b26" stroke="#292e42" stroke-width="1"/>
+    <circle cx="500" cy="52" r="4" fill="#f7768e">
+      <animate attributeName="fill" values="#f7768e;#f7768e;#9ece6a;#9ece6a" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <text x="512" y="56" font-family="'SF Mono','Cascadia Code','Fira Code',monospace" font-size="10" fill="#565f89">
+      loading
+      <animate attributeName="opacity" values="1;1;0;0" dur="6s" repeatCount="indefinite"/>
+    </text>
+    <text x="512" y="56" font-family="'SF Mono','Cascadia Code','Fira Code',monospace" font-size="10" fill="#565f89">
+      loaded
+      <animate attributeName="opacity" values="0;0;1;1" dur="6s" repeatCount="indefinite"/>
+    </text>
+  </g>
+</svg>

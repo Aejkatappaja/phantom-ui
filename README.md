@@ -1,5 +1,7 @@
 <p align="center">
   <img src="logo-phantom.svg" alt="phantom-ui" width="200" />
+  <br />
+  <img src="phantom-ui-text.svg" alt="phantom-ui" width="320" />
 </p>
 
 <p align="center">
@@ -24,7 +26,7 @@
 
 <div align="center">
   <picture>
-    <img src="preview.gif" alt="phantom-ui demo" width="640" />
+    <img src="phantom-ui-preview.svg" alt="phantom-ui demo" width="640" />
   </picture>
 </div>
 
