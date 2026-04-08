@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="logo-phantom.svg" alt="phantom-ui" width="200" />
+  <img src=".github/assets/logo-phantom.svg" alt="phantom-ui" width="200" />
   <br />
-  <img src="phantom-ui-text.svg" alt="phantom-ui" width="320" />
+  <img src=".github/assets/phantom-ui-text.svg" alt="phantom-ui" width="320" />
 </p>
 
 <p align="center">
@@ -26,7 +26,7 @@
 
 <div align="center">
   <picture>
-    <img src="phantom-ui-preview.svg" alt="phantom-ui demo" width="640" />
+    <img src=".github/assets/phantom-ui-preview.svg" alt="phantom-ui demo" width="640" />
   </picture>
 </div>
 
@@ -71,7 +71,7 @@ Or drop in a script tag with no build step:
 </phantom-ui>
 ```
 
-Set `loading` to show the shimmer. Remove it to reveal the real content.
+Set `loading` to show the shimmer. Remove it to reveal the real content. All child elements (including deeply nested images and media) are automatically hidden during loading.
 
 ## Framework examples
 
@@ -82,11 +82,23 @@ import "@aejkatappaja/phantom-ui";
 
 function ProfileCard({ user, isLoading }: Props) {
   return (
-    <phantom-ui loading={isLoading || undefined}>
+    <phantom-ui loading={isLoading || undefined} animation="pulse" reveal={0.3}>
       <div className="card">
         <img src={user?.avatar ?? "/placeholder.png"} className="avatar" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
         <p>{user?.bio ?? "A few words about this person go here."}</p>
+      </div>
+    </phantom-ui>
+  );
+}
+
+// List with repeat mode
+function UserList({ users, isLoading }: Props) {
+  return (
+    <phantom-ui loading={isLoading || undefined} count={5} count-gap={8}>
+      <div className="row">
+        <img src="/placeholder.png" width="32" height="32" />
+        <span>Placeholder Name</span>
       </div>
     </phantom-ui>
   );
@@ -103,7 +115,7 @@ const props = defineProps<{ loading: boolean }>();
 </script>
 
 <template>
-  <phantom-ui :loading="props.loading">
+  <phantom-ui :loading="props.loading" animation="breathe" stagger="0.05">
     <div class="card">
       <img src="/avatar.png" class="avatar" />
       <h3>Ada Lovelace</h3>
@@ -122,7 +134,7 @@ const props = defineProps<{ loading: boolean }>();
   export let loading = true;
 </script>
 
-<phantom-ui {loading}>
+<phantom-ui {loading} reveal={0.4} stagger={0.03}>
   <div class="card">
     <img src="/avatar.png" alt="avatar" class="avatar" />
     <h3>Ada Lovelace</h3>
@@ -141,7 +153,7 @@ import "@aejkatappaja/phantom-ui";
   selector: "app-profile",
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
-    <phantom-ui [attr.loading]="loading() ? '' : null">
+    <phantom-ui [attr.loading]="loading() ? '' : null" animation="pulse">
       <div class="card">
         <img src="/avatar.png" class="avatar" />
         <h3>Ada Lovelace</h3>
@@ -165,7 +177,7 @@ function ProfileCard() {
   const [loading, setLoading] = createSignal(true);
 
   return (
-    <phantom-ui attr:loading={loading() || undefined}>
+    <phantom-ui attr:loading={loading() || undefined} animation="shimmer" stagger={0.05}>
       <div class="card">
         <img src="/avatar.png" class="avatar" />
         <h3>Ada Lovelace</h3>
@@ -176,7 +188,7 @@ function ProfileCard() {
 }
 ```
 
-### SSR frameworks (Next.js, Nuxt, SvelteKit, Remix)
+### SSR frameworks (Next.js, Nuxt, SvelteKit)
 
 The component needs browser APIs to measure the DOM. Import it client-side only:
 
@@ -355,7 +367,7 @@ This is useful with framework loops where the list is empty before data loads:
 
 4. An absolutely-positioned overlay renders one shimmer block per measured element, with a CSS gradient animation sweeping across each block.
 
-5. A `ResizeObserver` and `MutationObserver` re-measure automatically when the layout changes (window resize, content injection, DOM mutations).
+5. A `ResizeObserver`, `MutationObserver`, and media `load` listener re-measure automatically when the layout changes (window resize, content injection, DOM mutations, or images/videos finishing loading).
 
 6. When `loading` is removed, the overlay is destroyed and real content is revealed.
 
@@ -389,6 +401,9 @@ bun run storybook       # dev server on :6006
 bun run build           # tsc + custom elements manifest + CDN bundle
 bun run lint            # biome check
 bun run lint:fix        # biome auto-fix
+bun run test            # browser tests (Chromium)
+bun run test:all        # browser tests (Chromium + Firefox + WebKit)
+bun run playground      # local server to test the component
 ```
 
 The `examples/` directory contains test apps for React, Vue, Solid, Angular, and Qwik, each wired to the local package.

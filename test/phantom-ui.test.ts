@@ -206,4 +206,31 @@ describe("phantom-ui", () => {
 		const blocks = el.shadowRoot?.querySelectorAll(".shimmer-block");
 		expect(blocks.length).to.equal(1);
 	});
+
+	it("re-measures when a child image loads", async () => {
+		const el = await fixture<PhantomUi>(html`
+			<phantom-ui loading>
+				<div style="width:200px;">
+					<p style="width:150px;height:20px;">Text</p>
+				</div>
+			</phantom-ui>
+		`);
+		await nextFrame();
+		await el.updateComplete;
+		const blocksBefore = el.shadowRoot?.querySelectorAll(".shimmer-block");
+		const countBefore = blocksBefore?.length ?? 0;
+
+		const img = document.createElement("img");
+		img.style.width = "80px";
+		img.style.height = "80px";
+		img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+		el.querySelector("div")?.appendChild(img);
+
+		await new Promise((r) => img.addEventListener("load", r));
+		await nextFrame();
+		await el.updateComplete;
+
+		const blocksAfter = el.shadowRoot?.querySelectorAll(".shimmer-block");
+		expect(blocksAfter?.length).to.be.greaterThan(countBefore);
+	});
 });
