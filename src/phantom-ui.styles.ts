@@ -4,6 +4,7 @@ export const phantomUiStyles = css`
 	:host {
 		display: block;
 		position: relative;
+		overflow: hidden;
 		--shimmer-color: rgba(255, 255, 255, 0.3);
 		--shimmer-duration: 1.5s;
 		--shimmer-bg: rgba(255, 255, 255, 0.08);

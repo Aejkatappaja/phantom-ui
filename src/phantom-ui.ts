@@ -24,6 +24,8 @@ type Animation = "shimmer" | "pulse" | "breathe" | "solid";
  * @attr {Animation} animation - Animation mode: shimmer, pulse, breathe, or solid
  * @attr {number} stagger - Delay in seconds between each block's animation start
  * @attr {number} reveal - Fade-out duration in seconds when loading ends (0 = instant)
+ * @attr {number} count - Number of skeleton rows to generate from a single template (1 = no repeat)
+ * @attr {number} count-gap - Gap in pixels between repeated rows (only used when count > 1)
  *
  * @example
  * ```html
@@ -72,6 +74,14 @@ export class PhantomUi extends LitElement {
 	@property({ type: Number })
 	reveal = 0;
 
+	/** Number of skeleton rows to generate from a single template element */
+	@property({ type: Number })
+	count = 1;
+
+	/** Gap in pixels between each repeated skeleton row (only used when count > 1) */
+	@property({ type: Number, attribute: "count-gap" })
+	countGap = 0;
+
 	@state()
 	private _blocks: ElementInfo[] = [];
 
@@ -90,6 +100,10 @@ export class PhantomUi extends LitElement {
 	}
 
 	override updated(changedProperties: Map<PropertyKey, unknown>): void {
+		if ((changedProperties.has("count") || changedProperties.has("countGap")) && this.loading) {
+			this._scheduleMeasure();
+		}
+
 		if (changedProperties.has("loading")) {
 			this.setAttribute("aria-busy", String(this.loading));
 
@@ -105,10 +119,12 @@ export class PhantomUi extends LitElement {
 					this._revealing = false;
 					this._blocks = [];
 					this._revealTimeout = null;
+					this.style.minHeight = "";
 				}, this.reveal * 1000);
 			} else {
 				this._blocks = [];
 				this._teardownObservers();
+				this.style.minHeight = "";
 			}
 		}
 	}
@@ -166,6 +182,28 @@ export class PhantomUi extends LitElement {
 		for (const el of assignedElements) {
 			const blocks = extractElementInfo(el, hostRect);
 			allBlocks.push(...blocks);
+		}
+
+		if (this.count > 1 && allBlocks.length > 0) {
+			let slotHeight = 0;
+			for (const el of assignedElements) {
+				const rect = el.getBoundingClientRect();
+				slotHeight = Math.max(slotHeight, rect.bottom - hostRect.top);
+			}
+
+			const baseBlocks = [...allBlocks];
+			for (let i = 1; i < this.count; i++) {
+				for (const block of baseBlocks) {
+					allBlocks.push({
+						...block,
+						y: block.y + i * (slotHeight + this.countGap),
+					});
+				}
+			}
+			const totalHeight = this.count * slotHeight + (this.count - 1) * this.countGap;
+			this.style.minHeight = `${totalHeight}px`;
+		} else {
+			this.style.minHeight = "";
 		}
 
 		this._blocks = allBlocks;
@@ -239,6 +277,8 @@ export interface PhantomUiAttributes {
 	animation?: "shimmer" | "pulse" | "breathe" | "solid";
 	stagger?: number;
 	reveal?: number;
+	count?: number;
+	"count-gap"?: number;
 	children?: unknown;
 	class?: string;
 	id?: string;
