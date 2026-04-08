@@ -44,7 +44,7 @@ jobs:
           node-version: 22
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - run: npm install --prefer-offline --no-audit
+      - run: bun add --no-save @rollup/rollup-linux-x64-gnu
       - run: npx playwright install --with-deps chromium firefox webkit
       - run: bun run test:all
 
