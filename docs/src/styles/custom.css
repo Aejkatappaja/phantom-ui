@@ -1,7 +1,7 @@
 /* Tokyo Night Storm - dark (default) */
 :root {
 	--sl-color-accent-low: #1a1b2e;
-	--sl-color-accent: #7aa2f7;
+	--sl-color-accent: #A283DA;
 	--sl-color-accent-high: #c0caf5;
 	--sl-color-white: #c0caf5;
 	--sl-color-gray-1: #a9b1d6;
@@ -11,13 +11,13 @@
 	--sl-color-gray-5: #1a1b26;
 	--sl-color-gray-6: #16161e;
 	--sl-color-black: #0d0d14;
-	--sl-color-text-accent: #bb9af7;
+	--sl-color-text-accent: #A283DA;
 }
 
 /* Tokyo Night Day - light */
 [data-theme="light"] {
 	--sl-color-accent-low: #d5d6db;
-	--sl-color-accent: #2e7de9;
+	--sl-color-accent: #8b6cc1;
 	--sl-color-accent-high: #1a1b26;
 	--sl-color-white: #1a1b26;
 	--sl-color-gray-1: #2c2e3e;
@@ -27,7 +27,7 @@
 	--sl-color-gray-5: #e8e8ec;
 	--sl-color-gray-6: #f3f3f5;
 	--sl-color-black: #ffffff;
-	--sl-color-text-accent: #6230a7;
+	--sl-color-text-accent: #8b6cc1;
 }
 
 .site-title img {
