@@ -1,0 +1,27 @@
+/**
+ * phantom-ui SSR pre-hydration styles
+ *
+ * Import this file in your SSR layout/entry file to prevent content flash
+ * before the Web Component hydrates:
+ *
+ *   import "@aejkatappaja/phantom-ui/ssr.css";
+ *
+ * These rules mirror the light-DOM styles that phantom-ui normally injects
+ * at runtime via connectedCallback(), ensuring content inside
+ * <phantom-ui loading> is hidden even before JavaScript executes.
+ */
+
+phantom-ui[loading] * {
+	-webkit-text-fill-color: transparent !important;
+	pointer-events: none;
+	user-select: none;
+}
+
+phantom-ui[loading] img,
+phantom-ui[loading] svg,
+phantom-ui[loading] video,
+phantom-ui[loading] canvas,
+phantom-ui[loading] button,
+phantom-ui[loading] [role="button"] {
+	opacity: 0 !important;
+}

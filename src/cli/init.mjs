@@ -1,11 +1,16 @@
 #!/usr/bin/env node
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { join } from "node:path";
 
-const FILENAME = "phantom-ui.d.ts";
+const DTS_FILENAME = "phantom-ui.d.ts";
+const CSS_IMPORT = 'import "@aejkatappaja/phantom-ui/ssr.css";';
 
-const templates = {
+/* ------------------------------------------------------------------ */
+/*  JSX type declaration templates (React, Solid, Qwik)               */
+/* ------------------------------------------------------------------ */
+
+const typeTemplates = {
 	react: `import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "react/jsx-runtime" {
@@ -38,14 +43,41 @@ declare module "@builder.io/qwik" {
 `,
 };
 
+/* ------------------------------------------------------------------ */
+/*  SSR entry-file candidates per framework                           */
+/* ------------------------------------------------------------------ */
+
+const SSR_ENTRY_FILES = {
+	next: [
+		"app/layout.tsx",
+		"app/layout.jsx",
+		"app/layout.js",
+		"src/app/layout.tsx",
+		"src/app/layout.jsx",
+		"src/app/layout.js",
+		"pages/_app.tsx",
+		"pages/_app.jsx",
+		"pages/_app.js",
+		"src/pages/_app.tsx",
+		"src/pages/_app.jsx",
+		"src/pages/_app.js",
+	],
+	nuxt: ["app.vue", "layouts/default.vue"],
+	sveltekit: ["src/routes/+layout.svelte"],
+	remix: ["app/root.tsx", "app/root.jsx", "app/root.js"],
+	qwik: ["src/root.tsx", "src/root.jsx"],
+};
+
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                           */
+/* ------------------------------------------------------------------ */
+
 function findProjectRoot() {
-	// During postinstall, INIT_CWD is set to the directory where `npm install` was run
 	if (process.env.INIT_CWD && existsSync(join(process.env.INIT_CWD, "package.json"))) {
 		return process.env.INIT_CWD;
 	}
 
 	let dir = process.cwd();
-	// If we're inside node_modules, walk up to the project root
 	if (dir.includes("node_modules")) {
 		dir = dir.slice(0, dir.indexOf("node_modules") - 1);
 	}
@@ -53,21 +85,33 @@ function findProjectRoot() {
 	return null;
 }
 
-function detectFramework(root) {
+function readDeps(root) {
 	try {
 		const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
-		const deps = Object.keys({ ...pkg.dependencies, ...pkg.devDependencies });
-		const has = (name) => deps.includes(name);
-
-		if (has("react") || has("next") || has("@remix-run/react")) return "react";
-		if (has("solid-js")) return "solid";
-		if (has("@builder.io/qwik")) return "qwik";
-		if (has("vue") || has("nuxt")) return "vue";
-		if (has("svelte") || has("@sveltejs/kit")) return "svelte";
-		if (has("@angular/core")) return "angular";
+		return Object.keys({ ...pkg.dependencies, ...pkg.devDependencies });
 	} catch {
-		// no package.json
+		return [];
 	}
+}
+
+function detectFramework(deps) {
+	const has = (name) => deps.includes(name);
+	if (has("react") || has("next") || has("@remix-run/react")) return "react";
+	if (has("solid-js")) return "solid";
+	if (has("@builder.io/qwik")) return "qwik";
+	if (has("vue") || has("nuxt")) return "vue";
+	if (has("svelte") || has("@sveltejs/kit")) return "svelte";
+	if (has("@angular/core")) return "angular";
+	return null;
+}
+
+function detectSSRFramework(deps) {
+	const has = (name) => deps.includes(name);
+	if (has("next")) return "next";
+	if (has("@remix-run/react")) return "remix";
+	if (has("nuxt")) return "nuxt";
+	if (has("@sveltejs/kit")) return "sveltekit";
+	if (has("@builder.io/qwik")) return "qwik";
 	return null;
 }
 
@@ -78,39 +122,113 @@ function findSrcDir(root) {
 	return root;
 }
 
-const root = findProjectRoot();
-if (!root) {
-	// Silent exit during postinstall if we can't find the project
-	process.exit(0);
+function findEntryFile(root, ssrFramework) {
+	const candidates = SSR_ENTRY_FILES[ssrFramework] || [];
+	for (const file of candidates) {
+		const fullPath = join(root, file);
+		if (existsSync(fullPath)) return fullPath;
+	}
+	return null;
 }
 
-const framework = detectFramework(root);
+/* ------------------------------------------------------------------ */
+/*  CSS import injection                                              */
+/* ------------------------------------------------------------------ */
+
+function injectCSSImport(filePath) {
+	const content = readFileSync(filePath, "utf8");
+	if (content.includes("phantom-ui/ssr.css")) return false;
+
+	const ext = filePath.split(".").pop();
+
+	// Vue / Svelte — inject inside <script> block
+	if (ext === "vue" || ext === "svelte") {
+		return injectIntoSFC(filePath, content, ext);
+	}
+
+	// JS / TS / JSX / TSX — inject after last import
+	return injectIntoJS(filePath, content);
+}
+
+function injectIntoSFC(filePath, content, ext) {
+	const scriptMatch = content.match(/<script[^>]*>/);
+	if (scriptMatch) {
+		const insertPos = scriptMatch.index + scriptMatch[0].length;
+		const afterScript = content.slice(insertPos);
+		const indentMatch = afterScript.match(/\n(\s+)\S/);
+		const indent = indentMatch ? indentMatch[1] : "";
+		const newContent = `${content.slice(0, insertPos)}\n${indent}${CSS_IMPORT}${content.slice(insertPos)}`;
+		writeFileSync(filePath, newContent);
+		return true;
+	}
+
+	// No <script> block — create one
+	const tag = ext === "vue" ? "<script setup>" : "<script>";
+	writeFileSync(filePath, `${tag}\n${CSS_IMPORT}\n</script>\n\n${content}`);
+	return true;
+}
+
+function injectIntoJS(filePath, content) {
+	const lines = content.split("\n");
+
+	// Find the last line that ends an import statement (handles multi-line imports)
+	let insertAt = 0;
+	for (let i = 0; i < lines.length; i++) {
+		if (/\bfrom\s+["']|^\s*import\s+["']/.test(lines[i])) {
+			insertAt = i + 1;
+		}
+	}
+
+	lines.splice(insertAt, 0, CSS_IMPORT);
+	writeFileSync(filePath, lines.join("\n"));
+	return true;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main                                                              */
+/* ------------------------------------------------------------------ */
+
+const root = findProjectRoot();
+if (!root) process.exit(0);
+
+const isPostinstall = process.env.npm_lifecycle_event === "postinstall";
+const deps = readDeps(root);
+const framework = detectFramework(deps);
 
 if (!framework) {
-	// Silent exit during postinstall if framework is unknown
-	if (process.env.npm_lifecycle_event === "postinstall") process.exit(0);
+	if (isPostinstall) process.exit(0);
 	console.log("Could not detect framework from package.json.");
 	console.log("Run this command from your project root.");
 	process.exit(1);
 }
 
-if (framework === "vue" || framework === "svelte" || framework === "angular") {
-	if (process.env.npm_lifecycle_event !== "postinstall") {
-		console.log(`Detected ${framework}. No type declaration needed - types work automatically.`);
-	}
-	process.exit(0);
-}
+// --- Step 1: JSX type declarations ---
 
-const template = templates[framework];
-const srcDir = findSrcDir(root);
-const outPath = join(srcDir, FILENAME);
-
-if (existsSync(outPath)) {
-	if (process.env.npm_lifecycle_event !== "postinstall") {
+const template = typeTemplates[framework];
+if (template) {
+	const srcDir = findSrcDir(root);
+	const outPath = join(srcDir, DTS_FILENAME);
+	if (!existsSync(outPath)) {
+		writeFileSync(outPath, template);
+		console.log(`phantom-ui: created ${outPath} (${framework} JSX types)`);
+	} else if (!isPostinstall) {
 		console.log(`${outPath} already exists. Skipping.`);
 	}
-	process.exit(0);
 }
 
-writeFileSync(outPath, template);
-console.log(`phantom-ui: created ${outPath} (${framework} JSX types)`);
+// --- Step 2: SSR pre-hydration CSS ---
+
+const ssrFramework = detectSSRFramework(deps);
+if (ssrFramework) {
+	const entryFile = findEntryFile(root, ssrFramework);
+	if (entryFile) {
+		if (injectCSSImport(entryFile)) {
+			console.log(`phantom-ui: added SSR styles import in ${entryFile}`);
+		} else if (!isPostinstall) {
+			console.log("phantom-ui: SSR styles import already present. Skipping.");
+		}
+	} else if (!isPostinstall) {
+		console.log(`phantom-ui: detected ${ssrFramework} but could not find layout entry file.`);
+		console.log(`Add this to your layout/root file: ${CSS_IMPORT}`);
+	}
+}

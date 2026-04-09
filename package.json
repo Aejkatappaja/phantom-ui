@@ -14,7 +14,8 @@
 		".": {
 			"import": "./dist/phantom-ui.js",
 			"types": "./dist/phantom-ui.d.ts"
-		}
+		},
+		"./ssr.css": "./dist/ssr.css"
 	},
 	"bin": {
 		"phantom-ui": "./src/cli/init.mjs"
@@ -23,12 +24,14 @@
 		"dist/phantom-ui.js",
 		"dist/phantom-ui.cdn.js",
 		"dist/phantom-ui.d.ts",
+		"dist/ssr.css",
 		"src/cli/init.mjs",
 		"custom-elements.json"
 	],
 	"postinstall": "node ./src/cli/init.mjs || true",
 	"scripts": {
-		"build": "npm run build:esm && npm run build:cdn && npm run build:types && cem analyze",
+		"build": "npm run build:esm && npm run build:cdn && npm run build:types && npm run build:ssr && cem analyze",
+		"build:ssr": "cp src/ssr.css dist/ssr.css",
 		"build:esm": "esbuild src/phantom-ui.ts --bundle --format=esm --outfile=dist/phantom-ui.js --minify --target=es2022 --packages=external",
 		"build:cdn": "esbuild src/phantom-ui.ts --bundle --format=iife --outfile=dist/phantom-ui.cdn.js --minify --target=es2022",
 		"build:types": "tsc --emitDeclarationOnly --declaration --outDir dist",
