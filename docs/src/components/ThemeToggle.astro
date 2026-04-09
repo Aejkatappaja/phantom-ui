@@ -1,0 +1,68 @@
+---
+---
+<starlight-theme-toggle style="display: flex; align-items: center;">
+	<button type="button" title="Toggle theme">
+		<span class="slider">
+			<svg class="moon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+			<svg class="sun" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2"/></svg>
+		</span>
+	</button>
+</starlight-theme-toggle>
+
+<script>
+class StarlightThemeToggle extends HTMLElement {
+	constructor() {
+		super();
+		const btn = this.querySelector('button');
+		btn.addEventListener('click', () => {
+			const html = document.documentElement;
+			const isDark = html.dataset.theme !== 'light';
+			const next = isDark ? 'light' : 'dark';
+			html.dataset.theme = next;
+			localStorage.setItem('starlight-theme', next);
+			window.StarlightThemeProvider?.updatePickers?.(next);
+		});
+	}
+}
+customElements.define('starlight-theme-toggle', StarlightThemeToggle);
+</script>
+
+<style>
+	button {
+		all: unset;
+		box-sizing: border-box;
+		position: relative;
+		width: 40px;
+		height: 22px;
+		background: var(--sl-color-gray-5);
+		border-radius: 100px;
+		cursor: pointer;
+		transition: background 0.3s;
+	}
+
+	button:hover {
+		background: var(--sl-color-gray-4);
+	}
+
+	.slider {
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		width: 18px;
+		height: 18px;
+		background: var(--sl-color-bg);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--sl-color-accent);
+		transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+	}
+
+	:global([data-theme="dark"]) .sun { display: none; }
+	:global([data-theme="light"]) .moon { display: none; }
+
+	:global([data-theme="light"]) .slider {
+		transform: translateX(18px);
+	}
+</style>

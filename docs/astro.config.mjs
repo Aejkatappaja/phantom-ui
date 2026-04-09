@@ -4,7 +4,6 @@ import { defineConfig } from "astro/config";
 import { bundledThemes } from "shiki";
 
 const tokyoNight = (await bundledThemes["tokyo-night"]()).default;
-const githubLight = (await bundledThemes["github-light"]()).default;
 
 export default defineConfig({
 	site: "https://aejkatappaja.github.io",
@@ -12,7 +11,11 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			expressiveCode: {
-				themes: [tokyoNight, githubLight],
+				themes: [tokyoNight],
+				frames: false,
+			},
+			components: {
+				ThemeSelect: "./src/components/ThemeToggle.astro",
 			},
 			title: "phantom-ui",
 			logo: {
@@ -65,7 +68,7 @@ export default defineConfig({
 				},
 				{
 					label: "Playground",
-					items: [{ label: "Live Demo", slug: "demo" }],
+					items: [{ label: "Live Demo", link: "/demo/" }],
 				},
 			],
 		}),
