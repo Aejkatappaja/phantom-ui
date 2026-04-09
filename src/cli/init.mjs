@@ -2,15 +2,16 @@
 
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const DTS_FILENAME = "phantom-ui.d.ts";
-const CSS_IMPORT = 'import "@aejkatappaja/phantom-ui/ssr.css";';
+export const DTS_FILENAME = "phantom-ui.d.ts";
+export const CSS_IMPORT = 'import "@aejkatappaja/phantom-ui/ssr.css";';
 
 /* ------------------------------------------------------------------ */
 /*  JSX type declaration templates (React, Solid, Qwik)               */
 /* ------------------------------------------------------------------ */
 
-const typeTemplates = {
+export const typeTemplates = {
 	react: `import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
 declare module "react/jsx-runtime" {
@@ -47,7 +48,7 @@ declare module "@builder.io/qwik" {
 /*  SSR entry-file candidates per framework                           */
 /* ------------------------------------------------------------------ */
 
-const SSR_ENTRY_FILES = {
+export const SSR_ENTRY_FILES = {
 	next: [
 		"app/layout.tsx",
 		"app/layout.jsx",
@@ -72,7 +73,7 @@ const SSR_ENTRY_FILES = {
 /*  Helpers                                                           */
 /* ------------------------------------------------------------------ */
 
-function findProjectRoot() {
+export function findProjectRoot() {
 	if (process.env.INIT_CWD && existsSync(join(process.env.INIT_CWD, "package.json"))) {
 		return process.env.INIT_CWD;
 	}
@@ -85,7 +86,7 @@ function findProjectRoot() {
 	return null;
 }
 
-function readDeps(root) {
+export function readDeps(root) {
 	try {
 		const pkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
 		return Object.keys({ ...pkg.dependencies, ...pkg.devDependencies });
@@ -94,7 +95,7 @@ function readDeps(root) {
 	}
 }
 
-function detectFramework(deps) {
+export function detectFramework(deps) {
 	const has = (name) => deps.includes(name);
 	if (has("react") || has("next") || has("@remix-run/react")) return "react";
 	if (has("solid-js")) return "solid";
@@ -105,7 +106,7 @@ function detectFramework(deps) {
 	return null;
 }
 
-function detectSSRFramework(deps) {
+export function detectSSRFramework(deps) {
 	const has = (name) => deps.includes(name);
 	if (has("next")) return "next";
 	if (has("@remix-run/react")) return "remix";
@@ -115,14 +116,14 @@ function detectSSRFramework(deps) {
 	return null;
 }
 
-function findSrcDir(root) {
+export function findSrcDir(root) {
 	for (const dir of ["src", "app"]) {
 		if (existsSync(join(root, dir))) return join(root, dir);
 	}
 	return root;
 }
 
-function findEntryFile(root, ssrFramework) {
+export function findEntryFile(root, ssrFramework) {
 	const candidates = SSR_ENTRY_FILES[ssrFramework] || [];
 	for (const file of candidates) {
 		const fullPath = join(root, file);
@@ -135,7 +136,7 @@ function findEntryFile(root, ssrFramework) {
 /*  CSS import injection                                              */
 /* ------------------------------------------------------------------ */
 
-function injectCSSImport(filePath) {
+export function injectCSSImport(filePath) {
 	const content = readFileSync(filePath, "utf8");
 	if (content.includes("phantom-ui/ssr.css")) return false;
 
@@ -150,7 +151,7 @@ function injectCSSImport(filePath) {
 	return injectIntoJS(filePath, content);
 }
 
-function injectIntoSFC(filePath, content, ext) {
+export function injectIntoSFC(filePath, content, ext) {
 	const scriptMatch = content.match(/<script[^>]*>/);
 	if (scriptMatch) {
 		const insertPos = scriptMatch.index + scriptMatch[0].length;
@@ -168,7 +169,7 @@ function injectIntoSFC(filePath, content, ext) {
 	return true;
 }
 
-function injectIntoJS(filePath, content) {
+export function injectIntoJS(filePath, content) {
 	const lines = content.split("\n");
 
 	// Find the last line that ends an import statement (handles multi-line imports)
@@ -185,50 +186,56 @@ function injectIntoJS(filePath, content) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Main                                                              */
+/*  Main (only runs when executed directly, not when imported)        */
 /* ------------------------------------------------------------------ */
 
-const root = findProjectRoot();
-if (!root) process.exit(0);
+function main() {
+	const root = findProjectRoot();
+	if (!root) process.exit(0);
 
-const isPostinstall = process.env.npm_lifecycle_event === "postinstall";
-const deps = readDeps(root);
-const framework = detectFramework(deps);
+	const isPostinstall = process.env.npm_lifecycle_event === "postinstall";
+	const deps = readDeps(root);
+	const framework = detectFramework(deps);
 
-if (!framework) {
-	if (isPostinstall) process.exit(0);
-	console.log("Could not detect framework from package.json.");
-	console.log("Run this command from your project root.");
-	process.exit(1);
-}
-
-// --- Step 1: JSX type declarations ---
-
-const template = typeTemplates[framework];
-if (template) {
-	const srcDir = findSrcDir(root);
-	const outPath = join(srcDir, DTS_FILENAME);
-	if (!existsSync(outPath)) {
-		writeFileSync(outPath, template);
-		console.log(`phantom-ui: created ${outPath} (${framework} JSX types)`);
-	} else if (!isPostinstall) {
-		console.log(`${outPath} already exists. Skipping.`);
+	if (!framework) {
+		if (isPostinstall) process.exit(0);
+		console.log("Could not detect framework from package.json.");
+		console.log("Run this command from your project root.");
+		process.exit(1);
 	}
-}
 
-// --- Step 2: SSR pre-hydration CSS ---
+	// --- Step 1: JSX type declarations ---
 
-const ssrFramework = detectSSRFramework(deps);
-if (ssrFramework) {
-	const entryFile = findEntryFile(root, ssrFramework);
-	if (entryFile) {
-		if (injectCSSImport(entryFile)) {
-			console.log(`phantom-ui: added SSR styles import in ${entryFile}`);
+	const template = typeTemplates[framework];
+	if (template) {
+		const srcDir = findSrcDir(root);
+		const outPath = join(srcDir, DTS_FILENAME);
+		if (!existsSync(outPath)) {
+			writeFileSync(outPath, template);
+			console.log(`phantom-ui: created ${outPath} (${framework} JSX types)`);
 		} else if (!isPostinstall) {
-			console.log("phantom-ui: SSR styles import already present. Skipping.");
+			console.log(`${outPath} already exists. Skipping.`);
 		}
-	} else if (!isPostinstall) {
-		console.log(`phantom-ui: detected ${ssrFramework} but could not find layout entry file.`);
-		console.log(`Add this to your layout/root file: ${CSS_IMPORT}`);
 	}
+
+	// --- Step 2: SSR pre-hydration CSS ---
+
+	const ssrFramework = detectSSRFramework(deps);
+	if (ssrFramework) {
+		const entryFile = findEntryFile(root, ssrFramework);
+		if (entryFile) {
+			if (injectCSSImport(entryFile)) {
+				console.log(`phantom-ui: added SSR styles import in ${entryFile}`);
+			} else if (!isPostinstall) {
+				console.log("phantom-ui: SSR styles import already present. Skipping.");
+			}
+		} else if (!isPostinstall) {
+			console.log(`phantom-ui: detected ${ssrFramework} but could not find layout entry file.`);
+			console.log(`Add this to your layout/root file: ${CSS_IMPORT}`);
+		}
+	}
+}
+
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+	main();
 }

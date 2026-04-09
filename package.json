@@ -43,6 +43,7 @@
 		"build-storybook": "storybook build",
 		"prepare": "husky",
 		"test": "web-test-runner",
+		"test:cli": "bun test test/cli/",
 		"test:watch": "web-test-runner --watch",
 		"test:all": "web-test-runner --all-browsers",
 		"playground": "bunx --bun serve -l 4444 --no-clipboard"
