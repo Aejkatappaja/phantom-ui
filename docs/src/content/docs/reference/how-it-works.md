@@ -56,7 +56,7 @@ If an element has this attribute, it is captured as a single block without recur
 
 ### Zero-dimension elements
 
-Elements with `width: 0` or `height: 0` (collapsed, `display: none`) are skipped.
+Elements with `width: 0` or `height: 0` (collapsed, `display: none`) are skipped. Use `data-shimmer-width` and `data-shimmer-height` to override measured dimensions and force a block for elements that render at zero size.
 
 ### SVG
 
