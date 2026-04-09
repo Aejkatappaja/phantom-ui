@@ -14,7 +14,7 @@
 	<meta name="description" content="Interactive demo for phantom-ui — structure-aware skeleton loader Web Component." />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+	<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 </head>
 <body>
 
@@ -34,12 +34,35 @@
 	<p class="hero-sub">Toggle loading to watch real UI transform into perfectly-aligned skeleton placeholders.</p>
 </section>
 
+<div class="mobile-fab" id="mobile-fab">
+	<button id="mobile-toggle" class="ghost-toggle" type="button">
+		<svg class="ghost-icon" viewBox="0 0 40 48" fill="none" width="16" height="20"><path d="M20 2 C10 2, 4 12, 4 22 L4 36 L4 40 C6 37, 9 37, 12 40 C15 37, 18 37, 20 40 C22 37, 25 37, 28 40 C31 37, 34 37, 36 40 L36 36 L36 22 C36 12, 30 2, 20 2 Z" fill="currentColor"/><ellipse cx="14" cy="22" rx="3.5" ry="4" fill="var(--bg-deep, #0f1117)"/><ellipse cx="26" cy="22" rx="3.5" ry="4" fill="var(--bg-deep, #0f1117)"/><ellipse cx="20" cy="32" rx="2.5" ry="3" fill="var(--bg-deep, #0f1117)"/></svg>
+		<span class="ghost-toggle-text">Loaded</span>
+	</button>
+	<button id="mobile-gear" class="gear-btn" type="button" aria-label="Settings">
+		<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+	</button>
+</div>
+
+<div class="sheet-overlay" id="sheet-overlay"></div>
+<div class="sheet" id="sheet">
+	<div class="sheet-handle"></div>
+	<div class="sheet-body"></div>
+</div>
+
 <div class="controls-bar">
 	<div class="controls-inner">
-		<button id="toggle" class="toggle" type="button">
-			<span class="toggle-track"><span class="toggle-thumb"></span></span>
-			<span class="toggle-text">Loaded</span>
-		</button>
+		<div class="ghost-toggle-wrap">
+			<button id="toggle" class="ghost-toggle" type="button">
+				<svg class="ghost-icon" viewBox="0 0 40 48" fill="none" width="18" height="22"><path d="M20 2 C10 2, 4 12, 4 22 L4 36 L4 40 C6 37, 9 37, 12 40 C15 37, 18 37, 20 40 C22 37, 25 37, 28 40 C31 37, 34 37, 36 40 L36 36 L36 22 C36 12, 30 2, 20 2 Z" fill="currentColor"/><ellipse cx="14" cy="22" rx="3.5" ry="4" fill="var(--bg-deep, #0f1117)"/><ellipse cx="26" cy="22" rx="3.5" ry="4" fill="var(--bg-deep, #0f1117)"/><ellipse cx="20" cy="32" rx="2.5" ry="3" fill="var(--bg-deep, #0f1117)"/></svg>
+				<span class="ghost-toggle-text">Loaded</span>
+			</button>
+			<svg class="chalk-hint" width="140" height="50" viewBox="0 0 140 50" fill="none">
+				<text x="18" y="18" fill="var(--pink)" font-size="24" font-family="'Caveat', 'Segoe Print', cursive" font-weight="700" transform="rotate(-5, 55, 14)">click me!</text>
+				<path d="M100 14 C115 14, 128 16, 138 22" stroke="var(--pink)" stroke-width="2" stroke-linecap="round" fill="none"/>
+				<path d="M134 16 L140 23 L132 23" stroke="var(--pink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+			</svg>
+		</div>
 
 		<div class="ctrl-sep"></div>
 
@@ -570,8 +593,9 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	var ghost = document.querySelector(".dash-ghost");
-	btn.addEventListener("click", function () {
-		isLoading = !isLoading;
+	var mobileToggle = document.getElementById("mobile-toggle");
+
+	function applyLoading() {
 		allEls.forEach(function (el) {
 			if (isLoading) el.setAttribute("loading", "");
 			else el.removeAttribute("loading");
@@ -580,15 +604,27 @@ document.addEventListener("DOMContentLoaded", function () {
 			el.classList.toggle("visible", !isLoading);
 		});
 		if (ghost) ghost.style.display = isLoading ? "none" : "";
-		btn.classList.toggle("active", isLoading);
-		btn.querySelector(".toggle-text").textContent = isLoading ? "Loading" : "Loaded";
+		document.querySelectorAll(".ghost-toggle").forEach(function (b) {
+			b.classList.toggle("active", isLoading);
+			var txt = b.querySelector(".ghost-toggle-text");
+			if (txt) txt.textContent = isLoading ? "Loading" : "Loaded";
+		});
+	}
+
+	function toggleLoading() { isLoading = !isLoading; applyLoading(); }
+	var chalkHint = document.querySelector(".chalk-hint");
+	btn.addEventListener("click", function () {
+		toggleLoading();
+		if (chalkHint) { chalkHint.classList.add("hidden"); }
 	});
+	mobileToggle.addEventListener("click", toggleLoading);
 
 	document.querySelectorAll(".pills").forEach(function (group) {
 		group.querySelectorAll(".pill").forEach(function (pill) {
 			pill.addEventListener("click", function () {
-				group.querySelectorAll(".pill").forEach(function (p) { p.classList.remove("active"); });
-				pill.classList.add("active");
+				document.querySelectorAll(".pills .pill").forEach(function (p) {
+					p.classList.toggle("active", p.dataset.value === pill.dataset.value);
+				});
 				allEls.forEach(function (el) { el.setAttribute("animation", pill.dataset.value); });
 			});
 		});
@@ -630,17 +666,155 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 
 	var themeBtn = document.getElementById("theme-toggle");
-	themeBtn.addEventListener("click", function () {
+	function toggleTheme() {
 		var html = document.documentElement;
 		var isDark = html.getAttribute("data-theme") !== "light";
 		var next = isDark ? "light" : "dark";
 		html.setAttribute("data-theme", next);
 		localStorage.setItem("starlight-theme", next);
+	}
+	themeBtn.addEventListener("click", toggleTheme);
+
+	var gear = document.getElementById("mobile-gear");
+	var sheet = document.getElementById("sheet");
+	var overlay = document.getElementById("sheet-overlay");
+	var sheetBody = sheet.querySelector(".sheet-body");
+
+	function openSheet() {
+		var inner = document.querySelector(".controls-inner");
+		sheetBody.innerHTML = "";
+
+		var topRow = document.createElement("div");
+		topRow.className = "sheet-top-row";
+		var toggleClone = inner.querySelector("#toggle").cloneNode(true);
+		toggleClone.removeAttribute("id");
+		toggleClone.classList.toggle("active", isLoading);
+		toggleClone.querySelector(".ghost-toggle-text").textContent = isLoading ? "Loading" : "Loaded";
+		toggleClone.addEventListener("click", function () { toggleLoading(); });
+		var themeClone = inner.querySelector("#theme-toggle").cloneNode(true);
+		themeClone.removeAttribute("id");
+		themeClone.addEventListener("click", function () { toggleTheme(); });
+		topRow.appendChild(toggleClone);
+		topRow.appendChild(themeClone);
+		sheetBody.appendChild(topRow);
+
+		var animGroup = inner.querySelector('[data-control="animation"]').parentElement.cloneNode(true);
+		sheetBody.appendChild(animGroup);
+
+		var colorRow = document.createElement("div");
+		colorRow.className = "sheet-row";
+		var shimmerGroup = inner.querySelector('[data-control="shimmer-color"]').parentElement.cloneNode(true);
+		var blockGroup = inner.querySelector('[data-control="background-color"]').parentElement.cloneNode(true);
+		colorRow.appendChild(shimmerGroup);
+		colorRow.appendChild(blockGroup);
+		sheetBody.appendChild(colorRow);
+
+		var sliderIds = [["r-dur", "r-rev"], ["r-stag", "r-rad"]];
+		sliderIds.forEach(function (pair) {
+			var row = document.createElement("div");
+			row.className = "sheet-row";
+			pair.forEach(function (id) {
+				var orig = document.getElementById(id);
+				if (!orig) return;
+				var group = orig.closest(".ctrl-group").cloneNode(true);
+				row.appendChild(group);
+			});
+			sheetBody.appendChild(row);
+		});
+
+		sheetBody.querySelectorAll(".pill").forEach(function (pill) {
+			pill.addEventListener("click", function () {
+				document.querySelectorAll(".pills .pill").forEach(function (p) {
+					p.classList.toggle("active", p.dataset.value === pill.dataset.value);
+				});
+				allEls.forEach(function (el) { el.setAttribute("animation", pill.dataset.value); });
+			});
+		});
+
+		sheetBody.querySelectorAll(".swatches").forEach(function (group) {
+			var attr = group.dataset.control;
+			group.querySelectorAll(".sw").forEach(function (sw) {
+				sw.addEventListener("click", function () {
+					group.querySelectorAll(".sw").forEach(function (s) { s.classList.remove("active"); });
+					sw.classList.add("active");
+					allEls.forEach(function (el) { el.setAttribute(attr, sw.dataset.value); });
+				});
+			});
+		});
+
+		sheetBody.querySelectorAll("input[type='range']").forEach(function (input) {
+			var original = document.querySelector(".controls-inner #" + input.id);
+			if (original) input.value = original.value;
+			input.addEventListener("input", function () {
+				var val = input.value;
+				var display = sheetBody.querySelector("#" + input.id.replace("r-", "v-"));
+				var suffix = input.id.includes("rad") ? "px" : "s";
+				if (display) display.textContent = val + suffix;
+				var attrMap = { "r-dur": "duration", "r-stag": "stagger", "r-rev": "reveal", "r-rad": "fallback-radius" };
+				var a = attrMap[input.id];
+				if (a) allEls.forEach(function (el) { el.setAttribute(a, val); });
+				if (original) { original.value = val; original.dispatchEvent(new Event("input")); }
+			});
+		});
+
+		overlay.classList.add("open");
+		var fab = document.getElementById("mobile-fab");
+		if (fab) fab.style.display = "none";
+		requestAnimationFrame(function () { sheet.classList.add("open"); });
+	}
+
+	function closeSheet() {
+		sheet.style.transform = "";
+		sheet.classList.remove("open");
+		overlay.classList.remove("open");
+		var fab = document.getElementById("mobile-fab");
+		if (fab) fab.style.display = "";
+	}
+
+	gear.addEventListener("click", openSheet);
+	overlay.addEventListener("click", closeSheet);
+
+	var startY = 0, currentY = 0, dragging = false;
+	sheet.addEventListener("touchstart", function (e) {
+		var t = e.target;
+		if (t.tagName === "INPUT" || t.tagName === "BUTTON" || t.closest("button")) return;
+		startY = e.touches[0].clientY;
+		currentY = startY;
+		dragging = true;
+		sheet.style.transition = "none";
+	});
+	sheet.addEventListener("touchmove", function (e) {
+		if (!dragging) return;
+		currentY = e.touches[0].clientY;
+		var dy = currentY - startY;
+		if (dy > 0) {
+			sheet.style.transform = "translateY(" + dy + "px)";
+		}
+	});
+	sheet.addEventListener("touchend", function () {
+		if (!dragging) return;
+		dragging = false;
+		sheet.style.transition = "";
+		if (currentY - startY > 80) {
+			closeSheet();
+		} else {
+			sheet.style.transform = "translateY(0)";
+		}
 	});
 });
 </script>
 
 <style is:global>
+	.sheet-top-row {
+		display: flex; align-items: center; justify-content: space-between;
+	}
+	.sheet-body .sheet-row {
+		display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+	}
+	.sheet-body .sheet-row .ctrl-group { min-width: 0; }
+	.sheet-body .sheet-row input[type="range"] { width: 100%; }
+	.sheet-body .pills { flex-wrap: wrap; }
+
 	phantom-ui[loading] img,
 	phantom-ui[loading] svg,
 	phantom-ui[loading] video { opacity: 0 !important; }
@@ -767,40 +941,66 @@ document.addEventListener("DOMContentLoaded", function () {
 		max-width: 480px; margin: 0 auto 32px; line-height: 1.7;
 	}
 
-	.toggle {
-		display: inline-flex; align-items: center; gap: 14px;
-		padding: 10px 28px 10px 14px;
-		background: var(--bg-surface); border: 1px solid var(--border);
+	.ghost-toggle {
+		all: unset; box-sizing: border-box;
+		display: inline-flex; align-items: center; gap: 8px;
+		padding: 6px 14px 6px 10px;
 		border-radius: 100px; cursor: pointer;
 		color: var(--muted); font-family: var(--mono);
-		font-size: 14px; font-weight: 500;
-		min-width: 150px;
-		transition: border-color 0.3s, box-shadow 0.3s, color 0.3s;
+		font-size: 12px; font-weight: 600;
+		letter-spacing: 0.02em;
+		transition: color 0.3s, background 0.3s;
 	}
 
-	.toggle-text { min-width: 60px; text-align: center; }
+	.ghost-toggle:hover { background: rgba(128,128,128,0.1); }
 
-	.toggle.active {
-		border-color: var(--accent); color: var(--text);
-		box-shadow: 0 0 24px rgba(122,162,247,0.1), 0 0 64px rgba(122,162,247,0.05);
+	.ghost-toggle-text { pointer-events: none; display: inline-block; min-width: 58px; text-align: center; }
+
+	.ghost-icon {
+		pointer-events: none;
+		transition: transform 0.3s, filter 0.3s;
 	}
 
-	.toggle-track {
-		width: 44px; height: 24px;
-		background: var(--border); border-radius: 12px;
-		position: relative; transition: background 0.3s;
+	.ghost-toggle.active {
+		color: var(--accent);
 	}
 
-	.toggle.active .toggle-track { background: var(--accent); }
-
-	.toggle-thumb {
-		position: absolute; top: 3px; left: 3px;
-		width: 18px; height: 18px; background: var(--text);
-		border-radius: 50%;
-		transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+	.ghost-toggle.active .ghost-icon {
+		animation: ghost-bounce 1.5s ease-in-out infinite;
+		filter: drop-shadow(0 0 6px var(--accent));
 	}
 
-	.toggle.active .toggle-thumb { transform: translateX(20px); }
+	.ghost-toggle-wrap {
+		position: relative;
+		display: inline-flex; align-items: center;
+	}
+
+	.chalk-hint {
+		position: absolute;
+		right: 100%;
+		top: 50%;
+		transform: translateY(-60%);
+		margin-right: 2px;
+		opacity: 0.7;
+		animation: chalk-fade-in 0.8s ease 1s both;
+		transition: opacity 0.4s ease;
+		pointer-events: none;
+	}
+
+	.chalk-hint.hidden {
+		animation: none;
+		opacity: 0;
+	}
+
+	@keyframes chalk-fade-in {
+		from { opacity: 0; transform: translateY(-60%) translateX(5px); }
+		to { opacity: 0.7; transform: translateY(-60%) translateX(0); }
+	}
+
+	@keyframes ghost-bounce {
+		0%, 100% { transform: translateY(0); }
+		50% { transform: translateY(-3px); }
+	}
 
 	.controls-bar {
 		position: sticky; top: 0; z-index: 100;
@@ -1511,11 +1711,72 @@ document.addEventListener("DOMContentLoaded", function () {
 		background: rgba(0,0,0,0.05);
 	}
 
-	[data-theme="light"] .toggle {
-		background: var(--bg-surface);
+	[data-theme="light"] .ghost-toggle { color: var(--muted); }
+	[data-theme="light"] .ghost-toggle.active { color: var(--accent); }
+	[data-theme="light"] .ghost-icon ellipse { fill: white; }
+
+	.mobile-fab {
+		display: none;
 	}
 
-	[data-theme="light"] .toggle-thumb { background: white; }
+	.sheet-overlay {
+		display: none;
+		position: fixed; inset: 0; z-index: 299;
+		background: rgba(0,0,0,0.5);
+		opacity: 0;
+		transition: opacity 0.25s ease;
+	}
+
+	.sheet-overlay.open { display: block; opacity: 1; }
+
+	.sheet {
+		display: none;
+		position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+		background: var(--bg-surface, #1a1b26);
+		border-top: 1px solid var(--border);
+		border-radius: 16px 16px 0 0;
+		transform: translateY(100%);
+		transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+		max-height: 70vh;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	.sheet.open { transform: translateY(0); }
+
+	.sheet-handle {
+		width: 36px; height: 4px;
+		background: var(--border);
+		border-radius: 2px;
+		margin: 10px auto 4px;
+	}
+
+	.sheet-body {
+		padding: 8px 20px 24px;
+		display: flex; flex-direction: column; gap: 12px;
+	}
+
+	.gear-btn {
+		all: unset; box-sizing: border-box;
+		width: 40px; height: 40px;
+		display: flex; align-items: center; justify-content: center;
+		border-radius: 12px;
+		background: var(--bg-deep, #13141b);
+		border: 1px solid var(--border);
+		color: var(--muted);
+		cursor: pointer;
+		transition: border-color 0.2s, color 0.2s;
+	}
+
+	.gear-btn:hover { border-color: var(--accent); color: var(--text); }
+
+	[data-theme="light"] .sheet {
+		background: #f5f5f7;
+	}
+
+	[data-theme="light"] .gear-btn {
+		background: white;
+	}
 
 	@media (max-width: 960px) {
 		.grid { columns: 2; }
@@ -1526,8 +1787,18 @@ document.addEventListener("DOMContentLoaded", function () {
 		.back-link span { display: none; }
 		.hero { padding: 40px 16px 28px; }
 		.hero-sub { font-size: 14px; }
-		.controls-bar { padding: 12px 16px; }
-		.controls-inner { gap: 14px; }
+		.controls-bar { display: none; }
+		.mobile-fab {
+			display: flex; align-items: center; gap: 10px;
+			position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+			z-index: 200;
+			padding: 8px 12px;
+			background: rgba(10,11,16,0.92);
+			backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+			border: 1px solid var(--border);
+			border-radius: 16px;
+		}
+		.sheet { display: block; }
 		.showcase { padding: 20px 16px 0; }
 		.grid { columns: 1; }
 		.dash-grid { grid-template-columns: 1fr 1fr; }
@@ -1536,7 +1807,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		.dash-actions { display: none; }
 		.repeat-section { padding: 32px 16px 32px; }
 		.repeat-grid { grid-template-columns: 1fr; }
-		input[type="range"] { width: 90px; }
+
+		[data-theme="light"] .mobile-fab {
+			background: rgba(245,245,247,0.92);
+		}
 	}
 </style>
 

@@ -10,7 +10,7 @@
 	--sl-color-gray-4: #24283b;
 	--sl-color-gray-5: #1a1b26;
 	--sl-color-gray-6: #16161e;
-	--sl-color-black: #0d0d14;
+	--sl-color-black: #0a0b10;
 	--sl-color-text-accent: #A283DA;
 }
 
@@ -26,7 +26,7 @@
 	--sl-color-gray-4: #d4d4d8;
 	--sl-color-gray-5: #e8e8ec;
 	--sl-color-gray-6: #f3f3f5;
-	--sl-color-black: #ffffff;
+	--sl-color-black: #f5f5f7;
 	--sl-color-text-accent: #8b6cc1;
 }
 
@@ -53,3 +53,13 @@
 	border-radius: 12px !important;
 	overflow: hidden;
 }
+
+.card {
+	border-radius: 12px !important;
+	border: 1px solid transparent !important;
+}
+
+.card-grid .card:nth-child(1) { border-color: rgba(224,175,104,0.25) !important; background: rgba(224,175,104,0.05) !important; }
+.card-grid .card:nth-child(2) { border-color: rgba(187,154,247,0.25) !important; background: rgba(187,154,247,0.05) !important; }
+.card-grid .card:nth-child(3) { border-color: rgba(158,206,106,0.25) !important; background: rgba(158,206,106,0.05) !important; }
+.card-grid .card:nth-child(4) { border-color: rgba(247,118,142,0.25) !important; background: rgba(247,118,142,0.05) !important; }
