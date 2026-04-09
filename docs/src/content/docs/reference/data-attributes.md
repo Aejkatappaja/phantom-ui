@@ -43,3 +43,22 @@ Use this for dense metric groups, icon rows, or compact UI clusters that should 
 ```
 
 Without `data-shimmer-no-children`, each `<span>` would get its own shimmer block. With it, the entire `kpi-row` becomes one block.
+
+## `data-shimmer-width` / `data-shimmer-height`
+
+Override the measured dimensions (in pixels) of an element. By default, phantom-ui uses `getBoundingClientRect()` and skips elements with zero dimensions. These attributes let you force a skeleton block with explicit sizing.
+
+Use this for dynamically sized elements that have no dimensions yet when the skeleton is generated — images without explicit `width`/`height`, containers filled by JavaScript, or any element whose size depends on data that hasn't loaded.
+
+```html
+<phantom-ui loading>
+  <div class="profile">
+    <img src="/avatar.jpg" data-shimmer-width="80" data-shimmer-height="80" />
+    <div class="bio" data-shimmer-height="60">
+      <!-- Content injected by JS after fetch -->
+    </div>
+  </div>
+</phantom-ui>
+```
+
+You can set one or both attributes. If only one is set, the other falls back to the measured value from `getBoundingClientRect()`.

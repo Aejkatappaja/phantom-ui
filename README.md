@@ -352,11 +352,13 @@ The `postinstall` script automatically detects SSR frameworks and adds this impo
 
 ## Fine-grained control
 
-Two data attributes let you control which elements get shimmer treatment:
+Data attributes let you control which elements get shimmer treatment and how they are measured:
 
 **`data-shimmer-ignore`** keeps an element and all its descendants visible during loading. Useful for logos, brand marks, or live indicators that should always be shown.
 
 **`data-shimmer-no-children`** captures the element as one single shimmer block instead of recursing into its children. Useful for dense metric groups that should appear as a single placeholder.
+
+**`data-shimmer-width`** / **`data-shimmer-height`** override the measured dimensions (in pixels) of an element. Useful for dynamically sized elements that have no dimensions yet when the skeleton is generated (e.g. images without explicit `width`/`height`, containers filled by JS). Elements with zero dimensions are normally skipped — these attributes let you force a skeleton block.
 
 ```html
 <phantom-ui loading>
@@ -367,6 +369,7 @@ Two data attributes let you control which elements get shimmer treatment:
       <span>2,847 users</span>
       <span>42ms p99</span>
     </div>
+    <img src="/hero.jpg" data-shimmer-width="600" data-shimmer-height="400" />
     <div class="content">
       <p>Each leaf element here gets its own shimmer block.</p>
     </div>

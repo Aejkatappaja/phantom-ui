@@ -60,7 +60,12 @@ export function extractElementInfo(element: Element, parentRect: DOMRect): Eleme
 	function walk(el: Element): void {
 		const rect = el.getBoundingClientRect();
 
-		if (rect.width === 0 || rect.height === 0) {
+		const overrideW = Number(el.getAttribute("data-shimmer-width")) || 0;
+		const overrideH = Number(el.getAttribute("data-shimmer-height")) || 0;
+		const w = overrideW || rect.width;
+		const h = overrideH || rect.height;
+
+		if (w === 0 || h === 0) {
 			return;
 		}
 
@@ -75,7 +80,7 @@ export function extractElementInfo(element: Element, parentRect: DOMRect): Eleme
 			const borderRadius = style.borderRadius;
 
 			// For table cells with text, measure actual text width
-			if ((el.tagName === "TD" || el.tagName === "TH") && hasTextContent(el)) {
+			if ((el.tagName === "TD" || el.tagName === "TH") && hasTextContent(el) && !overrideW) {
 				const span = document.createElement("span");
 				span.style.visibility = "hidden";
 				span.style.position = "absolute";
@@ -88,7 +93,7 @@ export function extractElementInfo(element: Element, parentRect: DOMRect): Eleme
 					x: rect.left - parentRect.left,
 					y: rect.top - parentRect.top,
 					width: Math.min(spanRect.width, rect.width),
-					height: rect.height,
+					height: h,
 					tag: el.tagName.toLowerCase(),
 					borderRadius: borderRadius === "0px" ? "" : borderRadius,
 				});
@@ -98,8 +103,8 @@ export function extractElementInfo(element: Element, parentRect: DOMRect): Eleme
 			results.push({
 				x: rect.left - parentRect.left,
 				y: rect.top - parentRect.top,
-				width: rect.width,
-				height: rect.height,
+				width: w,
+				height: h,
 				tag: el.tagName.toLowerCase(),
 				borderRadius: borderRadius === "0px" ? "" : borderRadius,
 			});

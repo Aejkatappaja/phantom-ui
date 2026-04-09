@@ -207,6 +207,38 @@ describe("phantom-ui", () => {
 		expect(blocks.length).to.equal(1);
 	});
 
+	it("uses data-shimmer-width/height to override dimensions", async () => {
+		const el = await fixture<PhantomUi>(html`
+			<phantom-ui loading>
+				<div style="width:200px;">
+					<span style="display:inline-block;width:80px;height:16px;"
+						data-shimmer-width="200" data-shimmer-height="40">Text</span>
+				</div>
+			</phantom-ui>
+		`);
+		await nextFrame();
+		await el.updateComplete;
+		const block = el.shadowRoot?.querySelector(".shimmer-block") as HTMLElement;
+		expect(block).to.exist;
+		expect(block.style.width).to.equal("200px");
+		expect(block.style.height).to.equal("40px");
+	});
+
+	it("renders block for zero-size element with data-shimmer-width/height", async () => {
+		const el = await fixture<PhantomUi>(html`
+			<phantom-ui loading>
+				<div style="width:200px;height:100px;">
+					<div style="width:0;height:0;"
+						data-shimmer-width="120" data-shimmer-height="24">Empty</div>
+				</div>
+			</phantom-ui>
+		`);
+		await nextFrame();
+		await el.updateComplete;
+		const blocks = el.shadowRoot?.querySelectorAll(".shimmer-block");
+		expect(blocks.length).to.equal(1);
+	});
+
 	it("re-measures when a child image loads", async () => {
 		const el = await fixture<PhantomUi>(html`
 			<phantom-ui loading>
