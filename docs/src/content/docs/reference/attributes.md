@@ -103,7 +103,7 @@ Gap in pixels between each repeated skeleton row. Only applies when `count` is g
 | --- | --- |
 | `string` | `rgba(128, 128, 128, 0.3)` |
 
-Color of the animated gradient sweep that moves across each shimmer block.
+Color of the animated gradient sweep that moves across each shimmer block. Only applies to `animation="shimmer"` (the default).
 
 ```html
 <phantom-ui loading shimmer-color="rgba(100, 200, 255, 0.4)">
@@ -117,7 +117,7 @@ Color of the animated gradient sweep that moves across each shimmer block.
 | --- | --- |
 | `string` | `rgba(128, 128, 128, 0.2)` |
 
-Background fill of each shimmer block.
+Background fill of each shimmer block. Applies to all animation modes.
 
 ```html
 <phantom-ui loading background-color="rgba(100, 200, 255, 0.1)">

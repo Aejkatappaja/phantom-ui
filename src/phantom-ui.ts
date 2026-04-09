@@ -91,11 +91,11 @@ export class PhantomUi extends LitElement {
 	})
 	loading = false;
 
-	/** Color of the animated shimmer gradient wave */
+	/** Color of the animated gradient wave. Only used in `animation="shimmer"` mode. */
 	@property({ attribute: "shimmer-color" })
 	shimmerColor = "rgba(128, 128, 128, 0.3)";
 
-	/** Background color of each shimmer block */
+	/** Background color of each shimmer block. Applies to all animation modes. */
 	@property({ attribute: "background-color" })
 	backgroundColor = "rgba(128, 128, 128, 0.2)";
 
