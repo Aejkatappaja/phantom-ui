@@ -174,7 +174,7 @@ function UserProfile({ userId }: { userId: string }) {
   });
 
   return (
-    <phantom-ui loading={isLoading || undefined}>
+    <phantom-ui loading={isLoading}>
       <div className="card">
         <img src={user?.avatar ?? "/placeholder.png"} width="48" height="48" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
@@ -197,7 +197,7 @@ function UserProfile({ userId }: { userId: string }) {
   const { data: user, isLoading } = useSWR(`/api/users/${userId}`);
 
   return (
-    <phantom-ui loading={isLoading || undefined}>
+    <phantom-ui loading={isLoading}>
       <div className="card">
         <img src={user?.avatar ?? "/placeholder.png"} width="48" height="48" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
@@ -219,7 +219,7 @@ const { data: users, isLoading } = useQuery({
 });
 
 return (
-  <phantom-ui loading={isLoading || undefined} count={5} count-gap={8}>
+  <phantom-ui loading={isLoading} count={5} count-gap={8}>
     {isLoading ? (
       <div className="row">
         <img src="/placeholder.png" width="32" height="32" />
@@ -248,7 +248,7 @@ import "@aejkatappaja/phantom-ui";
 
 function ProfileCard({ user, isLoading }: Props) {
   return (
-    <phantom-ui loading={isLoading || undefined} animation="pulse" reveal={0.3}>
+    <phantom-ui loading={isLoading} animation="pulse" reveal={0.3}>
       <div className="card">
         <img src={user?.avatar ?? "/placeholder.png"} className="avatar" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
@@ -261,7 +261,7 @@ function ProfileCard({ user, isLoading }: Props) {
 // List with repeat mode
 function UserList({ users, isLoading }: Props) {
   return (
-    <phantom-ui loading={isLoading || undefined} count={5} count-gap={8}>
+    <phantom-ui loading={isLoading} count={5} count-gap={8}>
       <div className="row">
         <img src="/placeholder.png" width="32" height="32" />
         <span>Placeholder Name</span>
@@ -343,7 +343,7 @@ function ProfileCard() {
   const [loading, setLoading] = createSignal(true);
 
   return (
-    <phantom-ui attr:loading={loading() || undefined} animation="shimmer" stagger={0.05}>
+    <phantom-ui attr:loading={loading()} animation="shimmer" stagger={0.05}>
       <div class="card">
         <img src="/avatar.png" class="avatar" />
         <h3>Ada Lovelace</h3>

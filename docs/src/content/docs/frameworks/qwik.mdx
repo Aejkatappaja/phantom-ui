@@ -56,7 +56,7 @@ export default component$(() => {
   return (
     <>
       {ready.value && (
-        <phantom-ui loading={loading.value || undefined}>
+        <phantom-ui loading={loading.value }>
           <div class="card">
             <img src="/placeholder.png" class="avatar" />
             <h3>Placeholder Name</h3>

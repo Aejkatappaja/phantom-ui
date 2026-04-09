@@ -81,7 +81,14 @@ export class PhantomUi extends LitElement {
 	static override styles: CSSResult = phantomUiStyles;
 
 	/** Whether to show the shimmer overlay or the real content */
-	@property({ type: Boolean, reflect: true })
+	@property({
+		type: Boolean,
+		reflect: true,
+		converter: {
+			fromAttribute: (value: string | null) => value !== null && value !== "false",
+			toAttribute: (value: boolean) => (value ? "" : null),
+		},
+	})
 	loading = false;
 
 	/** Color of the animated shimmer gradient wave */

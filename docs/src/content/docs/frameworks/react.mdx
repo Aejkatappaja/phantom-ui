@@ -46,7 +46,7 @@ function UserCard() {
   }, []);
 
   return (
-    <phantom-ui loading={!user || undefined}>
+    <phantom-ui loading={!user}>
       <div className="card">
         <img src={user?.avatar ?? "/placeholder.png"} className="avatar" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
@@ -57,15 +57,11 @@ function UserCard() {
 }
 ```
 
-## Important: boolean attributes
+## Boolean attributes
 
-React passes `loading={true}` as the string `"true"`, which works. But `loading={false}` passes the string `"false"`, which is truthy in HTML. Use `undefined` to remove the attribute:
+phantom-ui treats `loading="false"` as falsy, so you can pass booleans directly:
 
 ```tsx
-// Correct
-<phantom-ui loading={isLoading || undefined}>
-
-// Wrong - "false" is a truthy string
 <phantom-ui loading={isLoading}>
 ```
 
