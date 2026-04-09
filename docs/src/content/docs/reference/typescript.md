@@ -12,9 +12,12 @@ The package ships full type definitions and exports the following types:
 
 ## Automatic setup
 
-The `postinstall` script detects your framework and generates a `phantom-ui.d.ts` in your `src/` directory. This works for React, Solid, and Qwik.
+The `postinstall` script detects your project setup and handles two things automatically:
 
-If it did not run (CI, monorepos, `--ignore-scripts`), generate it manually:
+- **JSX type declarations** — For React, Solid, and Qwik, it generates a `phantom-ui.d.ts` in your `src/` directory.
+- **SSR pre-hydration CSS** — For Next.js, Nuxt, SvelteKit, Remix, and Qwik, it adds `import "@aejkatappaja/phantom-ui/ssr.css"` to your layout file to prevent content flash before hydration (see [SSR Frameworks](/frameworks/ssr/#pre-hydration-css)).
+
+If it did not run (CI, monorepos, `--ignore-scripts`), trigger it manually:
 
 ```bash
 npx @aejkatappaja/phantom-ui init
@@ -26,9 +29,9 @@ npx @aejkatappaja/phantom-ui init
 
 **Angular** uses `CUSTOM_ELEMENTS_SCHEMA` which bypasses type checking for custom elements.
 
-## Manual declarations
+## Manual type declarations
 
-### React
+### React / Next.js / Remix
 
 ```typescript
 import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
@@ -69,6 +72,23 @@ declare module "@builder.io/qwik" {
   }
 }
 ```
+
+## Manual SSR CSS import
+
+Add this import to your root layout file:
+
+```js
+import "@aejkatappaja/phantom-ui/ssr.css";
+```
+
+| Framework | Layout file |
+| --- | --- |
+| Next.js (App Router) | `app/layout.tsx` |
+| Next.js (Pages) | `pages/_app.tsx` |
+| Nuxt | `app.vue` |
+| SvelteKit | `src/routes/+layout.svelte` |
+| Remix | `app/root.tsx` |
+| Qwik | `src/root.tsx` |
 
 ## Why a local file?
 

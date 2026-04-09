@@ -59,6 +59,90 @@ Or drop in a script tag with no build step:
 <script src="https://cdn.jsdelivr.net/npm/@aejkatappaja/phantom-ui/dist/phantom-ui.cdn.js"></script>
 ```
 
+## Automatic setup
+
+A `postinstall` script runs after installation and detects your project setup. It handles two things:
+
+**JSX type declarations** — For React, Solid, and Qwik, it generates a `phantom-ui.d.ts` in your `src/` directory so `<phantom-ui>` is recognized in JSX. Vue, Svelte, and Angular work out of the box without any type declaration.
+
+**SSR pre-hydration CSS** — For Next.js, Nuxt, SvelteKit, Remix, and Qwik, it adds `import "@aejkatappaja/phantom-ui/ssr.css"` to your layout file to prevent content flash before hydration (see [Pre-hydration CSS](#pre-hydration-css)).
+
+If the postinstall did not run (CI, monorepos, `--ignore-scripts`), you can trigger it manually:
+
+```bash
+npx @aejkatappaja/phantom-ui init    # npm
+bunx @aejkatappaja/phantom-ui init   # bun
+pnpx @aejkatappaja/phantom-ui init   # pnpm
+yarn dlx @aejkatappaja/phantom-ui init  # yarn
+```
+
+<details>
+<summary>Manual JSX type declarations</summary>
+
+**React / Next.js / Remix**
+
+```typescript
+import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
+
+declare module "react/jsx-runtime" {
+  export namespace JSX {
+    interface IntrinsicElements {
+      "phantom-ui": PhantomUiAttributes;
+    }
+  }
+}
+```
+
+**Solid**
+
+```typescript
+import type { SolidPhantomUiAttributes } from "@aejkatappaja/phantom-ui";
+
+declare module "solid-js" {
+  namespace JSX {
+    interface IntrinsicElements {
+      "phantom-ui": SolidPhantomUiAttributes;
+    }
+  }
+}
+```
+
+**Qwik**
+
+```typescript
+import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
+
+declare module "@builder.io/qwik" {
+  namespace QwikJSX {
+    interface IntrinsicElements {
+      "phantom-ui": PhantomUiAttributes & Record<string, unknown>;
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary>Manual SSR CSS import</summary>
+
+Add this import to your root layout file:
+
+```js
+import "@aejkatappaja/phantom-ui/ssr.css";
+```
+
+| Framework | Layout file |
+| --- | --- |
+| Next.js (App Router) | `app/layout.tsx` |
+| Next.js (Pages) | `pages/_app.tsx` |
+| Nuxt | `app.vue` |
+| SvelteKit | `src/routes/+layout.svelte` |
+| Remix | `app/root.tsx` |
+| Qwik | `src/root.tsx` |
+
+</details>
+
 ## Quick start
 
 ```html
@@ -188,7 +272,7 @@ function ProfileCard() {
 }
 ```
 
-### SSR frameworks (Next.js, Nuxt, SvelteKit)
+### SSR frameworks (Next.js, Nuxt, SvelteKit, Remix, Qwik)
 
 The component needs browser APIs to measure the DOM. Import it client-side only:
 
@@ -226,68 +310,30 @@ onMounted(() => import("@aejkatappaja/phantom-ui"));
 
 The `<phantom-ui>` tag can exist in server-rendered HTML. The browser treats it as an unknown element until hydration, then the Web Component activates and measures the DOM. Content renders normally on the server, which is good for SEO.
 
-## TypeScript
+#### Pre-hydration CSS
 
-The package ships full type definitions. A `postinstall` script automatically detects your framework and generates a `phantom-ui.d.ts` in your `src/` directory. No extra step needed.
+Before JavaScript loads, content inside `<phantom-ui loading>` can briefly flash as visible text. The package ships a small CSS file that hides this content immediately, with no JS needed:
 
-Vue, Svelte, and Angular work out of the box without any type declaration.
-
-If the postinstall did not run (CI, monorepos, `--ignore-scripts`), you can generate it manually:
-
-```bash
-npx @aejkatappaja/phantom-ui init    # npm
-bunx @aejkatappaja/phantom-ui init   # bun
-pnpx @aejkatappaja/phantom-ui init   # pnpm
-yarn dlx @aejkatappaja/phantom-ui init  # yarn
+```css
+import "@aejkatappaja/phantom-ui/ssr.css";
 ```
 
-<details>
-<summary>Or create the file yourself:</summary>
+The `postinstall` script automatically detects SSR frameworks and adds this import to your layout file (e.g. `app/layout.tsx` for Next.js, `app.vue` for Nuxt, `+layout.svelte` for SvelteKit). If you use the CDN build, add the rules directly in your `<head>`:
 
-**React**
-
-```typescript
-import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
-
-declare module "react/jsx-runtime" {
-  export namespace JSX {
-    interface IntrinsicElements {
-      "phantom-ui": PhantomUiAttributes;
-    }
+```html
+<style>
+  phantom-ui[loading] * {
+    -webkit-text-fill-color: transparent !important;
+    pointer-events: none;
+    user-select: none;
   }
-}
-```
-
-**Solid**
-
-```typescript
-import type { SolidPhantomUiAttributes } from "@aejkatappaja/phantom-ui";
-
-declare module "solid-js" {
-  namespace JSX {
-    interface IntrinsicElements {
-      "phantom-ui": SolidPhantomUiAttributes;
-    }
+  phantom-ui[loading] img, phantom-ui[loading] svg,
+  phantom-ui[loading] video, phantom-ui[loading] canvas,
+  phantom-ui[loading] button, phantom-ui[loading] [role="button"] {
+    opacity: 0 !important;
   }
-}
+</style>
 ```
-
-**Qwik**
-
-```typescript
-import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
-
-declare module "@builder.io/qwik" {
-  namespace QwikJSX {
-    interface IntrinsicElements {
-      "phantom-ui": PhantomUiAttributes & Record<string, unknown>;
-    }
-  }
-}
-```
-
-
-</details>
 
 ## Attributes
 
