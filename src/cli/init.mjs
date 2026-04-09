@@ -7,10 +7,6 @@ import { fileURLToPath } from "node:url";
 export const DTS_FILENAME = "phantom-ui.d.ts";
 export const CSS_IMPORT = 'import "@aejkatappaja/phantom-ui/ssr.css";';
 
-/* ------------------------------------------------------------------ */
-/*  JSX type declaration templates (React, Solid, Qwik)               */
-/* ------------------------------------------------------------------ */
-
 export const typeTemplates = {
 	react: `import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
 
@@ -44,10 +40,6 @@ declare module "@builder.io/qwik" {
 `,
 };
 
-/* ------------------------------------------------------------------ */
-/*  SSR entry-file candidates per framework                           */
-/* ------------------------------------------------------------------ */
-
 export const SSR_ENTRY_FILES = {
 	next: [
 		"app/layout.tsx",
@@ -68,10 +60,6 @@ export const SSR_ENTRY_FILES = {
 	remix: ["app/root.tsx", "app/root.jsx", "app/root.js"],
 	qwik: ["src/root.tsx", "src/root.jsx"],
 };
-
-/* ------------------------------------------------------------------ */
-/*  Helpers                                                           */
-/* ------------------------------------------------------------------ */
 
 export function findProjectRoot() {
 	if (process.env.INIT_CWD && existsSync(join(process.env.INIT_CWD, "package.json"))) {
@@ -132,22 +120,16 @@ export function findEntryFile(root, ssrFramework) {
 	return null;
 }
 
-/* ------------------------------------------------------------------ */
-/*  CSS import injection                                              */
-/* ------------------------------------------------------------------ */
-
 export function injectCSSImport(filePath) {
 	const content = readFileSync(filePath, "utf8");
 	if (content.includes("phantom-ui/ssr.css")) return false;
 
 	const ext = filePath.split(".").pop();
 
-	// Vue / Svelte — inject inside <script> block
 	if (ext === "vue" || ext === "svelte") {
 		return injectIntoSFC(filePath, content, ext);
 	}
 
-	// JS / TS / JSX / TSX — inject after last import
 	return injectIntoJS(filePath, content);
 }
 
@@ -172,7 +154,6 @@ export function injectIntoSFC(filePath, content, ext) {
 export function injectIntoJS(filePath, content) {
 	const lines = content.split("\n");
 
-	// Find the last line that ends an import statement (handles multi-line imports)
 	let insertAt = 0;
 	for (let i = 0; i < lines.length; i++) {
 		if (/\bfrom\s+["']|^\s*import\s+["']/.test(lines[i])) {
@@ -184,10 +165,6 @@ export function injectIntoJS(filePath, content) {
 	writeFileSync(filePath, lines.join("\n"));
 	return true;
 }
-
-/* ------------------------------------------------------------------ */
-/*  Main (only runs when executed directly, not when imported)        */
-/* ------------------------------------------------------------------ */
 
 function main() {
 	const root = findProjectRoot();
@@ -204,8 +181,6 @@ function main() {
 		process.exit(1);
 	}
 
-	// --- Step 1: JSX type declarations ---
-
 	const template = typeTemplates[framework];
 	if (template) {
 		const srcDir = findSrcDir(root);
@@ -217,8 +192,6 @@ function main() {
 			console.log(`${outPath} already exists. Skipping.`);
 		}
 	}
-
-	// --- Step 2: SSR pre-hydration CSS ---
 
 	const ssrFramework = detectSSRFramework(deps);
 	if (ssrFramework) {

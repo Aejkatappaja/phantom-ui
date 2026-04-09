@@ -14,10 +14,6 @@ import {
 	typeTemplates,
 } from "../../src/cli/init.mjs";
 
-/* ------------------------------------------------------------------ */
-/*  Temp directory helpers                                            */
-/* ------------------------------------------------------------------ */
-
 let tmp;
 
 beforeEach(() => {
@@ -45,10 +41,6 @@ function writeFile(relativePath, content) {
 function readFile(relativePath) {
 	return readFileSync(join(tmp, relativePath), "utf8");
 }
-
-/* ------------------------------------------------------------------ */
-/*  detectFramework                                                   */
-/* ------------------------------------------------------------------ */
 
 describe("detectFramework", () => {
 	test("detects react", () => {
@@ -100,10 +92,6 @@ describe("detectFramework", () => {
 	});
 });
 
-/* ------------------------------------------------------------------ */
-/*  detectSSRFramework                                                */
-/* ------------------------------------------------------------------ */
-
 describe("detectSSRFramework", () => {
 	test("detects next", () => {
 		expect(detectSSRFramework(["next", "react"])).toBe("next");
@@ -138,10 +126,6 @@ describe("detectSSRFramework", () => {
 	});
 });
 
-/* ------------------------------------------------------------------ */
-/*  readDeps                                                          */
-/* ------------------------------------------------------------------ */
-
 describe("readDeps", () => {
 	test("reads dependencies and devDependencies", () => {
 		writePkg({ react: "18.0.0", next: "14.0.0" }, { typescript: "5.0.0" });
@@ -155,10 +139,6 @@ describe("readDeps", () => {
 		expect(readDeps(join(tmp, "nonexistent"))).toEqual([]);
 	});
 });
-
-/* ------------------------------------------------------------------ */
-/*  findSrcDir                                                        */
-/* ------------------------------------------------------------------ */
 
 describe("findSrcDir", () => {
 	test("prefers src/ if it exists", () => {
@@ -176,10 +156,6 @@ describe("findSrcDir", () => {
 		expect(findSrcDir(tmp)).toBe(tmp);
 	});
 });
-
-/* ------------------------------------------------------------------ */
-/*  findEntryFile                                                     */
-/* ------------------------------------------------------------------ */
 
 describe("findEntryFile", () => {
 	test("finds Next.js App Router layout", () => {
@@ -232,10 +208,6 @@ describe("findEntryFile", () => {
 	});
 });
 
-/* ------------------------------------------------------------------ */
-/*  injectCSSImport — JS/TS files                                     */
-/* ------------------------------------------------------------------ */
-
 describe("injectCSSImport (JS/TS)", () => {
 	test("injects after last import in .tsx file", () => {
 		writeFile(
@@ -270,10 +242,6 @@ describe("injectCSSImport (JS/TS)", () => {
 		expect(matches.length).toBe(1);
 	});
 });
-
-/* ------------------------------------------------------------------ */
-/*  injectCSSImport — Vue files                                       */
-/* ------------------------------------------------------------------ */
 
 describe("injectCSSImport (Vue)", () => {
 	test("injects inside existing <script setup>", () => {
@@ -314,10 +282,6 @@ describe("injectCSSImport (Vue)", () => {
 	});
 });
 
-/* ------------------------------------------------------------------ */
-/*  injectCSSImport — Svelte files                                    */
-/* ------------------------------------------------------------------ */
-
 describe("injectCSSImport (Svelte)", () => {
 	test("injects inside existing <script>", () => {
 		writeFile("layout.svelte", '<script>\n  import "../app.css";\n</script>\n\n<slot />\n');
@@ -352,10 +316,6 @@ describe("injectCSSImport (Svelte)", () => {
 	});
 });
 
-/* ------------------------------------------------------------------ */
-/*  Type declaration templates                                        */
-/* ------------------------------------------------------------------ */
-
 describe("typeTemplates", () => {
 	test("has templates for react, solid, qwik only", () => {
 		expect(Object.keys(typeTemplates).sort()).toEqual(["qwik", "react", "solid"]);
@@ -376,10 +336,6 @@ describe("typeTemplates", () => {
 		expect(typeTemplates.qwik).toContain("QwikJSX");
 	});
 });
-
-/* ------------------------------------------------------------------ */
-/*  Integration: full postinstall scenario                            */
-/* ------------------------------------------------------------------ */
 
 describe("integration", () => {
 	test("Next.js project gets both .d.ts and SSR CSS", () => {
