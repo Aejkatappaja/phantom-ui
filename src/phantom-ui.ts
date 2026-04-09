@@ -58,6 +58,20 @@ function injectLightDomStyles(): void {
 		phantom-ui[loading] [role="button"] {
 			opacity: 0 !important;
 		}
+		phantom-ui[loading] [data-shimmer-ignore],
+		phantom-ui[loading] [data-shimmer-ignore] * {
+			-webkit-text-fill-color: initial !important;
+			pointer-events: auto;
+			user-select: auto;
+		}
+		phantom-ui[loading] [data-shimmer-ignore] img,
+		phantom-ui[loading] [data-shimmer-ignore] svg,
+		phantom-ui[loading] [data-shimmer-ignore] video,
+		phantom-ui[loading] [data-shimmer-ignore] canvas,
+		phantom-ui[loading] [data-shimmer-ignore] button,
+		phantom-ui[loading] [data-shimmer-ignore] [role="button"] {
+			opacity: 1 !important;
+		}
 	`;
 	document.head.appendChild(style);
 }
