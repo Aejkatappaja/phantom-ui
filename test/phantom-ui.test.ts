@@ -239,6 +239,39 @@ describe("phantom-ui", () => {
 		expect(blocks.length).to.equal(1);
 	});
 
+	it("data-shimmer-ignore keeps text visible during loading", async () => {
+		const el = await fixture<PhantomUi>(html`
+			<phantom-ui loading>
+				<div style="width:200px;">
+					<p style="width:150px;height:20px;" data-shimmer-ignore>Stay visible</p>
+				</div>
+			</phantom-ui>
+		`);
+		await nextFrame();
+		await el.updateComplete;
+		const p = el.querySelector("[data-shimmer-ignore]") as HTMLElement;
+		const style = getComputedStyle(p);
+		expect(style.webkitTextFillColor).to.not.equal("transparent");
+		expect(style.pointerEvents).to.not.equal("none");
+	});
+
+	it("data-shimmer-ignore keeps images visible during loading", async () => {
+		const el = await fixture<PhantomUi>(html`
+			<phantom-ui loading>
+				<div style="width:200px;">
+					<div data-shimmer-ignore>
+						<img style="width:48px;height:48px;" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />
+					</div>
+				</div>
+			</phantom-ui>
+		`);
+		await nextFrame();
+		await el.updateComplete;
+		const img = el.querySelector("[data-shimmer-ignore] img") as HTMLElement;
+		const style = getComputedStyle(img);
+		expect(style.opacity).to.equal("1");
+	});
+
 	it("re-measures when a child image loads", async () => {
 		const el = await fixture<PhantomUi>(html`
 			<phantom-ui loading>
