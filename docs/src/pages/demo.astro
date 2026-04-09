@@ -21,11 +21,9 @@
 <div class="grain" aria-hidden="true"></div>
 
 <a href="/phantom-ui/" class="back-link">
-	<svg viewBox="0 0 40 48" fill="none" width="24" height="28">
-		<path d="M20 2 C10 2, 4 12, 4 22 L4 36 L4 40 C6 37, 9 37, 12 40 C15 37, 18 37, 20 40 C22 37, 25 37, 28 40 C31 37, 34 37, 36 40 L36 36 L36 22 C36 12, 30 2, 20 2 Z" fill="#c0caf5"/>
-		<ellipse cx="14" cy="22" rx="3.5" ry="4" fill="#0f1117"/>
-		<ellipse cx="26" cy="22" rx="3.5" ry="4" fill="#0f1117"/>
-		<ellipse cx="20" cy="32" rx="2.5" ry="3" fill="#0f1117"/>
+	<svg viewBox="0 0 24 24" fill="none" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+		<path d="M19 12H5"/>
+		<path d="M12 19l-7-7 7-7"/>
 	</svg>
 	<span>Back to docs</span>
 </a>
@@ -725,24 +723,23 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	.back-link {
 		position: fixed; top: 16px; left: 20px; z-index: 200;
-		display: flex; align-items: center; gap: 8px;
-		padding: 6px 14px 6px 8px;
-		border: 1px solid var(--border);
-		border-radius: 100px;
-		background: rgba(10,11,16,0.7);
-		backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+		display: flex; align-items: center; gap: 6px;
+		padding: 6px 12px 6px 8px;
+		border: none;
+		border-radius: 8px;
+		background: transparent;
 		color: var(--muted);
 		font-size: 12px; font-weight: 500;
-		transition: border-color 0.2s, color 0.2s;
+		transition: color 0.2s, background 0.2s;
 	}
 
 	.back-link:hover {
-		border-color: var(--accent);
 		color: var(--text);
+		background: rgba(128,128,128,0.1);
 	}
 
 	.back-link svg {
-		filter: drop-shadow(0 0 6px rgba(122,162,247,0.2));
+		flex-shrink: 0;
 	}
 
 	.hero {
@@ -930,6 +927,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	.dash-nav-item {
 		font-size: 12px; font-weight: 500; color: var(--muted);
 		padding: 4px 12px; border-radius: 6px; cursor: default;
+		white-space: nowrap;
 	}
 
 	.dash-nav-item.active {
@@ -1509,8 +1507,8 @@ document.addEventListener("DOMContentLoaded", function () {
 		background: rgba(245,245,247,0.9);
 	}
 
-	[data-theme="light"] .back-link {
-		background: rgba(245,245,247,0.8);
+	[data-theme="light"] .back-link:hover {
+		background: rgba(0,0,0,0.05);
 	}
 
 	[data-theme="light"] .toggle {
@@ -1521,6 +1519,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	@media (max-width: 960px) {
 		.grid { columns: 2; }
+		.dash-grid { grid-template-columns: repeat(2, 1fr); }
 	}
 
 	@media (max-width: 640px) {
@@ -1531,6 +1530,10 @@ document.addEventListener("DOMContentLoaded", function () {
 		.controls-inner { gap: 14px; }
 		.showcase { padding: 20px 16px 0; }
 		.grid { columns: 1; }
+		.dash-grid { grid-template-columns: 1fr 1fr; }
+		.back-link { position: static; padding: 16px 16px 0; }
+		.dash-nav-item { font-size: 10px; padding: 3px 8px; }
+		.dash-actions { display: none; }
 		.repeat-section { padding: 32px 16px 32px; }
 		.repeat-grid { grid-template-columns: 1fr; }
 		input[type="range"] { width: 90px; }
