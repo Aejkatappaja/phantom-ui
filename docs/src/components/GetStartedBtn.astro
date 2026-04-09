@@ -1,0 +1,38 @@
+---
+interface Props {
+	href?: string;
+	size?: "sm" | "lg";
+}
+const { href = "/phantom-ui/guides/installation/", size = "sm" } = Astro.props;
+const isLg = size === "lg";
+---
+
+<a href={href} class:list={["gs-btn", { lg: isLg }]}>
+	Get Started
+	<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+</a>
+
+<style>
+	.gs-btn {
+		display: inline-flex; align-items: center; gap: 8px;
+		color: var(--sl-color-white, #c0caf5);
+		font-size: 13px; font-weight: 600;
+		padding: 6px 16px;
+		border-radius: 100px;
+		border: 1px solid var(--sl-color-gray-3, #414868);
+		transition: border-color 0.2s, color 0.2s;
+		text-decoration: none;
+	}
+	.gs-btn:hover {
+		border-color: var(--sl-color-accent, #7aa2f7);
+		color: var(--sl-color-accent, #7aa2f7);
+	}
+	.gs-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+	.gs-btn.lg {
+		font-size: 16px;
+		padding: 10px 24px;
+		gap: 10px;
+	}
+	.gs-btn.lg svg { width: 18px; height: 18px; }
+</style>

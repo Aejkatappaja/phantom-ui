@@ -3,7 +3,30 @@ title: Changelog
 description: Release history for phantom-ui
 ---
 
-## 0.6.1 <span style="display:inline-block;vertical-align:middle;font-size:0.4em;font-weight:600;letter-spacing:0.05em;padding:4px 10px;border-radius:100px;background:rgba(158,206,106,0.15);color:#9ece6a;margin-left:8px;position:relative;top:-2px">latest</span>
+## 0.7.0 <span style="display:inline-block;vertical-align:middle;font-size:0.4em;font-weight:600;letter-spacing:0.05em;padding:4px 10px;border-radius:100px;background:rgba(158,206,106,0.15);color:#9ece6a;margin-left:8px;position:relative;top:-2px">latest</span>
+
+*2026-04-09*
+
+## Features
+
+- **`loading="false"` treated as falsy** — No more `|| undefined` workaround. Pass booleans directly in React <19, Qwik, Solid, and vanilla HTML. React 19+, Vue, and Svelte already handled this natively.
+
+- **Auto-generated changelog** — Docs now include a [Changelog](/phantom-ui/changelog/) page pulled from GitHub releases at build time. Stays up to date automatically on every deploy.
+
+## Docs & Demo
+
+- Redesigned demo controls: ghost mascot toggle button with bounce animation
+- Handwritten "click me!" chalk annotation on desktop
+- Mobile: floating action button + bottom sheet for settings (swipe to close)
+- Compact bottom sheet layout: 2-column grid for colors and sliders
+- Responsive dashboard card grid (4→2 columns on mobile)
+- Ghost-style back button with arrow icon
+- Landing page cards with subtle colored borders and tinted backgrounds
+- Matched docs background colors to demo page (dark/light)
+- Improved data fetching guide: clarified that layout structure is the skeleton, no fake placeholder text needed
+- Removed `|| undefined` pattern from all code examples across docs, README, and framework guides
+
+## 0.6.1
 
 *2026-04-09*
 

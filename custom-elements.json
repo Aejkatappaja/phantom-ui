@@ -29,7 +29,7 @@
                 "text": "string"
               },
               "default": "\"rgba(128, 128, 128, 0.3)\"",
-              "description": "Color of the animated shimmer gradient wave",
+              "description": "Color of the animated gradient wave. Only used in `animation=\"shimmer\"` mode.",
               "attribute": "shimmer-color"
             },
             {
@@ -39,7 +39,7 @@
                 "text": "string"
               },
               "default": "\"rgba(128, 128, 128, 0.2)\"",
-              "description": "Background color of each shimmer block",
+              "description": "Background color of each shimmer block. Applies to all animation modes.",
               "attribute": "background-color"
             },
             {
@@ -248,7 +248,7 @@
                 "text": "string"
               },
               "default": "\"rgba(128, 128, 128, 0.3)\"",
-              "description": "Color of the animated shimmer gradient wave",
+              "description": "Color of the animated gradient wave. Only used in `animation=\"shimmer\"` mode.",
               "fieldName": "shimmerColor"
             },
             {
@@ -257,7 +257,7 @@
                 "text": "string"
               },
               "default": "\"rgba(128, 128, 128, 0.2)\"",
-              "description": "Background color of each shimmer block",
+              "description": "Background color of each shimmer block. Applies to all animation modes.",
               "fieldName": "backgroundColor"
             },
             {

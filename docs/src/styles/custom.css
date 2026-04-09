@@ -54,6 +54,9 @@
 	overflow: hidden;
 }
 
+.social-icons a[href*="github"] { color: #7aa2f7 !important; }
+.social-icons a[href*="npm"] { color: #f7768e !important; }
+
 .card {
 	border-radius: 12px !important;
 	border: 1px solid transparent !important;
@@ -63,3 +66,31 @@
 .card-grid .card:nth-child(2) { border-color: rgba(187,154,247,0.25) !important; background: rgba(187,154,247,0.05) !important; }
 .card-grid .card:nth-child(3) { border-color: rgba(158,206,106,0.25) !important; background: rgba(158,206,106,0.05) !important; }
 .card-grid .card:nth-child(4) { border-color: rgba(247,118,142,0.25) !important; background: rgba(247,118,142,0.05) !important; }
+
+.hero .actions {
+	gap: 0.75rem !important;
+}
+
+.hero .actions a {
+	border-radius: 100px !important;
+	font-weight: 600 !important;
+}
+
+.hero .actions a.primary {
+	background: var(--sl-color-accent) !important;
+	color: var(--sl-color-black) !important;
+	border: 1px solid var(--sl-color-accent) !important;
+	padding: 1rem 2.2rem !important;
+	font-size: 1.1rem !important;
+}
+
+.hero .actions a.minimal {
+	border: none !important;
+	color: var(--sl-color-gray-1) !important;
+	background: transparent !important;
+	padding: 0.75rem 0.5rem !important;
+	font-size: 1rem !important;
+}
+.hero .actions a.minimal:hover {
+	color: var(--sl-color-white) !important;
+}

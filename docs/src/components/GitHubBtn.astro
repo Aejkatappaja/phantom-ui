@@ -1,0 +1,57 @@
+---
+interface Props {
+	size?: "sm" | "lg";
+}
+const { size = "sm" } = Astro.props;
+const isLg = size === "lg";
+
+let stars = 0;
+try {
+	const res = await fetch("https://api.github.com/repos/Aejkatappaja/phantom-ui");
+	const data = await res.json();
+	stars = data.stargazers_count || 0;
+} catch {}
+---
+
+<a href="https://github.com/Aejkatappaja/phantom-ui" class:list={["gh-btn", { lg: isLg }]} target="_blank" rel="noopener">
+	<svg viewBox="0 0 24 24" fill="currentColor" class="gh-icon"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+	<span>View on GitHub</span>
+	<span class="gh-sep"></span>
+	<svg viewBox="0 0 24 24" fill="currentColor" class="gh-star"><path d="M12 .587l3.668 7.431 8.2 1.192-5.934 5.787 1.4 8.168L12 19.897l-7.334 3.268 1.4-8.168L.132 9.21l8.2-1.192z"/></svg>
+	{stars > 0 && <span class="gh-count">{stars}</span>}
+</a>
+
+<style>
+	.gh-btn {
+		display: inline-flex; align-items: center; gap: 8px;
+		color: var(--sl-color-gray-2, #565f89);
+		font-size: 13px; font-weight: 500;
+		padding: 6px 14px;
+		border-radius: 100px;
+		border: 1px solid var(--sl-color-gray-3, #414868);
+		transition: border-color 0.2s, color 0.2s;
+		text-decoration: none;
+	}
+	.gh-btn:hover {
+		border-color: var(--sl-color-accent, #7aa2f7);
+		color: var(--sl-color-white, #c0caf5);
+	}
+
+	.gh-icon { width: 16px; height: 16px; flex-shrink: 0; }
+	.gh-star { width: 14px; height: 14px; flex-shrink: 0; color: var(--sl-color-gray-3, #414868); transition: color 0.2s; }
+	.gh-btn:hover .gh-star { color: #e0af68; }
+
+	.gh-sep { width: 1px; height: 14px; background: var(--sl-color-gray-3, #414868); }
+
+	.gh-count { font-family: monospace; font-size: 12px; font-weight: 600; }
+
+	.gh-btn.lg {
+		font-size: 16px;
+		padding: 10px 20px;
+		gap: 10px;
+	}
+	.gh-btn.lg .gh-icon { width: 20px; height: 20px; }
+	.gh-btn.lg .gh-star { width: 16px; height: 16px; }
+	.gh-btn.lg .gh-sep { height: 18px; }
+	.gh-btn.lg .gh-count { font-size: 14px; }
+</style>
