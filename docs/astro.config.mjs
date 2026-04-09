@@ -27,7 +27,7 @@ export default defineConfig({
 				{
 					icon: "npm",
 					label: "npm",
-					href: "https://www.npmjs.com/package/phantom-ui",
+					href: "https://www.npmjs.com/package/@aejkatappaja/phantom-ui",
 				},
 			],
 			customCss: ["./src/styles/custom.css"],
@@ -38,6 +38,7 @@ export default defineConfig({
 						{ label: "Introduction", slug: "guides/introduction" },
 						{ label: "Installation", slug: "guides/installation" },
 						{ label: "Quick Start", slug: "guides/quick-start" },
+						{ label: "Data Fetching", slug: "guides/data-fetching" },
 					],
 				},
 				{
