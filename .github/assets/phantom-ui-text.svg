@@ -1,26 +1,3 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 60" fill="none">
-  <defs>
-    <linearGradient id="tokyonight" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#7aa2f7"/>
-      <stop offset="30%" stop-color="#bb9af7"/>
-      <stop offset="60%" stop-color="#7dcfff"/>
-      <stop offset="100%" stop-color="#c0caf5"/>
-    </linearGradient>
-    <linearGradient id="shimmer-sweep" x1="-100%" y1="0%" x2="200%" y2="0%">
-      <stop offset="0%" stop-color="transparent"/>
-      <stop offset="45%" stop-color="transparent"/>
-      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.25"/>
-      <stop offset="55%" stop-color="transparent"/>
-      <stop offset="100%" stop-color="transparent"/>
-      <animate attributeName="x1" values="-100%;200%" dur="3s" repeatCount="indefinite"/>
-      <animate attributeName="x2" values="0%;300%" dur="3s" repeatCount="indefinite"/>
-    </linearGradient>
-    <mask id="text-mask">
-      <text x="200" y="42" text-anchor="middle" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="44" font-weight="600" letter-spacing="-1" fill="white">phantom-ui</text>
-    </mask>
-  </defs>
-
-  <text x="200" y="42" text-anchor="middle" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="44" font-weight="600" letter-spacing="-1" fill="url(#tokyonight)">phantom-ui</text>
-
-  <rect x="0" y="0" width="400" height="60" fill="url(#shimmer-sweep)" mask="url(#text-mask)"/>
+  <text x="200" y="42" text-anchor="middle" font-family="'SF Pro Display','Segoe UI','Helvetica Neue',sans-serif" font-size="44" font-weight="600" letter-spacing="-1" fill="#c0caf5">phantom-ui</text>
 </svg>
