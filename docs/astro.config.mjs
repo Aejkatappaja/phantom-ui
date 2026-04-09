@@ -70,6 +70,10 @@ export default defineConfig({
 					label: "Playground",
 					items: [{ label: "Live Demo", link: "/demo/" }],
 				},
+				{
+					label: "Changelog",
+					slug: "changelog",
+				},
 			],
 		}),
 	],

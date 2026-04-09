@@ -64,4 +64,8 @@ jobs:
           node-version: 22
       - uses: oven-sh/setup-bun@v2
       - run: cd docs && bun install --frozen-lockfile
+      - name: Generate changelog
+        run: cd docs && node scripts/generate-changelog.mjs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: cd docs && bunx astro build
