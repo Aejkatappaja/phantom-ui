@@ -157,6 +157,88 @@ import "@aejkatappaja/phantom-ui/ssr.css";
 
 Set `loading` to show the shimmer. Remove it to reveal the real content. All child elements (including deeply nested images and media) are automatically hidden during loading.
 
+## Data fetching
+
+phantom-ui works with any data fetching approach. The pattern: render placeholder content while loading, real content when done. The placeholder text is invisible (CSS transparent) and only used to generate the skeleton shape.
+
+### TanStack Query
+
+```tsx
+import { useQuery } from "@tanstack/react-query";
+import "@aejkatappaja/phantom-ui";
+
+function UserProfile({ userId }: { userId: string }) {
+  const { data: user, isLoading } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => fetch(`/api/users/${userId}`).then((r) => r.json()),
+  });
+
+  return (
+    <phantom-ui loading={isLoading || undefined}>
+      <div className="card">
+        <img src={user?.avatar ?? "/placeholder.png"} width="48" height="48" />
+        <h3>{user?.name ?? "Placeholder Name"}</h3>
+        <p>{user?.bio ?? "A short bio goes here."}</p>
+      </div>
+    </phantom-ui>
+  );
+}
+```
+
+While `isLoading` is true, the placeholder text (`"Placeholder Name"`, `"A short bio goes here."`) is rendered invisibly and phantom-ui generates shimmer blocks matching their exact position and size. When the query resolves, `loading` is removed and the real content appears.
+
+### SWR
+
+```tsx
+import useSWR from "swr";
+import "@aejkatappaja/phantom-ui";
+
+function UserProfile({ userId }: { userId: string }) {
+  const { data: user, isLoading } = useSWR(`/api/users/${userId}`);
+
+  return (
+    <phantom-ui loading={isLoading || undefined}>
+      <div className="card">
+        <img src={user?.avatar ?? "/placeholder.png"} width="48" height="48" />
+        <h3>{user?.name ?? "Placeholder Name"}</h3>
+        <p>{user?.bio ?? "A short bio goes here."}</p>
+      </div>
+    </phantom-ui>
+  );
+}
+```
+
+### Lists
+
+For dynamic lists where the data hasn't loaded yet, use `count` to repeat a single template row:
+
+```tsx
+const { data: users, isLoading } = useQuery({
+  queryKey: ["users"],
+  queryFn: () => fetch("/api/users").then((r) => r.json()),
+});
+
+return (
+  <phantom-ui loading={isLoading || undefined} count={5} count-gap={8}>
+    {isLoading ? (
+      <div className="row">
+        <img src="/placeholder.png" width="32" height="32" />
+        <span>Placeholder Name</span>
+        <span>placeholder@email.com</span>
+      </div>
+    ) : (
+      users?.map((u) => (
+        <div key={u.id} className="row">
+          <img src={u.avatar} width="32" height="32" />
+          <span>{u.name}</span>
+          <span>{u.email}</span>
+        </div>
+      ))
+    )}
+  </phantom-ui>
+);
+```
+
 ## Framework examples
 
 ### React
