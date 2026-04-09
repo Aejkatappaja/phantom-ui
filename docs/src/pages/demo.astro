@@ -1,0 +1,1541 @@
+---
+---
+<html lang="en" data-theme="dark">
+<script is:inline>
+(function() {
+	var t = localStorage.getItem('starlight-theme');
+	if (t === 'light') document.documentElement.setAttribute('data-theme', 'light');
+})();
+</script>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>phantom-ui / demo</title>
+	<meta name="description" content="Interactive demo for phantom-ui — structure-aware skeleton loader Web Component." />
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<a href="/phantom-ui/" class="back-link">
+	<svg viewBox="0 0 40 48" fill="none" width="24" height="28">
+		<path d="M20 2 C10 2, 4 12, 4 22 L4 36 L4 40 C6 37, 9 37, 12 40 C15 37, 18 37, 20 40 C22 37, 25 37, 28 40 C31 37, 34 37, 36 40 L36 36 L36 22 C36 12, 30 2, 20 2 Z" fill="#c0caf5"/>
+		<ellipse cx="14" cy="22" rx="3.5" ry="4" fill="#0f1117"/>
+		<ellipse cx="26" cy="22" rx="3.5" ry="4" fill="#0f1117"/>
+		<ellipse cx="20" cy="32" rx="2.5" ry="3" fill="#0f1117"/>
+	</svg>
+	<span>Back to docs</span>
+</a>
+
+<section class="hero">
+	<p class="hero-tag">Interactive Demo</p>
+	<h1 class="hero-title">See it in action</h1>
+	<p class="hero-sub">Toggle loading to watch real UI transform into perfectly-aligned skeleton placeholders.</p>
+</section>
+
+<div class="controls-bar">
+	<div class="controls-inner">
+		<button id="toggle" class="toggle" type="button">
+			<span class="toggle-track"><span class="toggle-thumb"></span></span>
+			<span class="toggle-text">Loaded</span>
+		</button>
+
+		<div class="ctrl-sep"></div>
+
+		<div class="ctrl-group">
+			<span class="ctrl-label">Animation</span>
+			<div class="pills" data-control="animation">
+				<button class="pill active" data-value="shimmer">shimmer</button>
+				<button class="pill" data-value="pulse">pulse</button>
+				<button class="pill" data-value="breathe">breathe</button>
+				<button class="pill" data-value="solid">solid</button>
+			</div>
+		</div>
+
+		<div class="ctrl-stack">
+			<div class="ctrl-group">
+				<span class="ctrl-label">Shimmer color</span>
+				<div class="swatches" data-control="shimmer-color">
+					<button class="sw active" data-value="rgba(122,162,247,0.35)" style="--c:#7aa2f7" title="Blue"></button>
+					<button class="sw" data-value="rgba(187,154,247,0.35)" style="--c:#bb9af7" title="Purple"></button>
+					<button class="sw" data-value="rgba(158,206,106,0.35)" style="--c:#9ece6a" title="Green"></button>
+					<button class="sw" data-value="rgba(224,175,104,0.35)" style="--c:#e0af68" title="Orange"></button>
+					<button class="sw" data-value="rgba(247,118,142,0.35)" style="--c:#f7768e" title="Pink"></button>
+				</div>
+			</div>
+			<div class="ctrl-group">
+				<span class="ctrl-label">Block color</span>
+				<div class="swatches" data-control="background-color">
+					<button class="sw active" data-value="rgba(122,162,247,0.1)" style="--c:#7aa2f7" title="Blue"></button>
+					<button class="sw" data-value="rgba(187,154,247,0.1)" style="--c:#bb9af7" title="Purple"></button>
+					<button class="sw" data-value="rgba(158,206,106,0.1)" style="--c:#9ece6a" title="Green"></button>
+					<button class="sw" data-value="rgba(224,175,104,0.1)" style="--c:#e0af68" title="Orange"></button>
+					<button class="sw" data-value="rgba(247,118,142,0.1)" style="--c:#f7768e" title="Pink"></button>
+				</div>
+			</div>
+		</div>
+
+		<div class="ctrl-stack">
+			<div class="ctrl-group">
+				<span class="ctrl-label">Duration <span class="ctrl-val" id="v-dur">1.5s</span></span>
+				<input type="range" id="r-dur" min="0.5" max="4" step="0.1" value="1.5" />
+			</div>
+			<div class="ctrl-group">
+				<span class="ctrl-label">Reveal <span class="ctrl-val" id="v-rev">0s</span></span>
+				<input type="range" id="r-rev" min="0" max="1" step="0.05" value="0" />
+			</div>
+		</div>
+
+		<div class="ctrl-stack">
+			<div class="ctrl-group">
+				<span class="ctrl-label">Stagger <span class="ctrl-val" id="v-stag">0s</span></span>
+				<input type="range" id="r-stag" min="0" max="0.2" step="0.01" value="0" />
+			</div>
+			<div class="ctrl-group">
+				<span class="ctrl-label">Radius <span class="ctrl-val" id="v-rad">4px</span></span>
+				<input type="range" id="r-rad" min="0" max="24" step="1" value="4" />
+			</div>
+		</div>
+
+		<div class="ctrl-sep"></div>
+
+		<button id="theme-toggle" class="theme-toggle" type="button" title="Toggle theme">
+			<span class="theme-slider">
+				<svg class="theme-moon" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+				<svg class="theme-sun" width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3" stroke="currentColor" stroke-width="2"/><line x1="12" y1="21" x2="12" y2="23" stroke="currentColor" stroke-width="2"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" stroke="currentColor" stroke-width="2"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" stroke="currentColor" stroke-width="2"/><line x1="1" y1="12" x2="3" y2="12" stroke="currentColor" stroke-width="2"/><line x1="21" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" stroke="currentColor" stroke-width="2"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" stroke="currentColor" stroke-width="2"/></svg>
+			</span>
+		</button>
+	</div>
+</div>
+
+<section class="showcase">
+	<phantom-ui class="target dash-shell">
+		<div class="card dash">
+			<div class="dash-top">
+				<nav class="dash-nav" data-shimmer-ignore>
+					<span class="dash-nav-item">Overview</span>
+					<span class="dash-nav-item active">Analytics</span>
+					<span class="dash-nav-item">Customers</span>
+					<span class="dash-nav-item">Settings</span>
+				</nav>
+				<div class="dash-actions">
+					<div class="dash-search" data-shimmer-ignore>
+						<span>Search...</span>
+						<span class="dash-kbd">&#8984;K</span>
+					</div>
+					<div class="dash-avatar-sm">
+						<svg class="dash-ghost" viewBox="0 0 40 48" fill="none" width="18" height="22">
+							<path d="M20 2 C10 2, 4 12, 4 22 L4 36 L4 40 C6 37, 9 37, 12 40 C15 37, 18 37, 20 40 C22 37, 25 37, 28 40 C31 37, 34 37, 36 40 L36 36 L36 22 C36 12, 30 2, 20 2 Z" fill="#c0caf5"/>
+							<ellipse cx="14" cy="22" rx="3.5" ry="4" fill="#0f1117"/>
+							<ellipse cx="26" cy="22" rx="3.5" ry="4" fill="#0f1117"/>
+							<ellipse cx="20" cy="32" rx="2.5" ry="3" fill="#0f1117"/>
+						</svg>
+					</div>
+				</div>
+			</div>
+			<div class="dash-body">
+				<div class="dash-grid">
+					<div class="dash-metric">
+						<div class="dash-metric-label">Total Revenue</div>
+						<div class="dash-metric-val">$124,592</div>
+						<div class="dash-metric-change positive">+12.3%</div>
+					</div>
+					<div class="dash-metric">
+						<div class="dash-metric-label">Active Users</div>
+						<div class="dash-metric-val">8,429</div>
+						<div class="dash-metric-change positive">+4.1%</div>
+					</div>
+					<div class="dash-metric">
+						<div class="dash-metric-label">Conversion</div>
+						<div class="dash-metric-val">3.24%</div>
+						<div class="dash-metric-change negative">-0.8%</div>
+					</div>
+					<div class="dash-metric">
+						<div class="dash-metric-label">Avg. Order</div>
+						<div class="dash-metric-val">$68.40</div>
+						<div class="dash-metric-change positive">+2.5%</div>
+					</div>
+				</div>
+				<div class="dash-chart-area">
+					<div class="dash-chart-header">
+						<span>Revenue Overview</span>
+						<div class="dash-chart-tabs">
+							<span class="dash-chart-tab active">Week</span>
+							<span class="dash-chart-tab">Month</span>
+							<span class="dash-chart-tab">Year</span>
+						</div>
+					</div>
+					<div class="dash-chart-body">
+					<svg class="dash-chart" viewBox="0 0 600 160" preserveAspectRatio="none">
+						<defs>
+							<linearGradient id="chart-fill" x1="0" y1="0" x2="0" y2="1">
+								<stop offset="0%" stop-color="#E1AF68" stop-opacity="0.15"/>
+								<stop offset="100%" stop-color="#E1AF68" stop-opacity="0"/>
+							</linearGradient>
+						</defs>
+						<path d="M0,120 C40,110 80,90 120,95 C160,100 200,60 240,55 C280,50 320,70 360,45 C400,20 440,35 480,25 C520,15 560,30 600,10 L600,160 L0,160 Z" fill="url(#chart-fill)"/>
+						<polyline points="0,120 120,95 240,55 360,45 480,25 600,10" fill="none" stroke="#E1AF68" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+					</svg>
+				</div>
+				</div>
+			</div>
+		</div>
+	</phantom-ui>
+
+	<div class="grid">
+
+
+		<phantom-ui class="target">
+			<div class="card">
+				<div class="card-head">
+					<img class="avatar" src="https://i.pravatar.cc/96?img=68" alt="" width="48" height="48" />
+					<div>
+						<h3>John Doe</h3>
+						<p class="muted small">Senior Engineer at Vercel</p>
+					</div>
+				</div>
+				<p class="muted body-text">Building scalable distributed systems and mentoring junior engineers on cloud-native architecture.</p>
+				<div class="tags">
+					<span class="tag">Rust</span>
+					<span class="tag">TypeScript</span>
+					<span class="tag">Go</span>
+				</div>
+			</div>
+		</phantom-ui>
+
+
+		<phantom-ui class="target">
+			<div class="stats">
+				<div class="stat">
+					<div class="stat-val">$48.2k</div>
+					<div class="stat-lbl">Revenue</div>
+				</div>
+				<div class="stat">
+					<div class="stat-val">2,847</div>
+					<div class="stat-lbl">Users</div>
+				</div>
+				<div class="stat">
+					<div class="stat-val">42ms</div>
+					<div class="stat-lbl">Latency</div>
+				</div>
+				<div class="stat">
+					<div class="stat-val">99.9%</div>
+					<div class="stat-lbl">Uptime</div>
+				</div>
+			</div>
+		</phantom-ui>
+
+
+		<phantom-ui class="target">
+			<div class="card">
+				<div class="list-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=33" alt="" width="32" height="32" />
+					<div class="list-text">
+						<strong>New deployment</strong>
+						<span class="muted small">Production v2.4.1 deployed</span>
+					</div>
+					<span class="badge">New</span>
+				</div>
+				<div class="list-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=15" alt="" width="32" height="32" />
+					<div class="list-text">
+						<strong>PR merged</strong>
+						<span class="muted small">Fix auth timeout #342</span>
+					</div>
+				</div>
+				<div class="list-row last">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=8" alt="" width="32" height="32" />
+					<div class="list-text">
+						<strong>Alert resolved</strong>
+						<span class="muted small">CPU back to normal on api-3</span>
+					</div>
+				</div>
+			</div>
+		</phantom-ui>
+
+
+		<phantom-ui class="target">
+			<div class="card">
+				<img class="cover" src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=240&fit=crop" alt="" />
+				<h3>Building Resilient Microservices</h3>
+				<p class="muted small" style="margin-bottom:6px">March 28, 2026 &middot; 8 min read</p>
+				<p class="muted body-text">A practical guide to circuit breakers and retry patterns that keep services running.</p>
+			</div>
+		</phantom-ui>
+
+
+		<phantom-ui class="target">
+			<div class="card pricing">
+				<div class="plan-name" data-shimmer-ignore>Pro Plan</div>
+				<div class="price" data-shimmer-no-children>$29<span class="muted">/mo</span></div>
+				<ul class="features">
+					<li>Unlimited projects</li>
+					<li>Priority support</li>
+					<li>Custom domains</li>
+					<li>Analytics dashboard</li>
+				</ul>
+				<button class="cta" type="button">Get Started</button>
+			</div>
+		</phantom-ui>
+
+
+		<phantom-ui class="target">
+			<div class="card">
+				<div class="comment">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=51" alt="" width="32" height="32" />
+					<div>
+						<strong>Alex Rivera</strong> <span class="muted small">2h ago</span>
+						<p class="muted body-text">Have you considered using a service mesh for the retry logic?</p>
+					</div>
+				</div>
+				<div class="comment last">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=25" alt="" width="32" height="32" />
+					<div>
+						<strong>Priya Sharma</strong> <span class="muted small">4h ago</span>
+						<p class="muted body-text">We tried this pattern last quarter. Reduced p99 latency by 40%.</p>
+					</div>
+				</div>
+			</div>
+		</phantom-ui>
+
+
+		<phantom-ui class="target">
+			<div class="card chat-card">
+				<div class="chat-header">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=60" alt="" width="32" height="32" />
+					<div>
+						<strong data-shimmer-ignore>Team General</strong>
+						<span class="muted small">3 online</span>
+					</div>
+				</div>
+				<div class="chat-messages">
+					<div class="msg msg-other">
+						<img class="msg-avatar" src="https://i.pravatar.cc/48?img=33" alt="" width="24" height="24" />
+						<div class="msg-bubble">
+							<span class="msg-name">Alex</span>
+							<p>Deployed the new API gateway. Tests are green.</p>
+							<span class="msg-time muted">10:42</span>
+						</div>
+					</div>
+					<div class="msg msg-self">
+						<div class="msg-bubble self">
+							<p>Nice, I'll start migrating the auth service.</p>
+							<span class="msg-time muted">10:45</span>
+						</div>
+					</div>
+					<div class="msg msg-other">
+						<img class="msg-avatar" src="https://i.pravatar.cc/48?img=25" alt="" width="24" height="24" />
+						<div class="msg-bubble">
+							<span class="msg-name">Priya</span>
+							<p>Heads up, staging DB is running slow today.</p>
+							<span class="msg-time muted">10:51</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</phantom-ui>
+
+
+		<phantom-ui class="target">
+			<div class="card metrics-card">
+				<h3 class="metrics-title" data-shimmer-ignore>System Health</h3>
+				<div class="metric-row">
+					<div class="metric-head">
+						<span class="metric-label">CPU Usage</span>
+						<span class="metric-value">73%</span>
+					</div>
+					<div class="meter" data-shimmer-no-children><div class="meter-fill" style="width:73%"></div></div>
+				</div>
+				<div class="metric-row">
+					<div class="metric-head">
+						<span class="metric-label">Memory</span>
+						<span class="metric-value">4.2 / 8 GB</span>
+					</div>
+					<div class="meter" data-shimmer-no-children><div class="meter-fill" style="width:52%"></div></div>
+				</div>
+				<div class="metric-row">
+					<div class="metric-head">
+						<span class="metric-label">Disk</span>
+						<span class="metric-value">186 / 512 GB</span>
+					</div>
+					<div class="meter" data-shimmer-no-children><div class="meter-fill" style="width:36%"></div></div>
+				</div>
+				<div class="metric-row">
+					<div class="metric-head">
+						<span class="metric-label">Network</span>
+						<span class="metric-value">12.4 Mbps</span>
+					</div>
+					<div class="meter" data-shimmer-no-children><div class="meter-fill" style="width:18%"></div></div>
+				</div>
+			</div>
+		</phantom-ui>
+
+
+		<phantom-ui class="target">
+			<div class="card product-card">
+				<img class="product-img" src="https://images.unsplash.com/photo-1545454675-3531b543be5d?w=600&h=280&fit=crop" alt="" />
+				<div class="product-body">
+					<span class="product-cat muted small">Audio Equipment</span>
+					<h3 class="product-name">Studio Monitor Pro 8"</h3>
+					<div class="stars">
+						<span class="star filled">&#9733;</span><span class="star filled">&#9733;</span><span class="star filled">&#9733;</span><span class="star filled">&#9733;</span><span class="star dim">&#9733;</span>
+						<span class="star-count muted small">(128)</span>
+					</div>
+					<div class="product-footer">
+						<span class="product-price">$349</span>
+						<button class="cta-sm" type="button">Add to cart</button>
+					</div>
+				</div>
+			</div>
+		</phantom-ui>
+
+
+		<phantom-ui class="target">
+			<div class="card player-card">
+				<div class="player-top">
+					<img class="album-art" src="https://picsum.photos/seed/phantom-album/128/128" alt="" />
+					<div class="player-info">
+						<h3 class="player-song">Midnight City</h3>
+						<p class="muted small">M83 &middot; Hurry Up, We're Dreaming</p>
+					</div>
+				</div>
+				<div class="player-progress">
+					<div class="progress-bar" data-shimmer-no-children><div class="progress-fill" style="width:65%"></div></div>
+					<div class="progress-times muted small">
+						<span>2:38</span>
+						<span>4:03</span>
+					</div>
+				</div>
+				<div class="player-controls">
+					<button class="p-btn" type="button">&#9198;</button>
+					<button class="p-btn play" type="button">&#9654;</button>
+					<button class="p-btn" type="button">&#9197;</button>
+				</div>
+			</div>
+		</phantom-ui>
+
+
+		<phantom-ui class="target">
+			<div class="card status-card">
+				<div class="status-row">
+					<span class="status-dot green"></span>
+					<span>API Gateway</span>
+					<span class="muted small" style="margin-left:auto">99.9%</span>
+				</div>
+				<div class="status-row">
+					<span class="status-dot green"></span>
+					<span>Database</span>
+					<span class="muted small" style="margin-left:auto">99.8%</span>
+				</div>
+				<div class="status-row">
+					<span class="status-dot orange"></span>
+					<span>CDN</span>
+					<span class="muted small" style="margin-left:auto">98.2%</span>
+				</div>
+			</div>
+		</phantom-ui>
+
+	</div>
+</section>
+
+<section class="repeat-section">
+	<div class="section-intro">
+		<h2>Repeat mode</h2>
+		<p class="muted">Generate multiple skeleton rows from a single template with <code>count</code> and <code>count-gap</code>.</p>
+	</div>
+
+	<div class="repeat-controls">
+		<div class="ctrl-group">
+			<span class="ctrl-label">Count <span class="ctrl-val" id="v-count">5</span></span>
+			<input type="range" id="r-count" min="1" max="10" step="1" value="5" />
+		</div>
+		<div class="ctrl-group">
+			<span class="ctrl-label">Gap <span class="ctrl-val" id="v-gap">0px</span></span>
+			<input type="range" id="r-gap" min="0" max="24" step="1" value="0" />
+		</div>
+	</div>
+
+	<div class="repeat-grid">
+		<div class="repeat-card">
+			<div class="table-head" data-shimmer-ignore>
+				<span class="th" style="width:32px"></span>
+				<span class="th">Name</span>
+				<span class="th">Email</span>
+				<span class="th" style="width:60px">Role</span>
+			</div>
+			<phantom-ui class="count-target" count="5" count-gap="0">
+				<div class="table-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=68" alt="" width="32" height="32" />
+					<span>John Doe</span>
+					<span>john@acme.io</span>
+					<span class="role-badge">Admin</span>
+				</div>
+			</phantom-ui>
+			<div class="loaded-rows">
+				<div class="table-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=33" alt="" width="32" height="32" />
+					<span>Alex Rivera</span>
+					<span>alex@acme.io</span>
+					<span class="role-badge">Dev</span>
+				</div>
+				<div class="table-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=25" alt="" width="32" height="32" />
+					<span>Priya Sharma</span>
+					<span>priya@acme.io</span>
+					<span class="role-badge">Dev</span>
+				</div>
+				<div class="table-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=15" alt="" width="32" height="32" />
+					<span>Marcus Lee</span>
+					<span>marcus@acme.io</span>
+					<span class="role-badge">Design</span>
+				</div>
+				<div class="table-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=51" alt="" width="32" height="32" />
+					<span>Emma Wilson</span>
+					<span>emma@acme.io</span>
+					<span class="role-badge">PM</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="repeat-card">
+			<div class="feed-head" data-shimmer-ignore>Activity Feed</div>
+			<phantom-ui class="count-target" count="5" count-gap="0">
+				<div class="feed-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=33" alt="" width="32" height="32" />
+					<div class="feed-text">
+						<strong>New deployment successful</strong>
+						<span class="muted small">Production v2.4.1 deployed</span>
+					</div>
+				</div>
+			</phantom-ui>
+			<div class="loaded-rows">
+				<div class="feed-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=25" alt="" width="32" height="32" />
+					<div class="feed-text">
+						<strong>PR #891 merged</strong>
+						<span class="muted small">Auth service migration by @alex</span>
+					</div>
+				</div>
+				<div class="feed-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=68" alt="" width="32" height="32" />
+					<div class="feed-text">
+						<strong>Build optimized</strong>
+						<span class="muted small">Bundle size reduced 34%</span>
+					</div>
+				</div>
+				<div class="feed-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=15" alt="" width="32" height="32" />
+					<div class="feed-text">
+						<strong>New issue opened</strong>
+						<span class="muted small">Memory leak in worker pool #342</span>
+					</div>
+				</div>
+				<div class="feed-row">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=51" alt="" width="32" height="32" />
+					<div class="feed-text">
+						<strong>Release v2.5.0 tagged</strong>
+						<span class="muted small">12 commits since v2.4.1</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<footer class="footer">
+	<a href="https://github.com/Aejkatappaja/phantom-ui">GitHub</a>
+	<span class="footer-sep">/</span>
+	<a href="https://www.npmjs.com/package/@aejkatappaja/phantom-ui">npm</a>
+	<span class="footer-sep">/</span>
+	<a href="/phantom-ui/">Docs</a>
+</footer>
+
+<script is:inline src="/phantom-ui/phantom-ui.cdn.js"></script>
+<script is:inline>
+document.addEventListener("DOMContentLoaded", function () {
+	var els = document.querySelectorAll(".target");
+	var countEls = document.querySelectorAll(".count-target");
+	var allEls = document.querySelectorAll("phantom-ui");
+	var btn = document.getElementById("toggle");
+	var isLoading = false;
+	var loadedRows = document.querySelectorAll(".loaded-rows");
+	loadedRows.forEach(function (el) { el.classList.add("visible"); });
+
+	allEls.forEach(function (el) {
+		el.setAttribute("shimmer-color", "rgba(122,162,247,0.35)");
+		el.setAttribute("background-color", "rgba(122,162,247,0.1)");
+	});
+
+	var ghost = document.querySelector(".dash-ghost");
+	btn.addEventListener("click", function () {
+		isLoading = !isLoading;
+		allEls.forEach(function (el) {
+			if (isLoading) el.setAttribute("loading", "");
+			else el.removeAttribute("loading");
+		});
+		loadedRows.forEach(function (el) {
+			el.classList.toggle("visible", !isLoading);
+		});
+		if (ghost) ghost.style.display = isLoading ? "none" : "";
+		btn.classList.toggle("active", isLoading);
+		btn.querySelector(".toggle-text").textContent = isLoading ? "Loading" : "Loaded";
+	});
+
+	document.querySelectorAll(".pills").forEach(function (group) {
+		group.querySelectorAll(".pill").forEach(function (pill) {
+			pill.addEventListener("click", function () {
+				group.querySelectorAll(".pill").forEach(function (p) { p.classList.remove("active"); });
+				pill.classList.add("active");
+				allEls.forEach(function (el) { el.setAttribute("animation", pill.dataset.value); });
+			});
+		});
+	});
+
+	document.querySelectorAll(".swatches").forEach(function (group) {
+		var attr = group.dataset.control;
+		group.querySelectorAll(".sw").forEach(function (sw) {
+			sw.addEventListener("click", function () {
+				group.querySelectorAll(".sw").forEach(function (s) { s.classList.remove("active"); });
+				sw.classList.add("active");
+				allEls.forEach(function (el) { el.setAttribute(attr, sw.dataset.value); });
+			});
+		});
+	});
+
+	function slider(id, valId, suffix, attr) {
+		var input = document.getElementById(id);
+		var display = document.getElementById(valId);
+		input.addEventListener("input", function () {
+			display.textContent = input.value + suffix;
+			allEls.forEach(function (el) { el.setAttribute(attr, input.value); });
+		});
+	}
+
+	slider("r-dur", "v-dur", "s", "duration");
+	slider("r-stag", "v-stag", "s", "stagger");
+	slider("r-rev", "v-rev", "s", "reveal");
+	slider("r-rad", "v-rad", "px", "fallback-radius");
+
+	document.getElementById("r-count").addEventListener("input", function () {
+		document.getElementById("v-count").textContent = this.value;
+		countEls.forEach(function (el) { el.setAttribute("count", this.value); }.bind(this));
+	});
+
+	document.getElementById("r-gap").addEventListener("input", function () {
+		document.getElementById("v-gap").textContent = this.value + "px";
+		countEls.forEach(function (el) { el.setAttribute("count-gap", this.value); }.bind(this));
+	});
+
+	var themeBtn = document.getElementById("theme-toggle");
+	themeBtn.addEventListener("click", function () {
+		var html = document.documentElement;
+		var isDark = html.getAttribute("data-theme") !== "light";
+		var next = isDark ? "light" : "dark";
+		html.setAttribute("data-theme", next);
+		localStorage.setItem("starlight-theme", next);
+	});
+});
+</script>
+
+<style is:global>
+	phantom-ui[loading] img,
+	phantom-ui[loading] svg,
+	phantom-ui[loading] video { opacity: 0 !important; }
+	phantom-ui[loading] .badge,
+	phantom-ui[loading] .role-badge,
+	phantom-ui[loading] .cta,
+	phantom-ui[loading] .cta-sm,
+	phantom-ui[loading] .meter-fill,
+	phantom-ui[loading] .progress-fill,
+	phantom-ui[loading] .star,
+	phantom-ui[loading] .star-count,
+	phantom-ui[loading] .p-btn,
+	phantom-ui[loading] .status-dot { background: var(--bg-raised) !important; box-shadow: none !important; }
+	phantom-ui[loading] [data-shimmer-ignore],
+	phantom-ui[loading] [data-shimmer-ignore] * {
+		-webkit-text-fill-color: initial !important;
+		opacity: 1 !important;
+		pointer-events: auto;
+		user-select: auto;
+	}
+</style>
+
+<style>
+	:root {
+		--bg-deep: #0a0b10;
+		--bg-surface: #1a1b26;
+		--bg-raised: #1f2335;
+		--border: #292e42;
+		--border-dim: #1e2030;
+		--text: #c0caf5;
+		--muted: #565f89;
+		--dim: #3b4261;
+		--accent: #7aa2f7;
+		--accent-dim: rgba(122,162,247,0.15);
+		--pink: #f7768e;
+		--green: #9ece6a;
+		--orange: #e0af68;
+		--radius: 12px;
+		--font: "Sora", system-ui, sans-serif;
+		--mono: "JetBrains Mono", monospace;
+	}
+
+	*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+	html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+	body {
+		background: var(--bg-deep);
+		color: var(--text);
+		font-family: var(--font);
+		font-size: 14px;
+		line-height: 1.6;
+		min-height: 100vh;
+		overflow-x: hidden;
+	}
+
+	a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+	a:hover { color: var(--text); }
+	h3 { font-size: 15px; font-weight: 600; margin-bottom: 2px; color: var(--text); }
+	strong { font-weight: 600; font-size: 13px; }
+	code {
+		font-family: var(--mono); font-size: 12px;
+		background: var(--bg-raised); border: 1px solid var(--border);
+		padding: 1px 6px; border-radius: 4px;
+	}
+	.muted { color: var(--muted); }
+	.small { font-size: 12px; }
+	.body-text { font-size: 13px; line-height: 1.6; margin: 0; }
+
+	.grain {
+		position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+	}
+
+	body::before {
+		content: "";
+		position: fixed; top: 0; left: 0; right: 0; height: 60vh;
+		background: radial-gradient(ellipse at 50% 0%, rgba(122,162,247,0.04) 0%, transparent 70%);
+		pointer-events: none; z-index: 0;
+	}
+
+	.back-link {
+		position: fixed; top: 16px; left: 20px; z-index: 200;
+		display: flex; align-items: center; gap: 8px;
+		padding: 6px 14px 6px 8px;
+		border: 1px solid var(--border);
+		border-radius: 100px;
+		background: rgba(10,11,16,0.7);
+		backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+		color: var(--muted);
+		font-size: 12px; font-weight: 500;
+		transition: border-color 0.2s, color 0.2s;
+	}
+
+	.back-link:hover {
+		border-color: var(--accent);
+		color: var(--text);
+	}
+
+	.back-link svg {
+		filter: drop-shadow(0 0 6px rgba(122,162,247,0.2));
+	}
+
+	.hero {
+		text-align: center;
+		padding: 64px 24px 48px;
+		position: relative;
+	}
+
+	.hero-tag {
+		font-family: var(--mono); font-size: 11px; font-weight: 500;
+		text-transform: uppercase; letter-spacing: 2px;
+		color: var(--accent); margin-bottom: 16px;
+	}
+
+	.hero-title {
+		font-size: clamp(32px, 5vw, 52px);
+		font-weight: 700; letter-spacing: -1.5px;
+		background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+		-webkit-background-clip: text; -webkit-text-fill-color: transparent;
+		background-clip: text; margin-bottom: 12px;
+	}
+
+	.hero-sub {
+		color: var(--muted); font-size: 16px; font-weight: 300;
+		max-width: 480px; margin: 0 auto 32px; line-height: 1.7;
+	}
+
+	.toggle {
+		display: inline-flex; align-items: center; gap: 14px;
+		padding: 10px 28px 10px 14px;
+		background: var(--bg-surface); border: 1px solid var(--border);
+		border-radius: 100px; cursor: pointer;
+		color: var(--muted); font-family: var(--mono);
+		font-size: 14px; font-weight: 500;
+		min-width: 150px;
+		transition: border-color 0.3s, box-shadow 0.3s, color 0.3s;
+	}
+
+	.toggle-text { min-width: 60px; text-align: center; }
+
+	.toggle.active {
+		border-color: var(--accent); color: var(--text);
+		box-shadow: 0 0 24px rgba(122,162,247,0.1), 0 0 64px rgba(122,162,247,0.05);
+	}
+
+	.toggle-track {
+		width: 44px; height: 24px;
+		background: var(--border); border-radius: 12px;
+		position: relative; transition: background 0.3s;
+	}
+
+	.toggle.active .toggle-track { background: var(--accent); }
+
+	.toggle-thumb {
+		position: absolute; top: 3px; left: 3px;
+		width: 18px; height: 18px; background: var(--text);
+		border-radius: 50%;
+		transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+	}
+
+	.toggle.active .toggle-thumb { transform: translateX(20px); }
+
+	.controls-bar {
+		position: sticky; top: 0; z-index: 100;
+		background: rgba(10,11,16,0.88);
+		backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+		border-bottom: 1px solid var(--border-dim);
+		padding: 16px 32px;
+	}
+
+	.controls-inner {
+		max-width: 1200px; margin: 0 auto;
+		display: flex; flex-wrap: wrap; gap: 40px; align-items: center;
+		justify-content: center;
+	}
+
+	.ctrl-sep {
+		width: 1px; height: 28px;
+		background: var(--border); flex-shrink: 0;
+	}
+
+	.theme-toggle {
+		all: unset; box-sizing: border-box;
+		position: relative;
+		width: 40px; height: 22px;
+		background: var(--border);
+		border-radius: 100px;
+		cursor: pointer;
+		transition: background 0.3s;
+	}
+
+	.theme-toggle:hover { background: var(--muted); }
+
+	.theme-slider {
+		position: absolute;
+		top: 2px; left: 2px;
+		width: 18px; height: 18px;
+		background: var(--bg-deep);
+		border-radius: 50%;
+		display: flex; align-items: center; justify-content: center;
+		color: var(--accent);
+		transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+	}
+
+	[data-theme="dark"] .theme-sun { display: none; }
+	[data-theme="light"] .theme-moon { display: none; }
+
+	[data-theme="light"] .theme-slider {
+		transform: translateX(18px);
+	}
+
+	.ctrl-stack { display: flex; flex-direction: column; gap: 12px; }
+
+	.ctrl-group { display: flex; flex-direction: column; gap: 6px; }
+
+	.ctrl-label {
+		font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px;
+		color: var(--dim); font-weight: 600;
+	}
+
+	.ctrl-val { color: var(--accent); font-family: var(--mono); }
+
+	.pills { display: flex; gap: 3px; }
+
+	.pill {
+		all: unset; box-sizing: border-box;
+		font-family: var(--mono); font-size: 11px; font-weight: 500;
+		padding: 5px 12px; border: 1px solid var(--border);
+		border-radius: 6px; color: var(--dim); cursor: pointer;
+		transition: all 0.2s;
+	}
+
+	.pill:hover { border-color: var(--muted); color: var(--muted); }
+
+	.pill.active {
+		background: var(--accent); border-color: var(--accent);
+		color: var(--bg-deep);
+	}
+
+	.swatches { display: flex; gap: 6px; }
+
+	.sw {
+		width: 24px; height: 24px; border-radius: 50%;
+		background: var(--c); border: 2px solid transparent;
+		cursor: pointer; padding: 0; opacity: 0.5;
+		transition: opacity 0.15s, border-color 0.15s, transform 0.15s;
+	}
+
+	.sw:hover { opacity: 0.8; transform: scale(1.1); }
+	.sw.active { opacity: 1; border-color: var(--text); transform: scale(1.15); }
+
+	input[type="range"] {
+		-webkit-appearance: none; appearance: none;
+		height: 4px; border-radius: 2px;
+		background: var(--border); outline: none; width: 120px;
+	}
+
+	input[type="range"]::-webkit-slider-thumb {
+		-webkit-appearance: none; appearance: none;
+		width: 14px; height: 14px; border-radius: 50%;
+		background: var(--accent); cursor: pointer;
+		box-shadow: 0 0 8px rgba(122,162,247,0.3);
+	}
+
+	input[type="range"]::-moz-range-thumb {
+		width: 14px; height: 14px; border-radius: 50%;
+		background: var(--accent); cursor: pointer; border: none;
+		box-shadow: 0 0 8px rgba(122,162,247,0.3);
+	}
+
+	.showcase { max-width: 1200px; margin: 0 auto; padding: 32px 32px 0; }
+
+	.dash-shell { margin-bottom: 16px; }
+
+	.dash { padding: 0; overflow: hidden; }
+
+	.dash-top {
+		display: flex; align-items: center; gap: 16px;
+		padding: 12px 20px;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.dash-nav { display: flex; gap: 4px; flex: 1; }
+
+	.dash-nav-item {
+		font-size: 12px; font-weight: 500; color: var(--muted);
+		padding: 4px 12px; border-radius: 6px; cursor: default;
+	}
+
+	.dash-nav-item.active {
+		background: var(--accent-dim, rgba(122,162,247,0.1));
+		color: var(--accent);
+	}
+
+	.dash-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+
+	.dash-search {
+		display: flex; align-items: center; gap: 6px;
+		background: var(--bg-deep); border: 1px solid var(--border);
+		border-radius: 8px; padding: 5px 10px;
+		font-size: 12px; color: var(--dim);
+	}
+
+	.dash-search-icon { font-size: 12px; }
+
+	.dash-kbd {
+		font-family: var(--mono); font-size: 10px;
+		background: var(--bg-raised); border: 1px solid var(--border);
+		border-radius: 4px; padding: 1px 5px; margin-left: 12px;
+	}
+
+	.dash-avatar-sm {
+		width: 28px; height: 28px; border-radius: 50%;
+		background: var(--bg-raised); border: 1px solid var(--border);
+		display: flex; align-items: center; justify-content: center;
+		overflow: hidden;
+	}
+
+	.dash-ghost { animation: ghost-float 2s ease-in-out infinite; }
+
+	@keyframes ghost-float {
+		0%, 100% { transform: translateY(0); }
+		50% { transform: translateY(-2px); }
+	}
+
+	.dash-body { padding: 20px; }
+
+	.dash-grid {
+		display: grid; grid-template-columns: repeat(4, 1fr);
+		gap: 12px; margin-bottom: 16px;
+	}
+
+	.dash-metric {
+		background: var(--bg-deep); border: 1px solid var(--border);
+		border-radius: 8px; padding: 14px;
+	}
+
+	.dash-metric-label { font-size: 11px; color: var(--dim); margin-bottom: 6px; }
+	.dash-metric-val { font-family: var(--mono); font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+	.dash-metric-change { font-family: var(--mono); font-size: 11px; font-weight: 500; }
+	.dash-metric-change.positive { color: var(--green, #9ece6a); }
+	.dash-metric-change.negative { color: var(--pink); }
+
+	.dash-chart-area {
+		background: var(--bg-deep); border: 1px solid var(--border);
+		border-radius: 8px; overflow: hidden;
+	}
+
+	.dash-chart-header {
+		display: flex; align-items: center; justify-content: space-between;
+		padding: 12px 16px; border-bottom: 1px solid var(--border);
+		font-size: 13px; font-weight: 500;
+	}
+
+	.dash-chart-tabs { display: flex; gap: 4px; }
+
+	.dash-chart-tab {
+		font-size: 11px; color: var(--dim); padding: 3px 10px;
+		border-radius: 4px; cursor: default;
+	}
+
+	.dash-chart-tab.active {
+		background: var(--accent-dim, rgba(122,162,247,0.1));
+		color: var(--accent);
+	}
+
+	.dash-chart-body { height: 160px; }
+
+	.dash-chart {
+		width: 100%; height: 100%;
+		display: block;
+	}
+
+	.grid {
+		columns: 3;
+		column-gap: 16px;
+	}
+
+	.grid > phantom-ui {
+		break-inside: avoid;
+		margin-bottom: 16px;
+	}
+
+	.card {
+		background: var(--bg-surface);
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		padding: 20px;
+		color: var(--text);
+		transition: border-color 0.3s, box-shadow 0.3s;
+	}
+
+	phantom-ui:not([loading]) .card:hover {
+		border-color: rgba(122,162,247,0.25);
+		box-shadow: 0 0 40px rgba(122,162,247,0.04);
+	}
+
+	.card-head {
+		display: flex; align-items: center; gap: 12px; margin-bottom: 12px;
+	}
+
+	.avatar {
+		width: 48px; height: 48px; border-radius: 50%;
+		background: var(--bg-raised); object-fit: cover; flex-shrink: 0;
+	}
+
+	.tags { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+
+	.tag {
+		background: var(--bg-raised); border: 1px solid var(--border);
+		padding: 3px 10px; border-radius: 8px;
+		font-size: 11px; color: var(--accent); font-weight: 500;
+	}
+
+	.stats {
+		display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+	}
+
+	.stat {
+		background: var(--bg-surface); border: 1px solid var(--border);
+		border-radius: var(--radius); padding: 16px; text-align: center;
+	}
+
+	.stat-val {
+		font-family: var(--mono); font-size: 20px; font-weight: 700;
+		color: var(--text);
+	}
+
+	.stat-lbl {
+		font-size: 10px; color: var(--dim); text-transform: uppercase;
+		letter-spacing: 0.5px; margin-top: 4px; font-weight: 500;
+	}
+
+	.list-row {
+		display: flex; align-items: center; gap: 10px;
+		padding: 10px 0; border-bottom: 1px solid var(--border);
+	}
+
+	.list-row.last { border-bottom: none; }
+	.list-text { flex: 1; min-width: 0; }
+	.list-text strong { display: block; margin-bottom: 2px; }
+
+	.dot-avatar {
+		width: 32px; height: 32px; border-radius: 50%;
+		background: var(--bg-raised); flex-shrink: 0;
+		object-fit: cover;
+	}
+
+	.badge {
+		background: var(--pink); color: white;
+		border-radius: 6px; padding: 2px 8px;
+		font-size: 10px; font-weight: 600; flex-shrink: 0;
+		letter-spacing: 0.3px;
+	}
+
+	.cover {
+		width: 100%; height: 140px;
+		background: var(--bg-raised); border-radius: 8px; margin-bottom: 14px;
+		object-fit: cover; display: block;
+	}
+
+	.pricing { text-align: center; }
+
+	.plan-name {
+		font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+		color: var(--dim); font-weight: 600; margin-bottom: 4px;
+	}
+
+	.price {
+		font-family: var(--mono); font-size: 36px; font-weight: 700;
+		margin: 6px 0 16px; color: var(--text);
+	}
+
+	.price span { font-size: 14px; font-weight: 400; }
+
+	.features { list-style: none; text-align: left; margin-bottom: 16px; }
+
+	.features li {
+		font-size: 12px; color: var(--muted);
+		padding: 6px 0; border-bottom: 1px solid var(--border);
+	}
+
+	.features li:last-child { border-bottom: none; }
+
+	.features li::before {
+		content: "+"; color: var(--accent); font-family: var(--mono);
+		font-weight: 700; margin-right: 8px;
+	}
+
+	.cta {
+		width: 100%; padding: 10px;
+		background: var(--accent); color: var(--bg-deep);
+		border: none; border-radius: 8px;
+		font-family: var(--font); font-weight: 600; font-size: 13px;
+		cursor: pointer; transition: opacity 0.2s;
+	}
+
+	.cta:hover { opacity: 0.9; }
+
+	.comment {
+		display: flex; gap: 10px;
+		padding: 10px 0; border-bottom: 1px solid var(--border);
+	}
+
+	.comment .dot-avatar { flex-shrink: 0; margin-top: 2px; }
+	.comment.last { border-bottom: none; }
+	.comment p { margin-top: 4px; }
+
+	.chat-card { padding: 0; display: flex; flex-direction: column; }
+
+	.chat-header {
+		display: flex; align-items: center; gap: 10px;
+		padding: 14px 16px;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.chat-header .dot-avatar {
+		width: 28px; height: 28px;
+		background: var(--accent-dim);
+	}
+
+	.chat-header strong { font-size: 13px; display: block; }
+	.chat-header .small { display: block; line-height: 1.3; }
+
+	.chat-messages {
+		padding: 14px 16px 16px;
+		display: flex; flex-direction: column; gap: 10px;
+	}
+
+	.msg {
+		display: flex; align-items: flex-start; gap: 8px;
+	}
+
+	.msg-other { align-self: flex-start; }
+	.msg-self { align-self: flex-end; justify-content: flex-end; }
+
+	.msg-avatar {
+		width: 24px; height: 24px; border-radius: 50%;
+		background: var(--bg-raised); flex-shrink: 0; margin-top: 2px;
+		object-fit: cover;
+	}
+
+	.msg-bubble {
+		background: var(--bg-raised);
+		border: 1px solid var(--border);
+		border-radius: 10px; border-top-left-radius: 3px;
+		padding: 8px 12px;
+		max-width: 240px;
+	}
+
+	.msg-bubble.self {
+		background: rgba(122,162,247,0.12);
+		border-color: rgba(122,162,247,0.2);
+		border-radius: 10px; border-top-right-radius: 3px;
+	}
+
+	.msg-name {
+		font-size: 11px; font-weight: 600; color: var(--accent);
+		display: block; margin-bottom: 3px;
+	}
+
+	.msg-bubble p {
+		font-size: 13px; line-height: 1.5; margin: 0;
+		color: var(--text);
+	}
+
+	.msg-time {
+		font-size: 10px; display: block; margin-top: 4px;
+		text-align: right;
+	}
+
+	.metrics-card { display: flex; flex-direction: column; gap: 0; }
+
+	.metrics-title {
+		font-size: 15px; font-weight: 600; margin-bottom: 16px !important;
+	}
+
+	.metric-row { margin-bottom: 12px; }
+	.metric-row:last-child { margin-bottom: 0; }
+
+	.metric-head {
+		display: flex; justify-content: space-between; align-items: center;
+		margin-bottom: 6px;
+	}
+
+	.metric-label {
+		font-size: 12px; color: var(--muted); font-weight: 400;
+	}
+
+	.metric-value {
+		font-size: 12px; font-family: var(--mono); color: var(--text);
+		font-weight: 500;
+	}
+
+	.meter {
+		width: 100%; height: 6px; border-radius: 3px;
+		background: var(--bg-raised);
+		overflow: hidden;
+	}
+
+	.meter-fill {
+		height: 100%; border-radius: 3px;
+		background: var(--accent);
+		transition: width 0.4s ease, opacity 0.3s;
+	}
+
+	.metric-row:nth-child(3) .meter-fill { background: var(--green); }
+	.metric-row:nth-child(4) .meter-fill { background: var(--orange); }
+	.metric-row:nth-child(5) .meter-fill { background: #bb9af7; }
+
+	.product-card { padding: 0; overflow: hidden; }
+
+	.product-img {
+		width: 100%; height: 140px;
+		background: var(--bg-raised);
+		object-fit: cover; display: block;
+	}
+
+	.product-body { padding: 14px 16px 16px; }
+
+	.product-cat {
+		display: block; font-size: 11px; text-transform: uppercase;
+		letter-spacing: 0.8px; margin-bottom: 4px; font-weight: 500;
+	}
+
+	.product-name { font-size: 15px; margin-bottom: 8px; }
+
+	.stars {
+		display: flex; align-items: center; gap: 1px;
+		margin-bottom: 12px;
+	}
+
+	.star {
+		font-size: 14px; line-height: 1;
+	}
+
+	.star.filled { color: var(--orange); }
+	.star.dim { color: var(--dim); }
+
+	.star-count {
+		margin-left: 6px;
+	}
+
+	.product-footer {
+		display: flex; align-items: center; justify-content: space-between;
+		padding-top: 12px; border-top: 1px solid var(--border);
+	}
+
+	.product-price {
+		font-family: var(--mono); font-size: 20px; font-weight: 700;
+		color: var(--text);
+	}
+
+	.cta-sm {
+		padding: 7px 16px;
+		background: var(--accent); color: var(--bg-deep);
+		border: none; border-radius: 8px;
+		font-family: var(--font); font-weight: 600; font-size: 12px;
+		cursor: pointer; transition: opacity 0.2s;
+	}
+
+	.cta-sm:hover { opacity: 0.9; }
+
+	.player-card {
+		display: flex; flex-direction: column; gap: 14px;
+	}
+
+	.player-top {
+		display: flex; align-items: center; gap: 14px;
+	}
+
+	.album-art {
+		width: 64px; height: 64px; border-radius: 8px;
+		background: var(--bg-raised); flex-shrink: 0;
+		object-fit: cover;
+	}
+
+	.player-info { flex: 1; min-width: 0; }
+
+	.player-song {
+		font-size: 15px; font-weight: 600; margin-bottom: 2px;
+		white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+	}
+
+	.player-progress { display: flex; flex-direction: column; gap: 4px; }
+
+	.progress-bar {
+		width: 100%; height: 4px; border-radius: 2px;
+		background: var(--bg-raised); overflow: hidden;
+	}
+
+	.progress-fill {
+		height: 100%; border-radius: 2px;
+		background: var(--accent);
+		transition: width 0.4s ease, opacity 0.3s;
+	}
+
+	.progress-times {
+		display: flex; justify-content: space-between;
+		font-size: 10px; font-family: var(--mono);
+	}
+
+	.player-controls {
+		display: flex; align-items: center; justify-content: center;
+		gap: 12px;
+	}
+
+	.p-btn {
+		all: unset; box-sizing: border-box;
+		width: 36px; height: 36px;
+		display: flex; align-items: center; justify-content: center;
+		border-radius: 50%; cursor: pointer;
+		color: var(--muted); font-size: 14px;
+		background: var(--bg-raised);
+		border: 1px solid var(--border);
+		transition: color 0.2s, border-color 0.2s, background 0.2s;
+	}
+
+	.p-btn:hover {
+		color: var(--text); border-color: var(--muted);
+	}
+
+	.p-btn.play {
+		width: 42px; height: 42px;
+		background: var(--accent); border-color: var(--accent);
+		color: var(--bg-deep); font-size: 16px;
+	}
+
+	.p-btn.play:hover { opacity: 0.9; }
+
+	.loaded-rows { display: none; }
+	.loaded-rows.visible { display: block; }
+
+	.status-card { font-size: 13px; padding-bottom: 32px; }
+
+	.status-row {
+		display: flex; align-items: center; gap: 10px;
+		padding: 8px 0;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.status-row:last-child { border-bottom: none; }
+
+	.status-dot {
+		width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+	}
+
+	.status-dot.green { background: var(--green, #9ece6a); box-shadow: 0 0 6px rgba(158,206,106,0.4); }
+	.status-dot.orange { background: var(--orange); box-shadow: 0 0 6px rgba(224,175,104,0.4); }
+
+	.repeat-section { max-width: 1200px; margin: 0 auto; padding: 48px 32px 48px; }
+
+	.section-intro { margin-bottom: 20px; }
+	.section-intro h2 {
+		font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+		margin-bottom: 6px;
+	}
+
+	.repeat-controls {
+		display: flex; gap: 24px;
+		background: var(--bg-surface); border: 1px solid var(--border);
+		border-radius: var(--radius); padding: 16px 20px;
+		margin-bottom: 16px;
+	}
+
+	.repeat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+	.repeat-card {
+		background: var(--bg-surface); border: 1px solid var(--border);
+		border-radius: var(--radius); overflow: hidden;
+	}
+
+	.table-head {
+		display: grid; grid-template-columns: 32px 1fr 1fr 60px;
+		gap: 12px; padding: 10px 16px;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.th {
+		font-size: 10px; text-transform: uppercase;
+		letter-spacing: 0.5px; color: var(--dim); font-weight: 600;
+	}
+
+	.table-row {
+		display: grid; grid-template-columns: 32px 1fr 1fr 60px;
+		gap: 12px; padding: 10px 16px; align-items: center; font-size: 13px;
+	}
+
+	.role-badge {
+		font-size: 10px; padding: 2px 8px; border-radius: 6px;
+		background: var(--bg-raised); color: var(--accent); font-weight: 500;
+	}
+
+	.feed-head {
+		font-size: 11px; text-transform: uppercase;
+		letter-spacing: 0.5px; color: var(--dim);
+		font-weight: 600; padding: 14px 16px 10px;
+		border-bottom: 1px solid var(--border);
+	}
+
+	.feed-row {
+		display: flex; align-items: center; gap: 10px;
+		padding: 10px 16px; font-size: 13px;
+	}
+
+	.feed-text { flex: 1; min-width: 0; }
+	.feed-text strong { display: block; margin-bottom: 2px; }
+
+	.footer {
+		text-align: center; padding: 48px 24px 40px;
+		font-family: var(--mono); font-size: 12px; color: var(--dim);
+	}
+
+	.footer a {
+		color: var(--muted); border-bottom: 1px solid var(--border);
+		padding-bottom: 1px; transition: color 0.2s, border-color 0.2s;
+	}
+
+	.footer a:hover { color: var(--accent); border-color: var(--accent); }
+	.footer-sep { margin: 0 12px; }
+
+	@keyframes fade-up {
+		from { opacity: 0; transform: translateY(16px); }
+		to { opacity: 1; transform: translateY(0); }
+	}
+
+	.hero { animation: fade-up 0.6s ease both; }
+	.controls-bar { animation: fade-up 0.6s ease 0.1s both; }
+	.grid phantom-ui:nth-child(1)  { animation: fade-up 0.5s ease 0.15s both; }
+	.grid phantom-ui:nth-child(2)  { animation: fade-up 0.5s ease 0.20s both; }
+	.grid phantom-ui:nth-child(3)  { animation: fade-up 0.5s ease 0.25s both; }
+	.grid phantom-ui:nth-child(4)  { animation: fade-up 0.5s ease 0.30s both; }
+	.grid phantom-ui:nth-child(5)  { animation: fade-up 0.5s ease 0.35s both; }
+	.grid phantom-ui:nth-child(6)  { animation: fade-up 0.5s ease 0.40s both; }
+	.grid phantom-ui:nth-child(7)  { animation: fade-up 0.5s ease 0.45s both; }
+	.grid phantom-ui:nth-child(8)  { animation: fade-up 0.5s ease 0.50s both; }
+	.grid phantom-ui:nth-child(9)  { animation: fade-up 0.5s ease 0.55s both; }
+	.grid phantom-ui:nth-child(10) { animation: fade-up 0.5s ease 0.60s both; }
+	.grid phantom-ui:nth-child(11) { animation: fade-up 0.5s ease 0.65s both; }
+	.repeat-section { animation: fade-up 0.5s ease 0.70s both; }
+
+	[data-theme="light"] {
+		--bg-deep: #f5f5f7;
+		--bg-surface: #ffffff;
+		--bg-raised: #ebebef;
+		--border: #d4d4d8;
+		--border-dim: #e4e4e8;
+		--text: #1a1b26;
+		--muted: #4b4f6a;
+		--dim: #6e7290;
+		--accent: #3b5ce4;
+		--pink: #e5484d;
+		--green: #2f8a43;
+		--orange: #c4912e;
+	}
+
+	[data-theme="light"] .grain { display: none; }
+
+	[data-theme="light"] body::before {
+		background: radial-gradient(ellipse at 50% 0%, rgba(74,108,247,0.04) 0%, transparent 70%);
+	}
+
+	[data-theme="light"] .controls-bar {
+		background: rgba(245,245,247,0.9);
+	}
+
+	[data-theme="light"] .back-link {
+		background: rgba(245,245,247,0.8);
+	}
+
+	[data-theme="light"] .toggle {
+		background: var(--bg-surface);
+	}
+
+	[data-theme="light"] .toggle-thumb { background: white; }
+
+	@media (max-width: 960px) {
+		.grid { columns: 2; }
+	}
+
+	@media (max-width: 640px) {
+		.back-link span { display: none; }
+		.hero { padding: 40px 16px 28px; }
+		.hero-sub { font-size: 14px; }
+		.controls-bar { padding: 12px 16px; }
+		.controls-inner { gap: 14px; }
+		.showcase { padding: 20px 16px 0; }
+		.grid { columns: 1; }
+		.repeat-section { padding: 32px 16px 32px; }
+		.repeat-grid { grid-template-columns: 1fr; }
+		input[type="range"] { width: 90px; }
+	}
+</style>
+
+</body>
+</html>
