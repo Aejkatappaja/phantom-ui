@@ -3,14 +3,32 @@ title: Installation
 description: How to install phantom-ui in your project.
 ---
 
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
 ## Package manager
 
-```bash
-bun add @aejkatappaja/phantom-ui     # bun
-npm install @aejkatappaja/phantom-ui # npm
-pnpm add @aejkatappaja/phantom-ui    # pnpm
-yarn add @aejkatappaja/phantom-ui    # yarn
-```
+<Tabs>
+  <TabItem label="npm">
+    ```sh
+    npm install @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```sh
+    pnpm add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```sh
+    yarn add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="bun">
+    ```sh
+    bun add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+</Tabs>
 
 A `postinstall` script automatically detects your framework (React, Solid, Qwik) and generates a TypeScript declaration file in your `src/` directory. Vue, Svelte, and Angular need no extra setup.
 

@@ -3,11 +3,32 @@ title: Vue
 description: Using phantom-ui with Vue.
 ---
 
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
 ## Setup
 
-```bash
-bun add @aejkatappaja/phantom-ui
-```
+<Tabs>
+  <TabItem label="npm">
+    ```sh
+    npm install @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```sh
+    pnpm add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```sh
+    yarn add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="bun">
+    ```sh
+    bun add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+</Tabs>
 
 No extra TypeScript setup needed. Vue picks up types from `HTMLElementTagNameMap` automatically.
 

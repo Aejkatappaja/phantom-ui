@@ -3,11 +3,32 @@ title: Qwik
 description: Using phantom-ui with Qwik.
 ---
 
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
 ## Setup
 
-```bash
-bun add @aejkatappaja/phantom-ui
-```
+<Tabs>
+  <TabItem label="npm">
+    ```sh
+    npm install @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```sh
+    pnpm add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```sh
+    yarn add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="bun">
+    ```sh
+    bun add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+</Tabs>
 
 The `postinstall` script generates a `phantom-ui.d.ts` file for JSX types automatically.
 

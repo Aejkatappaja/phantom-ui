@@ -3,6 +3,8 @@ title: TypeScript
 description: TypeScript setup for phantom-ui across frameworks.
 ---
 
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
 The package ships full type definitions and exports the following types:
 
 - `PhantomUi` -- the Web Component class
@@ -19,9 +21,28 @@ The `postinstall` script detects your project setup and handles two things autom
 
 If it did not run (CI, monorepos, `--ignore-scripts`), trigger it manually:
 
-```bash
-npx @aejkatappaja/phantom-ui init
-```
+<Tabs>
+  <TabItem label="npm">
+    ```sh
+    npx @aejkatappaja/phantom-ui init
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```sh
+    pnpm dlx @aejkatappaja/phantom-ui init
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```sh
+    yarn dlx @aejkatappaja/phantom-ui init
+    ```
+  </TabItem>
+  <TabItem label="bun">
+    ```sh
+    bunx @aejkatappaja/phantom-ui init
+    ```
+  </TabItem>
+</Tabs>
 
 ## Frameworks that need no setup
 

@@ -3,11 +3,32 @@ title: React
 description: Using phantom-ui with React.
 ---
 
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
 ## Setup
 
-```bash
-bun add @aejkatappaja/phantom-ui
-```
+<Tabs>
+  <TabItem label="npm">
+    ```sh
+    npm install @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```sh
+    pnpm add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```sh
+    yarn add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+  <TabItem label="bun">
+    ```sh
+    bun add @aejkatappaja/phantom-ui
+    ```
+  </TabItem>
+</Tabs>
 
 The `postinstall` script generates a `phantom-ui.d.ts` file for JSX types automatically.
 
@@ -66,6 +87,25 @@ declare module "react/jsx-runtime" {
 
 Or run:
 
-```bash
-npx @aejkatappaja/phantom-ui init
-```
+<Tabs>
+  <TabItem label="npm">
+    ```sh
+    npx @aejkatappaja/phantom-ui init
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```sh
+    pnpm dlx @aejkatappaja/phantom-ui init
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```sh
+    yarn dlx @aejkatappaja/phantom-ui init
+    ```
+  </TabItem>
+  <TabItem label="bun">
+    ```sh
+    bunx @aejkatappaja/phantom-ui init
+    ```
+  </TabItem>
+</Tabs>
