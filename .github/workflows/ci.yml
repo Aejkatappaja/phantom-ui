@@ -51,6 +51,7 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('bun.lock') }}
       - run: npx playwright install --with-deps chromium firefox webkit
+      - run: bun run test:cli
       - run: bun run test:all
 
   build-docs:
