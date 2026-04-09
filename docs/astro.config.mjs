@@ -16,6 +16,7 @@ export default defineConfig({
 			},
 			components: {
 				ThemeSelect: "./src/components/ThemeToggle.astro",
+				Header: "./src/components/Header.astro",
 			},
 			title: "phantom-ui",
 			logo: {
