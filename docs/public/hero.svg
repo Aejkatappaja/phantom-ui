@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" fill="none">
+  <!-- Phantom ghost -->
+  <g>
+    <!-- Body -->
+    <path d="M100 8 C78 8, 64 26, 64 46 L64 82 L64 90 C68 85, 73 85, 77 90 C81 85, 86 85, 90 90 C94 85, 99 85, 103 90 C107 85, 112 85, 116 90 C120 85, 125 85, 129 90 L129 82 L129 46 C129 26, 115 8, 100 8 Z" fill="#d0d0e8">
+      <animate attributeName="opacity" values="0.9;0.7;0.9" dur="3s" repeatCount="indefinite"/>
+    </path>
+
+    <!-- Eyes -->
+    <ellipse cx="88" cy="46" rx="7" ry="7.5" fill="#1a1a2e">
+      <animate attributeName="ry" values="7.5;1.5;7.5" dur="4s" begin="2s" repeatCount="indefinite"/>
+    </ellipse>
+    <ellipse cx="112" cy="46" rx="7" ry="7.5" fill="#1a1a2e">
+      <animate attributeName="ry" values="7.5;1.5;7.5" dur="4s" begin="2s" repeatCount="indefinite"/>
+    </ellipse>
+
+    <!-- Mouth -->
+    <ellipse cx="100" cy="64" rx="5" ry="6" fill="#1a1a2e"/>
+
+    <!-- Float -->
+    <animateTransform attributeName="transform" type="translate" values="0 0;0 -5;0 0;0 5;0 0" dur="3s" repeatCount="indefinite"/>
+  </g>
+
+  <!-- Shimmer particles floating around -->
+  <rect x="38" y="30" width="12" height="4" rx="2" fill="#2a2a5e">
+    <animate attributeName="opacity" values="0;0.6;0" dur="2s" begin="0s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;-6 -8;-12 -16" dur="2s" begin="0s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="150" y="40" width="16" height="4" rx="2" fill="#2a2a5e">
+    <animate attributeName="opacity" values="0;0.6;0" dur="2.5s" begin="0.5s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;8 -6;16 -12" dur="2.5s" begin="0.5s" repeatCount="indefinite"/>
+  </rect>
+  <circle cx="46" cy="70" r="3" fill="#2a2a5e">
+    <animate attributeName="opacity" values="0;0.5;0" dur="1.8s" begin="1s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;-8 -4;-16 -8" dur="1.8s" begin="1s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="158" cy="65" r="3" fill="#2a2a5e">
+    <animate attributeName="opacity" values="0;0.5;0" dur="2.2s" begin="0.3s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;6 -6;12 -12" dur="2.2s" begin="0.3s" repeatCount="indefinite"/>
+  </circle>
+  <rect x="42" y="50" width="8" height="3" rx="1.5" fill="#2a2a5e">
+    <animate attributeName="opacity" values="0;0.4;0" dur="2s" begin="1.5s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;-5 -10;-10 -20" dur="2s" begin="1.5s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="152" y="55" width="10" height="3" rx="1.5" fill="#2a2a5e">
+    <animate attributeName="opacity" values="0;0.4;0" dur="2.3s" begin="0.8s" repeatCount="indefinite"/>
+    <animateTransform attributeName="transform" type="translate" values="0 0;7 -8;14 -16" dur="2.3s" begin="0.8s" repeatCount="indefinite"/>
+  </rect>
+</svg>
