@@ -42,6 +42,11 @@ export const phantomUiStyles = css`
 		overflow: hidden;
 	}
 
+	.shimmer-container-block {
+		position: absolute;
+		box-sizing: border-box;
+	}
+
 	/* Shimmer mode (default) */
 	.shimmer-block::after {
 		content: "";

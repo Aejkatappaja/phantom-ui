@@ -2,8 +2,12 @@ import { LitElement, html } from "lit";
 import type { CSSResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
-import { createResizeObserver, extractElementInfo } from "./dom-measurement.js";
-import type { ElementInfo } from "./dom-measurement.js";
+import {
+	createResizeObserver,
+	extractContainerInfo,
+	extractElementInfo,
+} from "./dom-measurement.js";
+import type { ContainerInfo, ElementInfo } from "./dom-measurement.js";
 import { phantomUiStyles } from "./phantom-ui.styles.js";
 
 type Animation = "shimmer" | "pulse" | "breathe" | "solid";
@@ -256,12 +260,33 @@ export class PhantomUi extends LitElement {
 				slotHeight = Math.max(slotHeight, rect.bottom - hostRect.top);
 			}
 
+			const containers: ContainerInfo[] = [];
+			for (const el of assignedElements) {
+				const info = extractContainerInfo(el, hostRect);
+				if (info) containers.push(info);
+			}
+
 			const baseBlocks = [...allBlocks];
 			for (let i = 1; i < this.count; i++) {
+				const offset = i * (slotHeight + this.countGap);
+				for (const c of containers) {
+					allBlocks.push({
+						x: c.x,
+						y: c.y + offset,
+						width: c.width,
+						height: c.height,
+						tag: "container",
+						borderRadius: c.borderRadius,
+						isContainer: true,
+						containerBg: c.backgroundColor,
+						containerBorder: c.border,
+						containerShadow: c.boxShadow,
+					});
+				}
 				for (const block of baseBlocks) {
 					allBlocks.push({
 						...block,
-						y: block.y + i * (slotHeight + this.countGap),
+						y: block.y + offset,
 					});
 				}
 			}
@@ -320,6 +345,25 @@ export class PhantomUi extends LitElement {
 	private _renderBlocks() {
 		return this._blocks.map((block, index) => {
 			const radius = block.borderRadius || `${this.fallbackRadius}px`;
+
+			if (block.isContainer) {
+				return html`
+        <div
+          class="shimmer-container-block"
+          style="
+						left: ${block.x}px;
+						top: ${block.y}px;
+						width: ${block.width}px;
+						height: ${block.height}px;
+						border-radius: ${radius};
+						${block.containerBg ? `background: ${block.containerBg};` : ""}
+						${block.containerBorder ? `border: ${block.containerBorder};` : ""}
+						${block.containerShadow ? `box-shadow: ${block.containerShadow};` : ""}
+					"
+        ></div>
+      `;
+			}
+
 			const staggerDelay = this.stagger;
 			const delay = staggerDelay > 0 ? `animation-delay: ${index * staggerDelay}s;` : "";
 			return html`

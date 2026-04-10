@@ -15,6 +15,21 @@ export interface ElementInfo {
 	height: number;
 	tag: string;
 	borderRadius: string;
+	isContainer?: boolean;
+	containerBg?: string;
+	containerBorder?: string;
+	containerShadow?: string;
+}
+
+export interface ContainerInfo {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+	borderRadius: string;
+	backgroundColor: string;
+	border: string;
+	boxShadow: string;
 }
 
 const ALWAYS_LEAF_TAGS = new Set([
@@ -119,6 +134,38 @@ export function extractElementInfo(element: Element, parentRect: DOMRect): Eleme
 	walk(element);
 
 	return results;
+}
+
+export function extractContainerInfo(element: Element, parentRect: DOMRect): ContainerInfo | null {
+	const rect = element.getBoundingClientRect();
+	if (rect.width === 0 || rect.height === 0) return null;
+
+	const style = getComputedStyle(element);
+	const bg = style.backgroundColor;
+	const borderWidth = style.borderWidth;
+	const borderStyle = style.borderStyle;
+	const borderColor = style.borderColor;
+	const shadow = style.boxShadow;
+	const radius = style.borderRadius;
+
+	const isTransparent = bg === "rgba(0, 0, 0, 0)" || bg === "transparent";
+	const hasBorder = borderStyle !== "none" && borderWidth !== "0px";
+	const hasShadow = shadow !== "none" && shadow !== "";
+
+	if (isTransparent && !hasBorder && !hasShadow) return null;
+
+	const borderStr = hasBorder ? `${borderWidth} ${borderStyle} ${borderColor}` : "";
+
+	return {
+		x: rect.left - parentRect.left,
+		y: rect.top - parentRect.top,
+		width: rect.width,
+		height: rect.height,
+		borderRadius: radius === "0px" ? "" : radius,
+		backgroundColor: isTransparent ? "" : bg,
+		border: borderStr,
+		boxShadow: hasShadow ? shadow : "",
+	};
 }
 
 export function createResizeObserver(element: Element, callback: () => void): ResizeObserver {
