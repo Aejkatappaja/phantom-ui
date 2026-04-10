@@ -68,7 +68,7 @@ Fade-out duration in seconds when loading ends. Instead of an instant switch, th
 | --- | --- |
 | `number` | `1` |
 
-Number of skeleton rows to generate from a single template element. The component measures your slotted content once, then duplicates the skeleton blocks vertically. Useful for lists, tables, or feeds where you don't have data yet to render multiple items.
+Number of skeleton rows to generate from a single template element. The component measures your slotted content once, then duplicates the skeleton blocks vertically. If the slotted element has a visible background, border, or box-shadow, these are replicated on each repeated row automatically. Useful for lists, tables, or feeds where you don't have data yet to render multiple items.
 
 ```html
 <phantom-ui loading count="5">
