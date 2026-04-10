@@ -77,6 +77,28 @@ function PostList() {
   );
 }
 
+function UserList() {
+  const { data: users, isLoading } = useQuery({
+    queryKey: ["users"],
+    queryFn: () => fetchPosts(),
+  });
+
+  return (
+    <div>
+      <h2 className="section-title">Team (count mode)</h2>
+      <phantom-ui loading={isLoading} count={4} count-gap={10} animation="shimmer">
+        <div className="member-card">
+          <img src="" width="36" height="36" className="avatar-sm" alt="" />
+          <div className="member-info">
+            <strong>Placeholder Name</strong>
+            <span className="muted">placeholder@company.com</span>
+          </div>
+        </div>
+      </phantom-ui>
+    </div>
+  );
+}
+
 function RefetchButton() {
   return (
     <button
@@ -107,6 +129,7 @@ function App() {
         <div className="grid">
           <UserProfile />
           <PostList />
+          <UserList />
         </div>
       </div>
     </QueryClientProvider>

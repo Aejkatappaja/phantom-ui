@@ -145,3 +145,33 @@ body {
 	font-size: 12px;
 	color: #7aa2f7;
 }
+
+.member-card {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 12px 16px;
+	background: #1a1b26;
+	border: 1px solid #292e42;
+	border-radius: 10px;
+}
+
+.avatar-sm {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.member-info {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	font-size: 13px;
+}
+
+.muted {
+	color: #565f89;
+	font-size: 12px;
+}
