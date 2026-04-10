@@ -137,6 +137,35 @@ describe("phantom-ui", () => {
 		expect(el.countGap).to.equal(0);
 	});
 
+	it("count replicates container background for repeated rows", async () => {
+		const el = await fixture<PhantomUi>(html`
+			<phantom-ui loading count="3" count-gap="10">
+				<div style="width:200px;height:50px;background:#1a1b26;border:1px solid #292e42;border-radius:8px;">
+					<span style="display:inline-block;width:100px;height:16px;">Item</span>
+				</div>
+			</phantom-ui>
+		`);
+		await nextFrame();
+		await el.updateComplete;
+		const containers = el.shadowRoot?.querySelectorAll(".shimmer-container-block");
+		expect(containers).to.exist;
+		expect(containers?.length).to.equal(2);
+	});
+
+	it("count does not emit container blocks when background is transparent", async () => {
+		const el = await fixture<PhantomUi>(html`
+			<phantom-ui loading count="3">
+				<div style="width:200px;height:50px;">
+					<span style="display:inline-block;width:100px;height:16px;">Item</span>
+				</div>
+			</phantom-ui>
+		`);
+		await nextFrame();
+		await el.updateComplete;
+		const containers = el.shadowRoot?.querySelectorAll(".shimmer-container-block");
+		expect(containers?.length).to.equal(0);
+	});
+
 	it("applies stagger delay to blocks", async () => {
 		const el = await fixture<PhantomUi>(html`
 			<phantom-ui loading stagger="0.1">
