@@ -8,36 +8,6 @@ import { phantomUiStyles } from "./phantom-ui.styles.js";
 
 type Animation = "shimmer" | "pulse" | "breathe" | "solid";
 
-/**
- * `<phantom-ui>` -- A structure-aware shimmer skeleton loader.
- *
- * Wraps real content and, when `loading` is true, measures the DOM structure
- * of the slotted children to generate perfectly-aligned shimmer overlay blocks.
- *
- * @slot - The real content to show (or measure for skeleton generation)
- *
- * @attr {boolean} loading - Show the shimmer overlay or real content
- * @attr {string} shimmer-color - Color of the animated gradient wave
- * @attr {string} background-color - Background color of each shimmer block
- * @attr {number} duration - Animation cycle duration in seconds
- * @attr {number} fallback-radius - Border radius (px) for elements with no radius
- * @attr {Animation} animation - Animation mode: shimmer, pulse, breathe, or solid
- * @attr {number} stagger - Delay in seconds between each block's animation start
- * @attr {number} reveal - Fade-out duration in seconds when loading ends (0 = instant)
- * @attr {number} count - Number of skeleton rows to generate from a single template (1 = no repeat)
- * @attr {number} count-gap - Gap in pixels between repeated rows (only used when count > 1)
- *
- * @example
- * ```html
- * <phantom-ui loading animation="pulse" stagger="0.05">
- *   <div class="card">
- *     <img src="avatar.png" width="48" height="48" />
- *     <h3>User Name</h3>
- *     <p>Some description text here</p>
- *   </div>
- * </phantom-ui>
- * ```
- */
 const LIGHT_DOM_STYLE_ID = "phantom-ui-loading-styles";
 
 function injectLightDomStyles(): void {
@@ -76,6 +46,36 @@ function injectLightDomStyles(): void {
 	document.head.appendChild(style);
 }
 
+/**
+ * `<phantom-ui>` -- A structure-aware shimmer skeleton loader.
+ *
+ * Wraps real content and, when `loading` is true, measures the DOM structure
+ * of the slotted children to generate perfectly-aligned shimmer overlay blocks.
+ *
+ * @slot - The real content to show (or measure for skeleton generation)
+ *
+ * @attr {boolean} loading - Show the shimmer overlay or real content. The string `"false"` is treated as falsy.
+ * @attr {string} shimmer-color - Color of the animated gradient wave (shimmer mode only)
+ * @attr {string} background-color - Background color of each shimmer block (all modes)
+ * @attr {number} duration - Animation cycle duration in seconds
+ * @attr {number} fallback-radius - Border radius (px) for elements with no radius
+ * @attr {Animation} animation - Animation mode: `shimmer`, `pulse`, `breathe`, or `solid`
+ * @attr {number} stagger - Delay in seconds between each block's animation start (0 = no stagger)
+ * @attr {number} reveal - Fade-out duration in seconds when loading ends (0 = instant)
+ * @attr {number} count - Number of skeleton rows to generate from a single template (1 = no repeat)
+ * @attr {number} count-gap - Gap in pixels between repeated rows (only used when count > 1)
+ *
+ * @example
+ * ```tsx
+ * <phantom-ui loading={isLoading}>
+ *   <div class="card">
+ *     <img src={user?.avatar} width="48" height="48" />
+ *     <h3>{user?.name ?? "x"}</h3>
+ *     <p>{user?.bio ?? "x"}</p>
+ *   </div>
+ * </phantom-ui>
+ * ```
+ */
 @customElement("phantom-ui")
 export class PhantomUi extends LitElement {
 	static override styles: CSSResult = phantomUiStyles;
@@ -341,21 +341,42 @@ export class PhantomUi extends LitElement {
 }
 
 export interface PhantomUiAttributes {
+	/** Show the shimmer overlay (`true`) or the real content (`false`). Treats the string `"false"` as falsy. */
 	loading?: boolean;
+	/** Color of the animated gradient wave. Only used in `animation="shimmer"` mode. */
 	"shimmer-color"?: string;
+	/** Background color of each shimmer block. Applies to all animation modes. */
 	"background-color"?: string;
+	/** Animation cycle duration in seconds. */
 	duration?: number;
+	/** Border radius (px) applied to elements that have none (like text). */
 	"fallback-radius"?: number;
+	/** Animation mode: `"shimmer"` (gradient sweep), `"pulse"` (opacity), `"breathe"` (scale + fade), or `"solid"` (static). */
 	animation?: "shimmer" | "pulse" | "breathe" | "solid";
+	/** Delay in seconds between each block's animation start. `0` = no stagger. */
 	stagger?: number;
+	/** Fade-out duration in seconds when loading ends. `0` = instant. */
 	reveal?: number;
+	/** Number of skeleton rows to generate from a single template element. */
 	count?: number;
+	/** Gap in pixels between repeated rows (only used when `count > 1`). */
 	"count-gap"?: number;
+	/** Slotted content (React/Solid/Qwik). */
 	children?: unknown;
+	/** Standard HTML `class` attribute. */
 	class?: string;
+	/** Standard HTML `id` attribute. */
 	id?: string;
-	style?: string;
+	/** Inline styles — string or object (React). */
+	style?: string | Record<string, string>;
+	/** Named slot assignment. */
 	slot?: string;
+	/** React/Solid reconciliation key. Not passed to the DOM. */
+	key?: string | number;
+	/** Element ref (React/Solid). Not passed to the DOM. */
+	ref?: unknown;
+	/** Any `data-*` attribute. */
+	[key: `data-${string}`]: string | undefined;
 }
 
 /** Solid uses `attr:` prefix to set HTML attributes. This maps all PhantomUiAttributes to their `attr:` equivalents. */

@@ -8,8 +8,14 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "`<phantom-ui>` -- A structure-aware shimmer skeleton loader.\n\nWraps real content and, when `loading` is true, measures the DOM structure\nof the slotted children to generate perfectly-aligned shimmer overlay blocks.",
           "name": "PhantomUi",
+          "slots": [
+            {
+              "description": "The real content to show (or measure for skeleton generation)",
+              "name": ""
+            }
+          ],
           "members": [
             {
               "kind": "field",
@@ -234,93 +240,93 @@
           ],
           "attributes": [
             {
-              "name": "loading",
               "type": {
                 "text": "boolean"
               },
-              "default": "false",
               "description": "Whether to show the shimmer overlay or the real content",
+              "name": "loading",
+              "default": "false",
               "fieldName": "loading"
             },
             {
-              "name": "shimmer-color",
               "type": {
                 "text": "string"
               },
-              "default": "\"rgba(128, 128, 128, 0.3)\"",
               "description": "Color of the animated gradient wave. Only used in `animation=\"shimmer\"` mode.",
+              "name": "shimmer-color",
+              "default": "\"rgba(128, 128, 128, 0.3)\"",
               "fieldName": "shimmerColor"
             },
             {
-              "name": "background-color",
               "type": {
                 "text": "string"
               },
-              "default": "\"rgba(128, 128, 128, 0.2)\"",
               "description": "Background color of each shimmer block. Applies to all animation modes.",
+              "name": "background-color",
+              "default": "\"rgba(128, 128, 128, 0.2)\"",
               "fieldName": "backgroundColor"
             },
             {
-              "name": "duration",
               "type": {
                 "text": "number"
               },
-              "default": "1.5",
               "description": "Animation cycle duration in seconds",
+              "name": "duration",
+              "default": "1.5",
               "fieldName": "duration"
             },
             {
-              "name": "fallback-radius",
               "type": {
                 "text": "number"
               },
-              "default": "4",
               "description": "Border radius applied to elements with border-radius: 0 (like text)",
+              "name": "fallback-radius",
+              "default": "4",
               "fieldName": "fallbackRadius"
             },
             {
-              "name": "animation",
               "type": {
                 "text": "Animation"
               },
-              "default": "\"shimmer\"",
               "description": "Animation mode: \"shimmer\" (gradient sweep), \"pulse\" (opacity), \"breathe\" (scale + fade), or \"solid\" (static)",
+              "name": "animation",
+              "default": "\"shimmer\"",
               "fieldName": "animation"
             },
             {
-              "name": "stagger",
               "type": {
                 "text": "number"
               },
-              "default": "0",
               "description": "Delay in seconds between each block's animation start (0 = no stagger)",
+              "name": "stagger",
+              "default": "0",
               "fieldName": "stagger"
             },
             {
-              "name": "reveal",
               "type": {
                 "text": "number"
               },
-              "default": "0",
               "description": "Fade-out duration in seconds when loading ends (0 = instant)",
+              "name": "reveal",
+              "default": "0",
               "fieldName": "reveal"
             },
             {
-              "name": "count",
               "type": {
                 "text": "number"
               },
-              "default": "1",
               "description": "Number of skeleton rows to generate from a single template element",
+              "name": "count",
+              "default": "1",
               "fieldName": "count"
             },
             {
-              "name": "count-gap",
               "type": {
                 "text": "number"
               },
-              "default": "0",
               "description": "Gap in pixels between each repeated skeleton row (only used when count > 1)",
+              "name": "count-gap",
+              "default": "0",
               "fieldName": "countGap"
             }
           ],
