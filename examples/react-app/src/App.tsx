@@ -31,7 +31,7 @@ function App() {
         Toggle loading
       </button>
 
-      <phantom-ui loading={loading || undefined}>
+      <phantom-ui loading={loading}>
         <div
           style={{
             background: "#16213e",

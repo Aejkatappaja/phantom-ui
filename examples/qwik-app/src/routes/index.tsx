@@ -37,7 +37,7 @@ export default component$(() => {
       </button>
 
       {ready.value && (
-        <phantom-ui loading={loading.value || undefined}>
+        <phantom-ui loading={loading.value}>
           <div
             style={{
               background: "#16213e",

@@ -22,7 +22,7 @@ function App() {
         Toggle loading
       </button>
 
-      <phantom-ui attr:loading={loading() || undefined}>
+      <phantom-ui attr:loading={loading()}>
         <div
           style={{
             background: "#16213e",

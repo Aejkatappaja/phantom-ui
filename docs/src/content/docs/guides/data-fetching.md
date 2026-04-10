@@ -21,7 +21,7 @@ function UserProfile({ userId }: { userId: string }) {
 
   return (
     <phantom-ui loading={isLoading}>
-      <div className="card">
+      <div class="card">
         <img src={user?.avatar ?? "/placeholder.png"} width="48" height="48" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
         <p>{user?.bio ?? "A short bio goes here."}</p>
@@ -52,7 +52,7 @@ function UserProfile({ userId }: { userId: string }) {
 
   return (
     <phantom-ui loading={isLoading}>
-      <div className="card">
+      <div class="card">
         <img src={user?.avatar ?? "/placeholder.png"} width="48" height="48" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
         <p>{user?.bio ?? "A short bio goes here."}</p>
@@ -103,14 +103,14 @@ const { data: users, isLoading } = useQuery({
 return (
   <phantom-ui loading={isLoading} count={5} count-gap={8}>
     {isLoading ? (
-      <div className="row">
+      <div class="row">
         <img src="/placeholder.png" width="32" height="32" />
         <span>Placeholder Name</span>
         <span>placeholder@email.com</span>
       </div>
     ) : (
       users?.map((u) => (
-        <div key={u.id} className="row">
+        <div key={u.id} class="row">
           <img src={u.avatar} width="32" height="32" />
           <span>{u.name}</span>
           <span>{u.email}</span>
