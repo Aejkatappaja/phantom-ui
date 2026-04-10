@@ -341,6 +341,22 @@
       "exports": [
         {
           "kind": "js",
+          "name": "PhantomUiAttributes",
+          "declaration": {
+            "name": "PhantomUiAttributes",
+            "module": "./types.js"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "SolidPhantomUiAttributes",
+          "declaration": {
+            "name": "SolidPhantomUiAttributes",
+            "module": "./types.js"
+          }
+        },
+        {
+          "kind": "js",
           "name": "PhantomUi",
           "declaration": {
             "name": "PhantomUi",

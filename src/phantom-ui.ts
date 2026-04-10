@@ -8,47 +8,13 @@ import {
 	extractElementInfo,
 } from "./dom-measurement.js";
 import type { ContainerInfo, ElementInfo } from "./dom-measurement.js";
+import { injectLightDomStyles } from "./light-dom-styles.js";
 import { phantomUiStyles } from "./phantom-ui.styles.js";
 
+export type { PhantomUiAttributes, SolidPhantomUiAttributes } from "./types.js";
+import "./types.js";
+
 type Animation = "shimmer" | "pulse" | "breathe" | "solid";
-
-const LIGHT_DOM_STYLE_ID = "phantom-ui-loading-styles";
-
-function injectLightDomStyles(): void {
-	if (document.getElementById(LIGHT_DOM_STYLE_ID)) return;
-	const style = document.createElement("style");
-	style.id = LIGHT_DOM_STYLE_ID;
-	style.textContent = `
-		phantom-ui[loading] * {
-			-webkit-text-fill-color: transparent !important;
-			pointer-events: none;
-			user-select: none;
-		}
-		phantom-ui[loading] img,
-		phantom-ui[loading] svg,
-		phantom-ui[loading] video,
-		phantom-ui[loading] canvas,
-		phantom-ui[loading] button,
-		phantom-ui[loading] [role="button"] {
-			opacity: 0 !important;
-		}
-		phantom-ui[loading] [data-shimmer-ignore],
-		phantom-ui[loading] [data-shimmer-ignore] * {
-			-webkit-text-fill-color: initial !important;
-			pointer-events: auto;
-			user-select: auto;
-		}
-		phantom-ui[loading] [data-shimmer-ignore] img,
-		phantom-ui[loading] [data-shimmer-ignore] svg,
-		phantom-ui[loading] [data-shimmer-ignore] video,
-		phantom-ui[loading] [data-shimmer-ignore] canvas,
-		phantom-ui[loading] [data-shimmer-ignore] button,
-		phantom-ui[loading] [data-shimmer-ignore] [role="button"] {
-			opacity: 1 !important;
-		}
-	`;
-	document.head.appendChild(style);
-}
 
 /**
  * `<phantom-ui>` -- A structure-aware shimmer skeleton loader.
@@ -242,6 +208,8 @@ export class PhantomUi extends LitElement {
 		const hostRect = this.getBoundingClientRect();
 		if (hostRect.width === 0 || hostRect.height === 0) return;
 
+		if (this._mutationObserver) this._mutationObserver.disconnect();
+
 		const slot = this.shadowRoot?.querySelector("slot");
 		if (!slot) return;
 
@@ -275,7 +243,6 @@ export class PhantomUi extends LitElement {
 						y: c.y + offset,
 						width: c.width,
 						height: c.height,
-						tag: "container",
 						borderRadius: c.borderRadius,
 						isContainer: true,
 						containerBg: c.backgroundColor,
@@ -297,6 +264,14 @@ export class PhantomUi extends LitElement {
 		}
 
 		this._blocks = allBlocks;
+
+		if (this._mutationObserver) {
+			this._mutationObserver.observe(this, {
+				childList: true,
+				subtree: true,
+				attributes: true,
+			});
+		}
 	}
 
 	private _setupObservers(): void {
@@ -345,98 +320,33 @@ export class PhantomUi extends LitElement {
 	private _renderBlocks() {
 		return this._blocks.map((block, index) => {
 			const radius = block.borderRadius || `${this.fallbackRadius}px`;
+			const base = {
+				left: `${block.x}px`,
+				top: `${block.y}px`,
+				width: `${block.width}px`,
+				height: `${block.height}px`,
+				"border-radius": radius,
+			};
 
 			if (block.isContainer) {
-				return html`
-        <div
+				const styles: Record<string, string> = { ...base };
+				if (block.containerBg) styles.background = block.containerBg;
+				if (block.containerBorder) styles.border = block.containerBorder;
+				if (block.containerShadow) styles["box-shadow"] = block.containerShadow;
+				return html`<div
           class="shimmer-container-block"
-          style="
-						left: ${block.x}px;
-						top: ${block.y}px;
-						width: ${block.width}px;
-						height: ${block.height}px;
-						border-radius: ${radius};
-						${block.containerBg ? `background: ${block.containerBg};` : ""}
-						${block.containerBorder ? `border: ${block.containerBorder};` : ""}
-						${block.containerShadow ? `box-shadow: ${block.containerShadow};` : ""}
-					"
-        ></div>
-      `;
+          style=${styleMap(styles)}
+        ></div>`;
 			}
 
-			const staggerDelay = this.stagger;
-			const delay = staggerDelay > 0 ? `animation-delay: ${index * staggerDelay}s;` : "";
-			return html`
-        <div
-          class="shimmer-block"
-          style="
-						left: ${block.x}px;
-						top: ${block.y}px;
-						width: ${block.width}px;
-						height: ${block.height}px;
-						border-radius: ${radius};
-						background: var(--shimmer-bg, ${this.backgroundColor});
-						${delay}
-					"
-        ></div>
-      `;
+			const styles: Record<string, string> = {
+				...base,
+				background: `var(--shimmer-bg, ${this.backgroundColor})`,
+			};
+			if (this.stagger > 0) {
+				styles["animation-delay"] = `${index * this.stagger}s`;
+			}
+			return html`<div class="shimmer-block" style=${styleMap(styles)}></div>`;
 		});
-	}
-}
-
-export interface PhantomUiAttributes {
-	/** Show the shimmer overlay (`true`) or the real content (`false`). Treats the string `"false"` as falsy. */
-	loading?: boolean;
-	/** Color of the animated gradient wave. Only used in `animation="shimmer"` mode. */
-	"shimmer-color"?: string;
-	/** Background color of each shimmer block. Applies to all animation modes. */
-	"background-color"?: string;
-	/** Animation cycle duration in seconds. */
-	duration?: number;
-	/** Border radius (px) applied to elements that have none (like text). */
-	"fallback-radius"?: number;
-	/** Animation mode: `"shimmer"` (gradient sweep), `"pulse"` (opacity), `"breathe"` (scale + fade), or `"solid"` (static). */
-	animation?: "shimmer" | "pulse" | "breathe" | "solid";
-	/** Delay in seconds between each block's animation start. `0` = no stagger. */
-	stagger?: number;
-	/** Fade-out duration in seconds when loading ends. `0` = instant. */
-	reveal?: number;
-	/** Number of skeleton rows to generate from a single template element. */
-	count?: number;
-	/** Gap in pixels between repeated rows (only used when `count > 1`). */
-	"count-gap"?: number;
-	/** Slotted content (React/Solid/Qwik). */
-	children?: unknown;
-	/** Standard HTML `class` attribute. */
-	class?: string;
-	/** Standard HTML `id` attribute. */
-	id?: string;
-	/** Inline styles — string or object (React). */
-	style?: string | Record<string, string>;
-	/** Named slot assignment. */
-	slot?: string;
-	/** React/Solid reconciliation key. Not passed to the DOM. */
-	key?: string | number;
-	/** Element ref (React/Solid). Not passed to the DOM. */
-	ref?: unknown;
-	/** Any `data-*` attribute. */
-	[key: `data-${string}`]: string | undefined;
-}
-
-/** Solid uses `attr:` prefix to set HTML attributes. This maps all PhantomUiAttributes to their `attr:` equivalents. */
-export type SolidPhantomUiAttributes = PhantomUiAttributes & {
-	[K in keyof PhantomUiAttributes as `attr:${K & string}`]?: PhantomUiAttributes[K];
-};
-
-declare global {
-	interface HTMLElementTagNameMap {
-		"phantom-ui": PhantomUi;
-	}
-
-	// Solid, Preact, React <19
-	namespace JSX {
-		interface IntrinsicElements {
-			"phantom-ui": PhantomUiAttributes;
-		}
 	}
 }

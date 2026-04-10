@@ -4,29 +4,26 @@
  * to generate shimmer overlay blocks.
  *
  * Based on a well-established technique (getBoundingClientRect overlay skeletons)
- * with prior art from page-skeleton-webpack-plugin (2018),
- * @findify/skeleton-generator (~2019), and shimmer-from-structure (2026).
+ * with prior art from page-skeleton-webpack-plugin (2018)
+ * and @findify/skeleton-generator (~2019).
  */
 
-export interface ElementInfo {
+interface BaseInfo {
 	x: number;
 	y: number;
 	width: number;
 	height: number;
-	tag: string;
 	borderRadius: string;
+}
+
+export interface ElementInfo extends BaseInfo {
 	isContainer?: boolean;
 	containerBg?: string;
 	containerBorder?: string;
 	containerShadow?: string;
 }
 
-export interface ContainerInfo {
-	x: number;
-	y: number;
-	width: number;
-	height: number;
-	borderRadius: string;
+export interface ContainerInfo extends BaseInfo {
 	backgroundColor: string;
 	border: string;
 	boxShadow: string;
@@ -44,7 +41,7 @@ const ALWAYS_LEAF_TAGS = new Set([
 	"HR",
 ]);
 
-const VOID_TAGS = new Set(["BR", "WBR", "HR"]);
+const VOID_TAGS = new Set(["BR", "WBR"]);
 
 function isLeafElement(element: Element): boolean {
 	if (ALWAYS_LEAF_TAGS.has(element.tagName)) {
@@ -77,10 +74,11 @@ export function extractElementInfo(element: Element, parentRect: DOMRect): Eleme
 
 		const overrideW = Number(el.getAttribute("data-shimmer-width")) || 0;
 		const overrideH = Number(el.getAttribute("data-shimmer-height")) || 0;
+		const hasOverride = overrideW > 0 || overrideH > 0;
 		const w = overrideW || rect.width;
 		const h = overrideH || rect.height;
 
-		if (w === 0 || h === 0) {
+		if ((w === 0 || h === 0) && !hasOverride) {
 			return;
 		}
 
@@ -109,7 +107,6 @@ export function extractElementInfo(element: Element, parentRect: DOMRect): Eleme
 					y: rect.top - parentRect.top,
 					width: Math.min(spanRect.width, rect.width),
 					height: h,
-					tag: el.tagName.toLowerCase(),
 					borderRadius: borderRadius === "0px" ? "" : borderRadius,
 				});
 				return;
@@ -120,7 +117,6 @@ export function extractElementInfo(element: Element, parentRect: DOMRect): Eleme
 				y: rect.top - parentRect.top,
 				width: w,
 				height: h,
-				tag: el.tagName.toLowerCase(),
 				borderRadius: borderRadius === "0px" ? "" : borderRadius,
 			});
 			return;

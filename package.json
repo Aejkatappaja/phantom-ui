@@ -24,6 +24,9 @@
 		"dist/phantom-ui.js",
 		"dist/phantom-ui.cdn.js",
 		"dist/phantom-ui.d.ts",
+		"dist/types.d.ts",
+		"dist/light-dom-styles.d.ts",
+		"dist/dom-measurement.d.ts",
 		"dist/ssr.css",
 		"src/cli/init.mjs",
 		"custom-elements.json"
