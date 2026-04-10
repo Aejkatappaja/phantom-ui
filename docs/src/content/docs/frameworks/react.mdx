@@ -47,8 +47,8 @@ function UserCard() {
 
   return (
     <phantom-ui loading={!user}>
-      <div class="card">
-        <img src={user?.avatar ?? "/placeholder.png"} class="avatar" />
+      <div className="card">
+        <img src={user?.avatar ?? "/placeholder.png"} className="avatar" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
         <p>{user?.bio ?? "A short bio goes here for measurement."}</p>
       </div>

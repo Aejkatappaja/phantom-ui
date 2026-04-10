@@ -175,7 +175,7 @@ function UserProfile({ userId }: { userId: string }) {
 
   return (
     <phantom-ui loading={isLoading}>
-      <div class="card">
+      <div className="card">
         <img src={user?.avatar ?? "/placeholder.png"} width="48" height="48" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
         <p>{user?.bio ?? "A short bio goes here."}</p>
@@ -198,7 +198,7 @@ function UserProfile({ userId }: { userId: string }) {
 
   return (
     <phantom-ui loading={isLoading}>
-      <div class="card">
+      <div className="card">
         <img src={user?.avatar ?? "/placeholder.png"} width="48" height="48" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
         <p>{user?.bio ?? "A short bio goes here."}</p>
@@ -221,14 +221,14 @@ const { data: users, isLoading } = useQuery({
 return (
   <phantom-ui loading={isLoading} count={5} count-gap={8}>
     {isLoading ? (
-      <div class="row">
+      <div className="row">
         <img src="/placeholder.png" width="32" height="32" />
         <span>Placeholder Name</span>
         <span>placeholder@email.com</span>
       </div>
     ) : (
       users?.map((u) => (
-        <div key={u.id} class="row">
+        <div key={u.id} className="row">
           <img src={u.avatar} width="32" height="32" />
           <span>{u.name}</span>
           <span>{u.email}</span>
@@ -249,8 +249,8 @@ import "@aejkatappaja/phantom-ui";
 function ProfileCard({ user, isLoading }: Props) {
   return (
     <phantom-ui loading={isLoading} animation="pulse" reveal={0.3}>
-      <div class="card">
-        <img src={user?.avatar ?? "/placeholder.png"} class="avatar" />
+      <div className="card">
+        <img src={user?.avatar ?? "/placeholder.png"} className="avatar" />
         <h3>{user?.name ?? "Placeholder Name"}</h3>
         <p>{user?.bio ?? "A few words about this person go here."}</p>
       </div>
@@ -262,7 +262,7 @@ function ProfileCard({ user, isLoading }: Props) {
 function UserList({ users, isLoading }: Props) {
   return (
     <phantom-ui loading={isLoading} count={5} count-gap={8}>
-      <div class="row">
+      <div className="row">
         <img src="/placeholder.png" width="32" height="32" />
         <span>Placeholder Name</span>
       </div>

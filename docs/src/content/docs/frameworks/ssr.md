@@ -50,7 +50,7 @@ export default function UserCard() {
 
   return (
     <phantom-ui loading={!user}>
-      <div class="card">
+      <div className="card">
         <h3>{user?.name ?? "Placeholder Name"}</h3>
         <p>{user?.bio ?? "A short bio goes here."}</p>
       </div>
@@ -131,7 +131,7 @@ export default function UserCard() {
 
   return (
     <phantom-ui loading={!ready}>
-      <div class="card">
+      <div className="card">
         <h3>{data.name}</h3>
         <p>{data.bio}</p>
       </div>
