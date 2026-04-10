@@ -12,6 +12,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>phantom-ui / demo</title>
 	<meta name="description" content="Interactive demo for phantom-ui — structure-aware skeleton loader Web Component." />
+	<link rel="icon" type="image/svg+xml" href="/phantom-ui/favicon.svg" />
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 	<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -524,44 +525,43 @@
 			</div>
 		</div>
 
-		<div class="repeat-card">
-			<div class="feed-head" data-shimmer-ignore>Activity Feed</div>
-			<phantom-ui class="count-target" count="5" count-gap="0">
-				<div class="feed-row">
-					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=33" alt="" width="32" height="32" />
-					<div class="feed-text">
-						<strong>New deployment successful</strong>
-						<span class="muted small">Production v2.4.1 deployed</span>
+		<div style="display:flex;flex-direction:column;gap:12px">
+			<phantom-ui class="count-target" count="4" count-gap="12">
+				<div class="count-card">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=33" alt="" width="40" height="40" />
+					<div class="count-card-info">
+						<strong>Sarah Chen</strong>
+						<span class="muted small">Staff Engineer at Vercel</span>
 					</div>
 				</div>
 			</phantom-ui>
-			<div class="loaded-rows">
-				<div class="feed-row">
-					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=25" alt="" width="32" height="32" />
-					<div class="feed-text">
-						<strong>PR #891 merged</strong>
-						<span class="muted small">Auth service migration by @alex</span>
+			<div class="loaded-rows count-card-list">
+				<div class="count-card">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=25" alt="" width="40" height="40" />
+					<div class="count-card-info">
+						<strong>Marcus Johnson</strong>
+						<span class="muted small">Design Lead at Figma</span>
 					</div>
 				</div>
-				<div class="feed-row">
-					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=68" alt="" width="32" height="32" />
-					<div class="feed-text">
-						<strong>Build optimized</strong>
-						<span class="muted small">Bundle size reduced 34%</span>
+				<div class="count-card">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=68" alt="" width="40" height="40" />
+					<div class="count-card-info">
+						<strong>Elena Rodriguez</strong>
+						<span class="muted small">Senior SRE at Datadog</span>
 					</div>
 				</div>
-				<div class="feed-row">
-					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=15" alt="" width="32" height="32" />
-					<div class="feed-text">
-						<strong>New issue opened</strong>
-						<span class="muted small">Memory leak in worker pool #342</span>
+				<div class="count-card">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=15" alt="" width="40" height="40" />
+					<div class="count-card-info">
+						<strong>James Park</strong>
+						<span class="muted small">Frontend Architect at Stripe</span>
 					</div>
 				</div>
-				<div class="feed-row">
-					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=51" alt="" width="32" height="32" />
-					<div class="feed-text">
-						<strong>Release v2.5.0 tagged</strong>
-						<span class="muted small">12 commits since v2.4.1</span>
+				<div class="count-card">
+					<img class="dot-avatar" src="https://i.pravatar.cc/64?img=51" alt="" width="40" height="40" />
+					<div class="count-card-info">
+						<strong>Aisha Patel</strong>
+						<span class="muted small">Principal Engineer at Netflix</span>
 					</div>
 				</div>
 			</div>
@@ -768,6 +768,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		overlay.classList.add("open");
 		var fab = document.getElementById("mobile-fab");
 		if (fab) fab.style.display = "none";
+		document.body.style.overflow = "hidden";
 		requestAnimationFrame(function () { sheet.classList.add("open"); });
 	}
 
@@ -775,6 +776,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		sheet.style.transform = "";
 		sheet.classList.remove("open");
 		overlay.classList.remove("open");
+		document.body.style.overflow = "";
 		var fab = document.getElementById("mobile-fab");
 		if (fab) fab.style.display = "";
 	}
@@ -1673,6 +1675,16 @@ document.addEventListener("DOMContentLoaded", function () {
 		display: flex; align-items: center; gap: 10px;
 		padding: 10px 16px; font-size: 13px;
 	}
+
+	.count-card {
+		display: flex; align-items: center; gap: 12px;
+		padding: 14px 16px; font-size: 13px;
+		background: var(--bg-surface); border: 1px solid var(--border);
+		border-radius: var(--radius);
+	}
+
+	.count-card-info { display: flex; flex-direction: column; gap: 2px; }
+	.count-card-list { display: flex; flex-direction: column; gap: 12px; }
 
 	.feed-text { flex: 1; min-width: 0; }
 	.feed-text strong { display: block; margin-bottom: 2px; }
