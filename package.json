@@ -1,6 +1,6 @@
 {
 	"name": "@aejkatappaja/phantom-ui",
-	"version": "0.8.0",
+	"version": "0.8.1",
 	"description": "Structure-aware shimmer skeleton loader as a universal Web Component built with Lit. Works with React, Vue, Svelte, Angular, Solid, or vanilla JS.",
 	"repository": {
 		"type": "git",
