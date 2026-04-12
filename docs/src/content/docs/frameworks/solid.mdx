@@ -44,7 +44,7 @@ function UserCard() {
   const [user] = createResource(fetchUser);
 
   return (
-    <phantom-ui attr:loading={user.loading}>
+    <phantom-ui attr:loading={user.loading ? "" : null}>
       <div class="card">
         <img src={user()?.avatar ?? "/placeholder.png"} class="avatar" />
         <h3>{user()?.name ?? "Placeholder Name"}</h3>
@@ -60,11 +60,12 @@ function UserCard() {
 Solid treats unknown props as DOM properties by default. Use `attr:loading` to set it as an HTML attribute:
 
 ```tsx
-// Correct
-<phantom-ui attr:loading={loading()}>
+// Correct — null removes the attribute entirely
+<phantom-ui attr:loading={loading() ? "" : null}>
 
-// Wrong - sets as DOM property, not attribute
-<phantom-ui loading={loading()}>
+// Wrong — attr:loading={false} sets loading="false" in the DOM,
+// which the CSS selector phantom-ui[loading] still matches
+<phantom-ui attr:loading={loading()}>
 ```
 
 ## TypeScript

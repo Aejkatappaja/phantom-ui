@@ -343,7 +343,7 @@ function ProfileCard() {
   const [loading, setLoading] = createSignal(true);
 
   return (
-    <phantom-ui attr:loading={loading()} animation="shimmer" stagger={0.05}>
+    <phantom-ui attr:loading={loading() ? "" : null} animation="shimmer" stagger={0.05}>
       <div class="card">
         <img src="/avatar.png" class="avatar" />
         <h3>Ada Lovelace</h3>
