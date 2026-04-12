@@ -553,7 +553,7 @@ The `examples/` directory contains test apps for React, Vue, Solid, Angular, and
 
 ## Acknowledgements
 
-The DOM-measurement overlay technique builds on prior art from [page-skeleton-webpack-plugin](https://github.com/nicehash/nicehash-page-skeleton-webpack-plugin) (2018) and [@findify/skeleton-generator](https://github.com/nicehash/nicehash-page-skeleton-webpack-plugin) (~2019). phantom-ui reimagines this concept as a single universal Web Component instead of framework-specific adapters.
+The DOM-measurement overlay technique builds on prior art from [page-skeleton-webpack-plugin](https://github.com/ElemeFE/page-skeleton-webpack-plugin) (2018) and [@findify/skeleton-generator](https://github.com/findify/skeleton-generator) (~2019). phantom-ui reimagines this concept as a single universal Web Component instead of framework-specific adapters.
 
 ## License
 
