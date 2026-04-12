@@ -1,30 +1,36 @@
 import { Component, signal, CUSTOM_ELEMENTS_SCHEMA } from "@angular/core";
 import "@aejkatappaja/phantom-ui";
 
+interface User {
+  name: string;
+  role: string;
+  bio: string;
+  avatar: string;
+  tags: string[];
+}
+
 @Component({
   selector: "app-root",
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   template: `
     <div class="app">
       <h1>Angular + phantom-ui</h1>
-      <button class="toggle" (click)="toggleLoading()">Toggle loading</button>
+      <button class="toggle" (click)="fetchUser()">Reload user</button>
 
-      <phantom-ui [attr.loading]="loading() ? '' : null">
+      <phantom-ui [attr.loading]="loading() ? '' : null" reveal="0.3">
         <div class="card">
           <div class="header">
-            <img src="https://i.pravatar.cc/96?img=12" alt="avatar" class="avatar" />
+            <img [src]="user()?.avatar ?? ''" alt="avatar" class="avatar" width="48" height="48" />
             <div>
-              <h3>Sarah Chen</h3>
-              <p class="subtitle">Senior Engineer</p>
+              <h3>{{ user()?.name ?? 'x' }}</h3>
+              <p class="subtitle">{{ user()?.role ?? 'x' }}</p>
             </div>
           </div>
-          <p class="body">
-            Building scalable distributed systems and mentoring junior engineers.
-          </p>
+          <p class="body">{{ user()?.bio ?? 'x' }}</p>
           <div class="tags">
-            <span class="tag">Rust</span>
-            <span class="tag">TypeScript</span>
-            <span class="tag">Go</span>
+            @for (tag of user()?.tags ?? ['x', 'x', 'x']; track tag) {
+              <span class="tag">{{ tag }}</span>
+            }
           </div>
         </div>
       </phantom-ui>
@@ -82,8 +88,25 @@ import "@aejkatappaja/phantom-ui";
 })
 export class App {
   protected readonly loading = signal(true);
+  protected readonly user = signal<User | null>(null);
 
-  toggleLoading() {
-    this.loading.update((v) => !v);
+  constructor() {
+    this.fetchUser();
+  }
+
+  fetchUser() {
+    this.loading.set(true);
+    this.user.set(null);
+
+    setTimeout(() => {
+      this.user.set({
+        name: "Sarah Chen",
+        role: "Senior Engineer",
+        bio: "Building scalable distributed systems and mentoring junior engineers.",
+        avatar: "https://i.pravatar.cc/96?img=12",
+        tags: ["Rust", "TypeScript", "Go"],
+      });
+      this.loading.set(false);
+    }, 2000);
   }
 }
