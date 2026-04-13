@@ -1,13 +1,13 @@
-import { LitElement, html } from "lit";
 import type { CSSResult } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
+import type { ContainerInfo, ElementInfo } from "./dom-measurement.js";
 import {
 	createResizeObserver,
 	extractContainerInfo,
 	extractElementInfo,
 } from "./dom-measurement.js";
-import type { ContainerInfo, ElementInfo } from "./dom-measurement.js";
 import { injectLightDomStyles } from "./light-dom-styles.js";
 import { phantomUiStyles } from "./phantom-ui.styles.js";
 
