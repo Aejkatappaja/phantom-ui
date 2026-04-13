@@ -423,6 +423,7 @@ The `postinstall` script automatically detects SSR frameworks and adds this impo
 | --- | --- | --- | --- |
 | `loading` | `boolean` | `false` | Show shimmer overlay or real content |
 | `animation` | `string` | `shimmer` | Animation mode: `shimmer`, `pulse`, `breathe`, or `solid` |
+| `shimmer-direction` | `string` | `ltr` | Direction of the shimmer sweep: `ltr`, `rtl`, `ttb`, or `btt` (shimmer mode only) |
 | `shimmer-color` | `string` | `rgba(128,128,128,0.3)` | Color of the animated gradient sweep (shimmer mode only) |
 | `background-color` | `string` | `rgba(128,128,128,0.2)` | Background of each shimmer block (all modes) |
 | `duration` | `number` | `1.5` | Animation cycle in seconds |

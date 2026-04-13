@@ -97,6 +97,24 @@ Gap in pixels between each repeated skeleton row. Only applies when `count` is g
 </phantom-ui>
 ```
 
+## `shimmer-direction`
+
+| Type | Default | Reflects |
+| --- | --- | --- |
+| `string` | `ltr` | Yes |
+
+Direction of the shimmer gradient sweep. Only applies to `animation="shimmer"` (the default).
+
+- `ltr` -- left to right (default)
+- `rtl` -- right to left
+- `ttb` -- top to bottom
+- `btt` -- bottom to top
+
+```html
+<phantom-ui loading shimmer-direction="rtl">...</phantom-ui>
+<phantom-ui loading shimmer-direction="ttb">...</phantom-ui>
+```
+
 ## `shimmer-color`
 
 | Type | Default |
