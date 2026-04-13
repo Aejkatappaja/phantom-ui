@@ -75,13 +75,24 @@
 
 		<div class="ctrl-sep"></div>
 
-		<div class="ctrl-group">
-			<span class="ctrl-label">Animation</span>
-			<div class="pills" data-control="animation">
-				<button class="pill active" data-value="shimmer">shimmer</button>
-				<button class="pill" data-value="pulse">pulse</button>
-				<button class="pill" data-value="breathe">breathe</button>
-				<button class="pill" data-value="solid">solid</button>
+		<div class="ctrl-stack">
+			<div class="ctrl-group">
+				<span class="ctrl-label">Animation</span>
+				<div class="pills" data-control="animation">
+					<button class="pill active" data-value="shimmer">shimmer</button>
+					<button class="pill" data-value="pulse">pulse</button>
+					<button class="pill" data-value="breathe">breathe</button>
+					<button class="pill" data-value="solid">solid</button>
+				</div>
+			</div>
+			<div class="ctrl-group" id="direction-group">
+				<span class="ctrl-label">Direction</span>
+				<div class="pills" data-control="shimmer-direction">
+					<button class="pill" data-value="rtl">◀</button>
+					<button class="pill" data-value="btt">▲</button>
+					<button class="pill" data-value="ttb">▼</button>
+					<button class="pill active" data-value="ltr">▶</button>
+				</div>
 			</div>
 		</div>
 
@@ -627,13 +638,22 @@ document.addEventListener("DOMContentLoaded", function () {
 	});
 	mobileToggle.addEventListener("click", toggleLoading);
 
+	function updateDirectionState(mode) {
+		document.querySelectorAll('[data-control="shimmer-direction"] .pill').forEach(function (p) {
+			p.disabled = mode !== "shimmer";
+		});
+	}
+
 	document.querySelectorAll(".pills").forEach(function (group) {
+		var attr = group.dataset.control;
 		group.querySelectorAll(".pill").forEach(function (pill) {
 			pill.addEventListener("click", function () {
-				document.querySelectorAll(".pills .pill").forEach(function (p) {
+				if (pill.disabled) return;
+				group.querySelectorAll(".pill").forEach(function (p) {
 					p.classList.toggle("active", p.dataset.value === pill.dataset.value);
 				});
-				allEls.forEach(function (el) { el.setAttribute("animation", pill.dataset.value); });
+				allEls.forEach(function (el) { el.setAttribute(attr, pill.dataset.value); });
+				if (attr === "animation") updateDirectionState(pill.dataset.value);
 			});
 		});
 	});
@@ -708,6 +728,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		var animGroup = inner.querySelector('[data-control="animation"]').parentElement.cloneNode(true);
 		sheetBody.appendChild(animGroup);
+		var dirGroup = inner.querySelector('[data-control="shimmer-direction"]').parentElement.cloneNode(true);
+		sheetBody.appendChild(dirGroup);
 
 		var colorRow = document.createElement("div");
 		colorRow.className = "sheet-row";
@@ -730,12 +752,17 @@ document.addEventListener("DOMContentLoaded", function () {
 			sheetBody.appendChild(row);
 		});
 
-		sheetBody.querySelectorAll(".pill").forEach(function (pill) {
-			pill.addEventListener("click", function () {
-				document.querySelectorAll(".pills .pill").forEach(function (p) {
-					p.classList.toggle("active", p.dataset.value === pill.dataset.value);
+		sheetBody.querySelectorAll(".pills").forEach(function (group) {
+			var attr = group.dataset.control;
+			group.querySelectorAll(".pill").forEach(function (pill) {
+				pill.addEventListener("click", function () {
+					if (pill.disabled) return;
+					group.querySelectorAll(".pill").forEach(function (p) {
+						p.classList.toggle("active", p.dataset.value === pill.dataset.value);
+					});
+					allEls.forEach(function (el) { el.setAttribute(attr, pill.dataset.value); });
+					if (attr === "animation") updateDirectionState(pill.dataset.value);
 				});
-				allEls.forEach(function (el) { el.setAttribute("animation", pill.dataset.value); });
 			});
 		});
 
@@ -1115,6 +1142,10 @@ document.addEventListener("DOMContentLoaded", function () {
 	.pill.active {
 		background: var(--accent); border-color: var(--accent);
 		color: var(--bg-deep);
+	}
+
+	.pill:disabled {
+		opacity: 0.3; cursor: not-allowed; pointer-events: none;
 	}
 
 	.swatches { display: flex; gap: 6px; }
