@@ -166,6 +166,29 @@ describe("phantom-ui", () => {
 		expect(containers?.length).to.equal(0);
 	});
 
+	describe("shimmer-direction", () => {
+		it("defaults to ltr", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="width:100px;height:50px;">Text</div>
+				</phantom-ui>
+			`);
+			expect(el.shimmerDirection).to.equal("ltr");
+		});
+
+		for (const dir of ["ltr", "rtl", "ttb", "btt"] as const) {
+			it(`reflects shimmer-direction="${dir}" on host`, async () => {
+				const el = await fixture<PhantomUi>(html`
+					<phantom-ui loading shimmer-direction="${dir}">
+						<div style="width:100px;height:50px;">Text</div>
+					</phantom-ui>
+				`);
+				expect(el.getAttribute("shimmer-direction")).to.equal(dir);
+				expect(el.shimmerDirection).to.equal(dir);
+			});
+		}
+	});
+
 	it("applies stagger delay to blocks", async () => {
 		const el = await fixture<PhantomUi>(html`
 			<phantom-ui loading stagger="0.1">

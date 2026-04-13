@@ -15,6 +15,7 @@ export type { PhantomUiAttributes, SolidPhantomUiAttributes } from "./types.js";
 import "./types.js";
 
 type Animation = "shimmer" | "pulse" | "breathe" | "solid";
+type ShimmerDirection = "ltr" | "rtl" | "ttb" | "btt";
 
 /**
  * `<phantom-ui>` -- A structure-aware shimmer skeleton loader.
@@ -25,6 +26,7 @@ type Animation = "shimmer" | "pulse" | "breathe" | "solid";
  * @slot - The real content to show (or measure for skeleton generation)
  *
  * @attr {boolean} loading - Show the shimmer overlay or real content. The string `"false"` is treated as falsy.
+ * @attr {ShimmerDirection} shimmer-direction - Direction of the shimmer sweep: `ltr`, `rtl`, `ttb`, or `btt` (shimmer mode only)
  * @attr {string} shimmer-color - Color of the animated gradient wave (shimmer mode only)
  * @attr {string} background-color - Background color of each shimmer block (all modes)
  * @attr {number} duration - Animation cycle duration in seconds
@@ -60,6 +62,10 @@ export class PhantomUi extends LitElement {
 		},
 	})
 	loading = false;
+
+	/** Direction of the shimmer sweep. Only used in `animation="shimmer"` mode. */
+	@property({ attribute: "shimmer-direction", reflect: true })
+	shimmerDirection: ShimmerDirection = "ltr";
 
 	/** Color of the animated gradient wave. Only used in `animation="shimmer"` mode. */
 	@property({ attribute: "shimmer-color" })
@@ -170,6 +176,7 @@ export class PhantomUi extends LitElement {
 			"--shimmer-duration": `${this.duration}s`,
 			"--shimmer-bg": this.backgroundColor,
 			"--reveal-duration": `${this.reveal}s`,
+			"--shimmer-direction": this.shimmerDirection,
 		});
 
 		const showOverlay = this.loading || this._revealing;

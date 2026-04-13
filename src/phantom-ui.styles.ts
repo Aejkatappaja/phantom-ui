@@ -47,7 +47,7 @@ export const phantomUiStyles = css`
 		box-sizing: border-box;
 	}
 
-	/* Shimmer mode (default) */
+	/* Shimmer mode (default) — ltr */
 	.shimmer-block::after {
 		content: "";
 		position: absolute;
@@ -59,16 +59,56 @@ export const phantomUiStyles = css`
 			var(--shimmer-bg) 70%
 		);
 		background-size: 200% 100%;
-		animation: shimmer-sweep var(--shimmer-duration, 1.5s) linear infinite;
+		animation: shimmer-ltr var(--shimmer-duration, 1.5s) linear infinite;
 	}
 
-	@keyframes shimmer-sweep {
-		0% {
-			background-position: 200% 0;
-		}
-		100% {
-			background-position: -200% 0;
-		}
+	@keyframes shimmer-ltr {
+		0% { background-position: 200% 0; }
+		100% { background-position: -200% 0; }
+	}
+
+	/* Shimmer rtl */
+	:host([shimmer-direction="rtl"]) .shimmer-block::after {
+		animation-name: shimmer-rtl;
+	}
+
+	@keyframes shimmer-rtl {
+		0% { background-position: -200% 0; }
+		100% { background-position: 200% 0; }
+	}
+
+	/* Shimmer ttb */
+	:host([shimmer-direction="ttb"]) .shimmer-block::after {
+		background: linear-gradient(
+			180deg,
+			var(--shimmer-bg) 30%,
+			var(--shimmer-color) 50%,
+			var(--shimmer-bg) 70%
+		);
+		background-size: 100% 200%;
+		animation-name: shimmer-ttb;
+	}
+
+	@keyframes shimmer-ttb {
+		0% { background-position: 0 200%; }
+		100% { background-position: 0 -200%; }
+	}
+
+	/* Shimmer btt */
+	:host([shimmer-direction="btt"]) .shimmer-block::after {
+		background: linear-gradient(
+			180deg,
+			var(--shimmer-bg) 30%,
+			var(--shimmer-color) 50%,
+			var(--shimmer-bg) 70%
+		);
+		background-size: 100% 200%;
+		animation-name: shimmer-btt;
+	}
+
+	@keyframes shimmer-btt {
+		0% { background-position: 0 -200%; }
+		100% { background-position: 0 200%; }
 	}
 
 	/* Pulse mode */

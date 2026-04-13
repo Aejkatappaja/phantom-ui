@@ -30,6 +30,17 @@
             },
             {
               "kind": "field",
+              "name": "shimmerDirection",
+              "type": {
+                "text": "ShimmerDirection"
+              },
+              "default": "\"ltr\"",
+              "description": "Direction of the shimmer sweep. Only used in `animation=\"shimmer\"` mode.",
+              "attribute": "shimmer-direction",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "shimmerColor",
               "type": {
                 "text": "string"
@@ -247,6 +258,15 @@
               "name": "loading",
               "default": "false",
               "fieldName": "loading"
+            },
+            {
+              "type": {
+                "text": "ShimmerDirection"
+              },
+              "description": "Direction of the shimmer sweep. Only used in `animation=\"shimmer\"` mode.",
+              "name": "shimmer-direction",
+              "default": "\"ltr\"",
+              "fieldName": "shimmerDirection"
             },
             {
               "type": {

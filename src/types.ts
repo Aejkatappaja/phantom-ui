@@ -3,6 +3,8 @@ import type { PhantomUi } from "./phantom-ui.js";
 export interface PhantomUiAttributes {
 	/** Show the shimmer overlay (`true`) or the real content (`false`). Treats the string `"false"` as falsy. */
 	loading?: boolean;
+	/** Direction of the shimmer sweep: `"ltr"`, `"rtl"`, `"ttb"`, or `"btt"`. Only used in `animation="shimmer"` mode. */
+	"shimmer-direction"?: "ltr" | "rtl" | "ttb" | "btt";
 	/** Color of the animated gradient wave. Only used in `animation="shimmer"` mode. */
 	"shimmer-color"?: string;
 	/** Background color of each shimmer block. Applies to all animation modes. */
