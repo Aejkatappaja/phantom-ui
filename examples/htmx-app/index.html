@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>phantom-ui + HTMX</title>
+  <script src="https://unpkg.com/htmx.org@2"></script>
+  <script src="https://unpkg.com/@aejkatappaja/phantom-ui/dist/phantom-ui.cdn.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0a0b10; color: #c0caf5; padding: 2rem; }
+    h1 { margin-bottom: 1.5rem; font-size: 1.5rem; }
+    .card { background: #1a1b26; border: 1px solid #2a2b36; border-radius: 12px; padding: 1rem; display: flex; gap: 1rem; align-items: center; }
+    .card img { width: 48px; height: 48px; border-radius: 50%; }
+    .card-body h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+    .card-body p { font-size: 0.875rem; color: #787c99; }
+    .cards { display: flex; flex-direction: column; gap: 1rem; max-width: 480px; }
+    button { background: #7aa2f7; color: #0a0b10; border: none; border-radius: 8px; padding: 0.5rem 1rem; cursor: pointer; font-weight: 600; margin-bottom: 1.5rem; }
+    button:hover { opacity: 0.9; }
+  </style>
+</head>
+<body>
+  <h1>phantom-ui + HTMX</h1>
+  <button onclick="reload()">Reload users</button>
+
+  <phantom-ui loading id="user-skeleton" count="3" count-gap="16" reveal="0.3">
+    <div class="cards"
+      hx-get="/api/users"
+      hx-trigger="load"
+      hx-on::after-swap="this.closest('phantom-ui').removeAttribute('loading')">
+      <div class="card">
+        <img width="48" height="48" />
+        <div class="card-body">
+          <h3>Loading name</h3>
+          <p>Loading bio text here</p>
+        </div>
+      </div>
+    </div>
+  </phantom-ui>
+
+  <script>
+    // Fake HTMX server — intercepts /api/users and returns HTML after 2s delay
+    document.body.addEventListener("htmx:configRequest", (e) => {
+      if (e.detail.path === "/api/users") {
+        e.preventDefault();
+
+        const users = [
+          { name: "Alice Martin", bio: "Frontend engineer at Vercel", avatar: "https://i.pravatar.cc/48?u=alice" },
+          { name: "Bob Chen", bio: "Full-stack dev, HTMX enthusiast", avatar: "https://i.pravatar.cc/48?u=bob" },
+          { name: "Clara Ruiz", bio: "Design systems lead", avatar: "https://i.pravatar.cc/48?u=clara" },
+        ];
+
+        const html = users.map(u => `
+          <div class="card">
+            <img src="${u.avatar}" width="48" height="48" />
+            <div class="card-body">
+              <h3>${u.name}</h3>
+              <p>${u.bio}</p>
+            </div>
+          </div>
+        `).join("");
+
+        const target = document.querySelector("[hx-get='/api/users']");
+        setTimeout(() => {
+          target.innerHTML = html;
+          target.closest("phantom-ui").removeAttribute("loading");
+        }, 2000);
+      }
+    });
+
+    function reload() {
+      const phantom = document.getElementById("user-skeleton");
+      phantom.setAttribute("loading", "");
+      const target = phantom.querySelector("[hx-get]");
+      target.innerHTML = `<div class="card">
+        <img width="48" height="48" />
+        <div class="card-body">
+          <h3>Loading name</h3>
+          <p>Loading bio text here</p>
+        </div>
+      </div>`;
+
+      const users = [
+        { name: "Alice Martin", bio: "Frontend engineer at Vercel", avatar: "https://i.pravatar.cc/48?u=alice" },
+        { name: "Bob Chen", bio: "Full-stack dev, HTMX enthusiast", avatar: "https://i.pravatar.cc/48?u=bob" },
+        { name: "Clara Ruiz", bio: "Design systems lead", avatar: "https://i.pravatar.cc/48?u=clara" },
+      ];
+
+      setTimeout(() => {
+        target.innerHTML = users.map(u => `
+          <div class="card">
+            <img src="${u.avatar}" width="48" height="48" />
+            <div class="card-body">
+              <h3>${u.name}</h3>
+              <p>${u.bio}</p>
+            </div>
+          </div>
+        `).join("");
+        phantom.removeAttribute("loading");
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
