@@ -1,0 +1,81 @@
+---
+title: HTMX
+description: Using phantom-ui with HTMX.
+---
+
+## Setup
+
+Add both scripts to your HTML:
+
+```html
+<script src="https://unpkg.com/htmx.org@2"></script>
+<script src="https://unpkg.com/@aejkatappaja/phantom-ui/dist/phantom-ui.cdn.js"></script>
+```
+
+No build step, no npm install needed.
+
+## Usage
+
+Wrap your HTMX-powered content with `<phantom-ui loading>`. Use `hx-on::after-swap` to remove `loading` when the server responds:
+
+```html
+<phantom-ui loading>
+  <div hx-get="/api/users"
+       hx-trigger="load"
+       hx-on::after-swap="this.closest('phantom-ui').removeAttribute('loading')">
+    <div class="card">
+      <img width="48" height="48" />
+      <h3>Placeholder Name</h3>
+      <p>A short bio goes here.</p>
+    </div>
+  </div>
+</phantom-ui>
+```
+
+The placeholder markup gives phantom-ui something to measure. The text is hidden during loading, only the shimmer overlay is visible. When HTMX swaps in the server response, `loading` is removed and the real content appears.
+
+## Repeating rows with `count`
+
+If you don't know how many items the server will return, use `count` to repeat the skeleton from a single template:
+
+```html
+<phantom-ui loading count="5" count-gap="16">
+  <div hx-get="/api/users"
+       hx-trigger="load"
+       hx-on::after-swap="this.closest('phantom-ui').removeAttribute('loading')">
+    <div class="card">
+      <img width="48" height="48" />
+      <h3>Placeholder Name</h3>
+      <p>A short bio goes here.</p>
+    </div>
+  </div>
+</phantom-ui>
+```
+
+## Reloading
+
+To re-trigger loading (e.g. a refresh button), set `loading` back and swap in placeholder markup before the next request:
+
+```html
+<button onclick="reload()">Reload</button>
+
+<script>
+function reload() {
+  const phantom = document.getElementById("user-skeleton");
+  phantom.setAttribute("loading", "");
+
+  const target = phantom.querySelector("[hx-get]");
+  target.innerHTML = `<div class="card">
+    <img width="48" height="48" />
+    <h3>Placeholder Name</h3>
+    <p>A short bio goes here.</p>
+  </div>`;
+
+  htmx.trigger(target, "load");
+}
+</script>
+```
+
+## Why HTMX + phantom-ui?
+
+HTMX has `hx-indicator` for showing/hiding a loading element, but it only toggles visibility. phantom-ui generates a skeleton that matches your actual layout, giving a much better perceived loading experience with no extra markup to maintain.

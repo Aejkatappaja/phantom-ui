@@ -54,6 +54,7 @@ export default defineConfig({
 						{ label: "Angular", slug: "frameworks/angular" },
 						{ label: "Solid", slug: "frameworks/solid" },
 						{ label: "Qwik", slug: "frameworks/qwik" },
+						{ label: "HTMX", slug: "frameworks/htmx" },
 						{ label: "SSR (Next, Nuxt, SvelteKit)", slug: "frameworks/ssr" },
 					],
 				},
