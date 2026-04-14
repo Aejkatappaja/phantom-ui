@@ -42,7 +42,7 @@ Traditional skeleton loaders require you to build and maintain a second version 
 
 `phantom-ui` takes a different approach. It renders your real component with invisible text, measures the position and size of every leaf element (`getBoundingClientRect`), and overlays animated shimmer blocks at the exact same coordinates. Container backgrounds and borders stay visible, giving a natural card outline while loading.
 
-Because it is a standard Web Component (built with Lit), it works in React, Vue, Svelte, Angular, Solid, Qwik, or plain HTML. No framework adapters needed.
+Because it is a standard Web Component (built with Lit), it works in React, Vue, Svelte, Angular, Solid, Qwik, HTMX, or plain HTML. No framework adapters needed.
 
 ## Install
 
@@ -390,6 +390,20 @@ onMounted(() => import("@aejkatappaja/phantom-ui"));
 </script>
 ```
 
+```tsx
+// Qwik
+import { component$, useVisibleTask$ } from "@builder.io/qwik";
+
+export default component$(() => {
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(async () => {
+    import("@aejkatappaja/phantom-ui");
+  });
+
+  return <phantom-ui loading>...</phantom-ui>;
+});
+```
+
 The `<phantom-ui>` tag can exist in server-rendered HTML. The browser treats it as an unknown element until hydration, then the Web Component activates and measures the DOM. Content renders normally on the server, which is good for SEO.
 
 #### Pre-hydration CSS
@@ -501,7 +515,7 @@ This is useful with framework loops where the list is empty before data loads:
 
 5. A `ResizeObserver`, `MutationObserver`, and media `load` listener re-measure automatically when the layout changes (window resize, content injection, DOM mutations, or images/videos finishing loading).
 
-6. When `loading` is removed, the overlay is destroyed and real content is revealed.
+6. When `loading` is removed, the overlay is destroyed and real content is revealed. `aria-busy` is set automatically on the host element to communicate loading state to assistive technologies.
 
 ## Performance
 
