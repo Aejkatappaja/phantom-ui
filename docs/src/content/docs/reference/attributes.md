@@ -166,3 +166,15 @@ Border radius in pixels applied to elements that have `border-radius: 0` (like t
 ```html
 <phantom-ui loading fallback-radius="8">...</phantom-ui>
 ```
+
+## `debug`
+
+| Type | Default | Reflects |
+| --- | --- | --- |
+| `boolean` | `false` | Yes |
+
+Outlines each measured block with an index, useful for inspecting how phantom-ui interprets your DOM. Leaf blocks get a pink outline and a numeric label (`0`, `1`, `2`...), container blocks get a blue outline and a `C`-prefixed label (`C0`, `C1`...). Toggle on temporarily during development to debug unexpected skeletons.
+
+```html
+<phantom-ui loading debug>...</phantom-ui>
+```

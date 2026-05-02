@@ -155,4 +155,32 @@ export const phantomUiStyles = css`
 	:host([animation="solid"]) .shimmer-block::after {
 		display: none;
 	}
+
+	/* Debug mode */
+	:host([debug]) .shimmer-block {
+		outline: 1px dashed rgba(247, 118, 142, 0.9);
+		outline-offset: -1px;
+	}
+
+	:host([debug]) .shimmer-container-block {
+		outline: 1px dashed rgba(122, 162, 247, 0.9);
+		outline-offset: -1px;
+	}
+
+	.debug-label {
+		position: absolute;
+		top: 2px;
+		left: 2px;
+		font: 600 10px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+		color: #fff;
+		background: rgba(247, 118, 142, 0.95);
+		padding: 2px 5px;
+		border-radius: 3px;
+		pointer-events: none;
+		z-index: 1;
+	}
+
+	.debug-label[data-kind="container"] {
+		background: rgba(122, 162, 247, 0.95);
+	}
 `;

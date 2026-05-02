@@ -132,6 +132,17 @@
             },
             {
               "kind": "field",
+              "name": "debug",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Debug mode: outlines each measured block with an index. Useful for inspecting how phantom-ui interprets your DOM.",
+              "attribute": "debug",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "_blocks",
               "type": {
                 "text": "ElementInfo[]"
@@ -348,6 +359,15 @@
               "name": "count-gap",
               "default": "0",
               "fieldName": "countGap"
+            },
+            {
+              "type": {
+                "text": "boolean"
+              },
+              "description": "Debug mode: outlines each measured block with an index. Useful for inspecting how phantom-ui interprets your DOM.",
+              "name": "debug",
+              "default": "false",
+              "fieldName": "debug"
             }
           ],
           "superclass": {

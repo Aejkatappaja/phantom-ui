@@ -23,6 +23,8 @@ export interface PhantomUiAttributes {
 	count?: number;
 	/** Gap in pixels between repeated rows (only used when `count > 1`). */
 	"count-gap"?: number;
+	/** Debug mode: outlines each measured block with an index for inspection. */
+	debug?: boolean;
 	/** Slotted content (React/Solid/Qwik). */
 	children?: unknown;
 	/** Standard HTML `class` attribute. */
