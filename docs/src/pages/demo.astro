@@ -141,6 +141,11 @@
 			</div>
 		</div>
 
+		<div class="ctrl-group">
+			<span class="ctrl-label">Debug</span>
+			<button class="pill" id="debug-toggle" type="button">Off</button>
+		</div>
+
 		<div class="ctrl-sep"></div>
 
 		<button id="theme-toggle" class="theme-toggle" type="button" title="Toggle theme">
@@ -683,6 +688,18 @@ document.addEventListener("DOMContentLoaded", function () {
 	slider("r-rev", "v-rev", "s", "reveal");
 	slider("r-rad", "v-rad", "px", "fallback-radius");
 
+	var debugBtn = document.getElementById("debug-toggle");
+	var debugOn = false;
+	debugBtn.addEventListener("click", function () {
+		debugOn = !debugOn;
+		debugBtn.classList.toggle("active", debugOn);
+		debugBtn.textContent = debugOn ? "On" : "Off";
+		allEls.forEach(function (el) {
+			if (debugOn) el.setAttribute("debug", "");
+			else el.removeAttribute("debug");
+		});
+	});
+
 	document.getElementById("r-count").addEventListener("input", function () {
 		document.getElementById("v-count").textContent = this.value;
 		countEls.forEach(function (el) { el.setAttribute("count", this.value); }.bind(this));
@@ -728,8 +745,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		var animGroup = inner.querySelector('[data-control="animation"]').parentElement.cloneNode(true);
 		sheetBody.appendChild(animGroup);
+
+		var dirRow = document.createElement("div");
+		dirRow.className = "sheet-row";
 		var dirGroup = inner.querySelector('[data-control="shimmer-direction"]').parentElement.cloneNode(true);
-		sheetBody.appendChild(dirGroup);
+		var debugGroup = document.getElementById("debug-toggle").closest(".ctrl-group").cloneNode(true);
+		var debugBtnClone = debugGroup.querySelector("#debug-toggle");
+		debugBtnClone.removeAttribute("id");
+		debugBtnClone.classList.toggle("active", debugOn);
+		debugBtnClone.textContent = debugOn ? "On" : "Off";
+		debugBtnClone.addEventListener("click", function () {
+			debugOn = !debugOn;
+			debugBtnClone.classList.toggle("active", debugOn);
+			debugBtnClone.textContent = debugOn ? "On" : "Off";
+			debugBtn.classList.toggle("active", debugOn);
+			debugBtn.textContent = debugOn ? "On" : "Off";
+			allEls.forEach(function (el) {
+				if (debugOn) el.setAttribute("debug", "");
+				else el.removeAttribute("debug");
+			});
+		});
+		dirRow.appendChild(dirGroup);
+		dirRow.appendChild(debugGroup);
+		sheetBody.appendChild(dirRow);
 
 		var colorRow = document.createElement("div");
 		colorRow.className = "sheet-row";
@@ -751,6 +789,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			});
 			sheetBody.appendChild(row);
 		});
+
 
 		sheetBody.querySelectorAll(".pills").forEach(function (group) {
 			var attr = group.dataset.control;
@@ -843,7 +882,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 <style is:global>
 	.sheet-top-row {
-		display: flex; align-items: center; justify-content: space-between;
+		display: flex; align-items: center; justify-content: space-between; gap: 8px;
 	}
 	.sheet-body .sheet-row {
 		display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
@@ -851,6 +890,7 @@ document.addEventListener("DOMContentLoaded", function () {
 	.sheet-body .sheet-row .ctrl-group { min-width: 0; }
 	.sheet-body .sheet-row input[type="range"] { width: 100%; }
 	.sheet-body .pills { flex-wrap: wrap; }
+	.sheet-body .ctrl-group > .pill { align-self: flex-start; width: fit-content; }
 
 	phantom-ui[loading] img,
 	phantom-ui[loading] svg,
@@ -1147,6 +1187,8 @@ document.addEventListener("DOMContentLoaded", function () {
 	.pill:disabled {
 		opacity: 0.3; cursor: not-allowed; pointer-events: none;
 	}
+
+	#debug-toggle, .sheet-body .ctrl-group > .pill { min-width: 48px; text-align: center; }
 
 	.swatches { display: flex; gap: 6px; }
 
