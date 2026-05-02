@@ -189,6 +189,64 @@ describe("phantom-ui", () => {
 		}
 	});
 
+	describe("debug mode", () => {
+		it("reflects debug attribute on host", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading debug>
+					<div style="width:100px;height:50px;">Text</div>
+				</phantom-ui>
+			`);
+			expect(el.hasAttribute("debug")).to.be.true;
+			expect(el.debug).to.be.true;
+		});
+
+		it("renders debug labels on each block when debug + loading", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading debug>
+					<div style="width:200px;">
+						<p style="width:150px;height:20px;">Line 1</p>
+						<p style="width:120px;height:20px;">Line 2</p>
+					</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const blocks = el.shadowRoot?.querySelectorAll(".shimmer-block");
+			const labels = el.shadowRoot?.querySelectorAll(".debug-label");
+			expect(labels?.length).to.equal(blocks?.length);
+		});
+
+		it("does not render debug labels when debug is false", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="width:200px;">
+						<p style="width:150px;height:20px;">Line 1</p>
+					</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const labels = el.shadowRoot?.querySelectorAll(".debug-label");
+			expect(labels?.length).to.equal(0);
+		});
+
+		it("marks container labels with data-kind=container", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading debug count="3" count-gap="10">
+					<div style="width:200px;height:50px;background:#1a1b26;border:1px solid #292e42;border-radius:8px;">
+						<span style="display:inline-block;width:100px;height:16px;">Item</span>
+					</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const containerLabels = el.shadowRoot?.querySelectorAll(
+				'.debug-label[data-kind="container"]',
+			);
+			expect(containerLabels?.length).to.be.greaterThan(0);
+		});
+	});
+
 	it("applies stagger delay to blocks", async () => {
 		const el = await fixture<PhantomUi>(html`
 			<phantom-ui loading stagger="0.1">
