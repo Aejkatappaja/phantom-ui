@@ -514,3 +514,39 @@ export const ToggleDemo: Story = {
 	args: {},
 	argTypes: {},
 };
+
+export const DebugMode: Story = {
+	render: (args) => html`
+    ${cardStyles}
+    <p style="font-family: system-ui; font-size: 13px; color: #8899aa; max-width: 320px; margin: 0 0 16px;">
+      Pink outlines = leaf blocks (numeric index). Blue outlines = container blocks (C-prefixed index).
+    </p>
+    <phantom-ui ?loading=${args.loading} ?debug=${args.debug}>
+      <div class="card">
+        <div class="card-header">
+          <img class="avatar" src="https://i.pravatar.cc/96?img=12" alt="Avatar" />
+          <div class="card-header-text">
+            <h3>Sarah Chen</h3>
+            <p>Senior Engineer</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <p>Building scalable distributed systems and mentoring junior engineers.</p>
+        </div>
+        <div class="card-footer">
+          <span class="tag">Rust</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">Go</span>
+        </div>
+      </div>
+    </phantom-ui>
+  `,
+	args: {
+		loading: true,
+		debug: true,
+	},
+	argTypes: {
+		loading: { control: "boolean" },
+		debug: { control: "boolean" },
+	},
+};
