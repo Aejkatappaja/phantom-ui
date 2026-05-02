@@ -1,5 +1,5 @@
 import type { CSSResult } from "lit";
-import { html, LitElement } from "lit";
+import { html, LitElement, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import type { ContainerInfo, ElementInfo } from "./dom-measurement.js";
@@ -36,6 +36,7 @@ type ShimmerDirection = "ltr" | "rtl" | "ttb" | "btt";
  * @attr {number} reveal - Fade-out duration in seconds when loading ends (0 = instant)
  * @attr {number} count - Number of skeleton rows to generate from a single template (1 = no repeat)
  * @attr {number} count-gap - Gap in pixels between repeated rows (only used when count > 1)
+ * @attr {boolean} debug - Outline each measured block with an index for inspection
  *
  * @example
  * ```tsx
@@ -109,6 +110,10 @@ export class PhantomUi extends LitElement {
 		converter: (v) => Math.max(0, Number(v) || 0),
 	})
 	countGap = 0;
+
+	/** Debug mode: outlines each measured block with an index. Useful for inspecting how phantom-ui interprets your DOM. */
+	@property({ type: Boolean, reflect: true })
+	debug = false;
 
 	@state()
 	private _blocks: ElementInfo[] = [];
@@ -343,7 +348,7 @@ export class PhantomUi extends LitElement {
 				return html`<div
           class="shimmer-container-block"
           style=${styleMap(styles)}
-        ></div>`;
+        >${this.debug ? html`<span class="debug-label" data-kind="container">C${index}</span>` : nothing}</div>`;
 			}
 
 			const styles: Record<string, string> = {
@@ -353,7 +358,7 @@ export class PhantomUi extends LitElement {
 			if (this.stagger > 0) {
 				styles["animation-delay"] = `${index * this.stagger}s`;
 			}
-			return html`<div class="shimmer-block" style=${styleMap(styles)}></div>`;
+			return html`<div class="shimmer-block" style=${styleMap(styles)}>${this.debug ? html`<span class="debug-label">${index}</span>` : nothing}</div>`;
 		});
 	}
 }
