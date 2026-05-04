@@ -1,0 +1,88 @@
+name: Bug report
+description: Report something that's broken
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Please fill out the fields below so we can reproduce the issue quickly.
+
+  - type: input
+    id: version
+    attributes:
+      label: phantom-ui version
+      description: Output of `npm list @aejkatappaja/phantom-ui` (or the version pinned in your CDN script tag)
+      placeholder: 0.10.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework
+      description: Which framework are you using phantom-ui with?
+      options:
+        - React
+        - Vue
+        - Svelte
+        - Angular
+        - Solid
+        - Qwik
+        - HTMX
+        - Vanilla HTML
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: framework-version
+    attributes:
+      label: Framework version
+      placeholder: e.g. React 19.0.0
+    validations:
+      required: false
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser
+      description: Browser name + version where the bug reproduces
+      placeholder: e.g. Chrome 130, Safari 18, Firefox 132
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug clearly. What did you expect? What happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: |
+        Provide a minimal reproduction. A StackBlitz or CodeSandbox link is best.
+        If posting code, paste the smallest snippet that reproduces the issue.
+      placeholder: |
+        Link to StackBlitz/CodeSandbox, or:
+
+        ```html
+        <phantom-ui loading>
+          ...
+        </phantom-ui>
+        ```
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console errors / warnings
+      description: Paste any relevant browser console output
+      render: shell
+    validations:
+      required: false

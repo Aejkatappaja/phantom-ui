@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or discussion
+    url: https://github.com/Aejkatappaja/phantom-ui/discussions
+    about: Ask a question, share how you're using phantom-ui, or discuss ideas before opening an issue.
+  - name: Documentation
+    url: https://aejkatappaja.github.io/phantom-ui/
+    about: Check the docs first, your question may already be answered.

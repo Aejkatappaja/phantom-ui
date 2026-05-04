@@ -1,0 +1,55 @@
+name: Feature request
+description: Suggest a new feature or improvement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea to make phantom-ui better? Tell us what problem you're trying to solve, then how you'd solve it.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What's the use case or pain point? What are you trying to do that you can't today?
+      placeholder: |
+        I want to ... but currently phantom-ui ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: How would you like phantom-ui to handle this?
+      placeholder: |
+        A new attribute / API / behavior that ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Any workarounds you've tried, or other libraries that solve this differently?
+    validations:
+      required: false
+
+  - type: dropdown
+    id: framework
+    attributes:
+      label: Framework
+      description: Is this specific to a framework or universal?
+      options:
+        - All / framework-agnostic
+        - React
+        - Vue
+        - Svelte
+        - Angular
+        - Solid
+        - Qwik
+        - HTMX
+        - Vanilla HTML
+    validations:
+      required: false
