@@ -1,6 +1,6 @@
 import type { CSSResult } from "lit";
 import { html, LitElement, nothing } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import type { ContainerInfo, ElementInfo } from "./dom-measurement.js";
 import {
@@ -49,7 +49,6 @@ type ShimmerDirection = "ltr" | "rtl" | "ttb" | "btt";
  * </phantom-ui>
  * ```
  */
-@customElement("phantom-ui")
 export class PhantomUi extends LitElement {
 	static override styles: CSSResult = phantomUiStyles;
 
@@ -361,4 +360,8 @@ export class PhantomUi extends LitElement {
 			return html`<div class="shimmer-block" style=${styleMap(styles)}>${this.debug ? html`<span class="debug-label">${index}</span>` : nothing}</div>`;
 		});
 	}
+}
+
+if (!customElements.get("phantom-ui")) {
+	customElements.define("phantom-ui", PhantomUi);
 }

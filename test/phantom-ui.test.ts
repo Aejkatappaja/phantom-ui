@@ -11,6 +11,14 @@ describe("phantom-ui", () => {
 		expect(customElements.get("phantom-ui")).to.not.be.undefined;
 	});
 
+	it("does not throw when the module is imported a second time", async () => {
+		// Re-importing the module simulates micro-frontend, lazy-loaded, or HMR setups
+		// where phantom-ui can end up being initialized more than once. Without the
+		// guard, customElements.define() throws NotSupportedError on the second call.
+		await import("../src/phantom-ui.js");
+		expect(customElements.get("phantom-ui")).to.not.be.undefined;
+	});
+
 	it("renders slotted content", async () => {
 		const el = await fixture<PhantomUi>(html`
 			<phantom-ui>

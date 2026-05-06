@@ -32,4 +32,5 @@ When `loading` is removed, the shimmer disappears and real content is revealed i
 - **Smooth reveal** -- configurable fade-out transition when loading ends
 - **Accessible** -- `aria-busy` set automatically on the host element
 - **Dark mode friendly** -- default semi-transparent white colors work on any background
+- **Micro-frontend ready** -- safe to import multiple times across lazy-loaded modules, dynamic imports, and HMR environments
 - **~8kb gzipped** -- CDN bundle with Lit included
