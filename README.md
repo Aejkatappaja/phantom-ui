@@ -241,6 +241,8 @@ return (
 
 ## Framework examples
 
+Safe to import multiple times. The custom element registration is guarded against duplicate `customElements.define()` calls, so phantom-ui works reliably in **micro-frontends, lazy-loaded modules, dynamic imports, and HMR / hot reload** environments where the package can end up being initialized more than once.
+
 ### React
 
 ```tsx
