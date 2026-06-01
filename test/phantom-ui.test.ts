@@ -450,4 +450,84 @@ describe("phantom-ui", () => {
 		const blocksAfter = el.shadowRoot?.querySelectorAll(".shimmer-block");
 		expect(blocksAfter?.length).to.be.greaterThan(countBefore);
 	});
+
+	describe("pierce-shadow", () => {
+		// Minimal Stencil-like component: shadow:true with a slot, mirroring k-text
+		class MockText extends HTMLElement {
+			connectedCallback() {
+				if (this.shadowRoot) return;
+				const root = this.attachShadow({ mode: "open" });
+				const p = document.createElement("p");
+				p.style.cssText = "font-size:16px;line-height:24px;margin:0;";
+				p.appendChild(document.createElement("slot"));
+				root.appendChild(p);
+			}
+		}
+		// Component with multiple internal elements + named slots, mirroring k-header
+		class MockHeader extends HTMLElement {
+			connectedCallback() {
+				if (this.shadowRoot) return;
+				const root = this.attachShadow({ mode: "open" });
+				root.innerHTML = `
+					<header style="display:flex;gap:12px;align-items:center;height:48px;">
+						<div class="start"><slot name="start"></slot></div>
+						<a class="logo" href="./" style="width:120px;height:32px;display:block;background:#333;"></a>
+						<div class="end"><slot name="end"></slot></div>
+					</header>`;
+			}
+		}
+		before(() => {
+			if (!customElements.get("mock-text")) customElements.define("mock-text", MockText);
+			if (!customElements.get("mock-header")) customElements.define("mock-header", MockHeader);
+		});
+
+		it("does not pierce shadow by default (single block at host boundary)", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<mock-text style="display:block;width:200px;">Hello world</mock-text>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const blocks = el.shadowRoot?.querySelectorAll(".shimmer-block");
+			// Without piercing, mock-text has no light element children -> measured as one leaf
+			expect(blocks?.length).to.equal(1);
+		});
+
+		it("measures the inner text box when pierce-shadow is set", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<mock-text style="display:block;width:200px;">Hello world</mock-text>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const blocks = el.shadowRoot?.querySelectorAll(".shimmer-block");
+			expect(blocks?.length).to.be.greaterThanOrEqual(1);
+		});
+
+		it("measures inner elements of a shadow component with named slots", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<mock-header style="display:block;width:600px;">
+						<button slot="start" style="width:32px;height:32px;">M</button>
+					</mock-header>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const blocks = el.shadowRoot?.querySelectorAll(".shimmer-block");
+			// At least the logo anchor + the projected hamburger button
+			expect(blocks?.length).to.be.greaterThanOrEqual(2);
+		});
+
+		it("reflects pierce-shadow as a property", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<div style="width:100px;height:40px;">x</div>
+				</phantom-ui>
+			`);
+			expect(el.pierceShadow).to.equal(true);
+		});
+	});
 });
