@@ -37,6 +37,7 @@ type ShimmerDirection = "ltr" | "rtl" | "ttb" | "btt";
  * @attr {number} count - Number of skeleton rows to generate from a single template (1 = no repeat)
  * @attr {number} count-gap - Gap in pixels between repeated rows (only used when count > 1)
  * @attr {boolean} debug - Outline each measured block with an index for inspection
+ * @attr {string} loading-label - Accessible label announced by screen readers while loading (default "Loading")
  *
  * @example
  * ```tsx
@@ -114,6 +115,10 @@ export class PhantomUi extends LitElement {
 	@property({ type: Boolean, reflect: true })
 	debug = false;
 
+	/** Accessible label announced by screen readers while loading. Set as `aria-label` on the host when `loading` is true. */
+	@property({ attribute: "loading-label" })
+	loadingLabel = "Loading";
+
 	@state()
 	private _blocks: ElementInfo[] = [];
 
@@ -150,9 +155,17 @@ export class PhantomUi extends LitElement {
 			this._scheduleMeasure();
 		}
 
-		if (changedProperties.has("loading")) {
+		if (changedProperties.has("loading") || changedProperties.has("loadingLabel")) {
 			this.setAttribute("aria-busy", String(this.loading));
 
+			if (this.loading) {
+				this.setAttribute("aria-label", this.loadingLabel);
+			} else {
+				this.removeAttribute("aria-label");
+			}
+		}
+
+		if (changedProperties.has("loading")) {
 			if (this.loading) {
 				this._revealing = false;
 				this._clearRevealTimeout();

@@ -25,6 +25,8 @@ export interface PhantomUiAttributes {
 	"count-gap"?: number;
 	/** Debug mode: outlines each measured block with an index for inspection. */
 	debug?: boolean;
+	/** Accessible label announced by screen readers while loading. Default `"Loading"`. */
+	"loading-label"?: string;
 	/** Slotted content (React/Solid/Qwik). */
 	children?: unknown;
 	/** Standard HTML `class` attribute. */
