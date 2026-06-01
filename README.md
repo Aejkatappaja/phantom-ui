@@ -449,6 +449,7 @@ The `postinstall` script automatically detects SSR frameworks and adds this impo
 | `count-gap` | `number` | `0` | Gap in pixels between repeated rows |
 | `fallback-radius` | `number` | `4` | Border radius (px) for flat elements like text |
 | `debug` | `boolean` | `false` | Outline each measured block with an index for inspection |
+| `loading-label` | `string` | `Loading` | Accessible label announced by screen readers while loading (set as `aria-label`) |
 
 ## Fine-grained control
 

@@ -143,6 +143,16 @@
             },
             {
               "kind": "field",
+              "name": "loadingLabel",
+              "type": {
+                "text": "string"
+              },
+              "default": "\"Loading\"",
+              "description": "Accessible label announced by screen readers while loading. Set as `aria-label` on the host when `loading` is true.",
+              "attribute": "loading-label"
+            },
+            {
+              "kind": "field",
               "name": "_blocks",
               "type": {
                 "text": "ElementInfo[]"
@@ -368,6 +378,15 @@
               "name": "debug",
               "default": "false",
               "fieldName": "debug"
+            },
+            {
+              "type": {
+                "text": "string"
+              },
+              "description": "Accessible label announced by screen readers while loading. Set as `aria-label` on the host when `loading` is true.",
+              "name": "loading-label",
+              "default": "\"Loading\"",
+              "fieldName": "loadingLabel"
             }
           ],
           "superclass": {
