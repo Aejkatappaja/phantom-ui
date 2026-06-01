@@ -153,6 +153,16 @@
             },
             {
               "kind": "field",
+              "name": "pierceShadow",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Measure inside open shadow roots of slotted custom elements (design systems built with Stencil, Lit, FAST). Resolves slots to their projected content.",
+              "attribute": "pierce-shadow"
+            },
+            {
+              "kind": "field",
               "name": "_blocks",
               "type": {
                 "text": "ElementInfo[]"
@@ -213,6 +223,41 @@
               },
               "privacy": "private",
               "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "_hiddenRoots",
+              "privacy": "private",
+              "default": "new Set<ShadowRoot>()"
+            },
+            {
+              "kind": "method",
+              "name": "_hideShadowContent",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "roots",
+                  "type": {
+                    "text": "Element[]"
+                  }
+                }
+              ],
+              "description": "Inject hiding styles into every open shadow root under the slotted elements.\nLight-DOM hiding rules cannot cross shadow boundaries, so pierced components\nwould otherwise show their real content through the shimmer overlay."
+            },
+            {
+              "kind": "method",
+              "name": "_restoreShadowContent",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
             },
             {
               "kind": "method",
@@ -387,6 +432,15 @@
               "name": "loading-label",
               "default": "\"Loading\"",
               "fieldName": "loadingLabel"
+            },
+            {
+              "name": "pierce-shadow",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Measure inside open shadow roots of slotted custom elements (design systems built with Stencil, Lit, FAST). Resolves slots to their projected content.",
+              "fieldName": "pierceShadow"
             }
           ],
           "superclass": {
