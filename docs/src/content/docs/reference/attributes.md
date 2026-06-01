@@ -178,3 +178,15 @@ Outlines each measured block with an index, useful for inspecting how phantom-ui
 ```html
 <phantom-ui loading debug>...</phantom-ui>
 ```
+
+## `loading-label`
+
+| Type | Default |
+| --- | --- |
+| `string` | `Loading` |
+
+Accessible label announced by screen readers while loading. Set as `aria-label` on the host when `loading` is true, and removed when loading ends. Pair it with the automatic `aria-busy` to give assistive technology a meaningful description of what is loading.
+
+```html
+<phantom-ui loading loading-label="Loading article">...</phantom-ui>
+```
