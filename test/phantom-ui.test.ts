@@ -59,6 +59,40 @@ describe("phantom-ui", () => {
 		expect(el.getAttribute("aria-busy")).to.equal("false");
 	});
 
+	describe("loading-label", () => {
+		it("sets a default aria-label while loading", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="width:100px;height:50px;">Text</div>
+				</phantom-ui>
+			`);
+			await el.updateComplete;
+			expect(el.getAttribute("aria-label")).to.equal("Loading");
+		});
+
+		it("uses a custom loading-label", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading loading-label="Loading article">
+					<div style="width:100px;height:50px;">Text</div>
+				</phantom-ui>
+			`);
+			await el.updateComplete;
+			expect(el.getAttribute("aria-label")).to.equal("Loading article");
+		});
+
+		it("removes aria-label when loading ends", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="width:100px;height:50px;">Text</div>
+				</phantom-ui>
+			`);
+			await el.updateComplete;
+			el.loading = false;
+			await el.updateComplete;
+			expect(el.hasAttribute("aria-label")).to.be.false;
+		});
+	});
+
 	it("generates shimmer blocks from slotted content", async () => {
 		const el = await fixture<PhantomUi>(html`
 			<phantom-ui loading>
