@@ -8,7 +8,13 @@ import {
 	extractContainerInfo,
 	extractElementInfo,
 } from "./dom-measurement.js";
-import { hideShadowRoot, injectLightDomStyles, unhideShadowRoot } from "./light-dom-styles.js";
+import {
+	GRAPHIC_ATTR,
+	hideShadowRoot,
+	injectLightDomStyles,
+	isMaskedGraphic,
+	unhideShadowRoot,
+} from "./light-dom-styles.js";
 import { phantomUiStyles } from "./phantom-ui.styles.js";
 
 export type { PhantomUiAttributes, SolidPhantomUiAttributes } from "./types.js";
@@ -135,6 +141,7 @@ export class PhantomUi extends LitElement {
 	private _measureScheduled = false;
 	private _revealTimeout: ReturnType<typeof setTimeout> | null = null;
 	private _hiddenRoots = new Set<ShadowRoot>();
+	private _markedGraphics = new Set<Element>();
 
 	override connectedCallback(): void {
 		super.connectedCallback();
@@ -146,6 +153,7 @@ export class PhantomUi extends LitElement {
 		this._teardownObservers();
 		this._clearRevealTimeout();
 		this._restoreShadowContent();
+		this._restoreGraphics();
 	}
 
 	/**
@@ -168,6 +176,32 @@ export class PhantomUi extends LitElement {
 	private _restoreShadowContent(): void {
 		for (const root of this._hiddenRoots) unhideShadowRoot(root);
 		this._hiddenRoots.clear();
+	}
+
+	/**
+	 * Icons drawn with CSS mask-image and tinted via background-color are neither
+	 * <img> nor <svg>, so the media-hiding rules miss them and they show through
+	 * the shimmer. CSS can't select "has a mask", so detect them at runtime and
+	 * mark them with GRAPHIC_ATTR, which the hiding rules target. Walks light DOM
+	 * and (when piercing) shadow roots.
+	 */
+	private _markGraphics(roots: Element[]): void {
+		const visit = (el: Element): void => {
+			if (isMaskedGraphic(el)) {
+				el.setAttribute(GRAPHIC_ATTR, "");
+				this._markedGraphics.add(el);
+			}
+			if (this.pierceShadow && el.shadowRoot) {
+				for (const child of el.shadowRoot.children) visit(child);
+			}
+			for (const child of el.children) visit(child);
+		};
+		for (const el of roots) visit(el);
+	}
+
+	private _restoreGraphics(): void {
+		for (const el of this._markedGraphics) el.removeAttribute(GRAPHIC_ATTR);
+		this._markedGraphics.clear();
 	}
 
 	override willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
@@ -207,12 +241,14 @@ export class PhantomUi extends LitElement {
 					this._revealTimeout = null;
 					this.style.minHeight = "";
 					this._restoreShadowContent();
+					this._restoreGraphics();
 				}, this.reveal * 1000);
 			} else {
 				this._blocks = [];
 				this._teardownObservers();
 				this.style.minHeight = "";
 				this._restoreShadowContent();
+				this._restoreGraphics();
 			}
 		}
 	}
@@ -273,6 +309,7 @@ export class PhantomUi extends LitElement {
 		if (this.pierceShadow) {
 			this._hideShadowContent(assignedElements);
 		}
+		this._markGraphics(assignedElements);
 
 		for (const el of assignedElements) {
 			const blocks = extractElementInfo(el, hostRect, this.pierceShadow);

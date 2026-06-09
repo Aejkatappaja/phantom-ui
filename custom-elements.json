@@ -231,6 +231,12 @@
               "default": "new Set<ShadowRoot>()"
             },
             {
+              "kind": "field",
+              "name": "_markedGraphics",
+              "privacy": "private",
+              "default": "new Set<Element>()"
+            },
+            {
               "kind": "method",
               "name": "_hideShadowContent",
               "privacy": "private",
@@ -252,6 +258,35 @@
             {
               "kind": "method",
               "name": "_restoreShadowContent",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_markGraphics",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "roots",
+                  "type": {
+                    "text": "Element[]"
+                  }
+                }
+              ],
+              "description": "Icons drawn with CSS mask-image and tinted via background-color are neither\n<img> nor <svg>, so the media-hiding rules miss them and they show through\nthe shimmer. CSS can't select \"has a mask\", so detect them at runtime and\nmark them with GRAPHIC_ATTR, which the hiding rules target. Walks light DOM\nand (when piercing) shadow roots."
+            },
+            {
+              "kind": "method",
+              "name": "_restoreGraphics",
               "privacy": "private",
               "return": {
                 "type": {
