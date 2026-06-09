@@ -531,6 +531,42 @@ describe("phantom-ui", () => {
 		});
 	});
 
+	describe("inline SVG with text layer", () => {
+		it("data-shimmer-no-children collapses an SVG-with-text wrapper to one block", async () => {
+			const svg = `<svg width="120" height="32" viewBox="0 0 120 32" xmlns="http://www.w3.org/2000/svg">
+				<rect width="120" height="32" rx="4"/>
+				<text x="10" y="20" font-size="14">LOGO</text>
+			</svg>`;
+
+			// Without the escape hatch: the wrapper recurses and can yield multiple blocks
+			const without = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<a class="logo" style="display:inline-block;width:120px;height:32px;">
+						<span class="logo-mark" .innerHTML=${svg}></span>
+					</a>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await without.updateComplete;
+			const withoutBlocks = without.shadowRoot?.querySelectorAll(".shimmer-block");
+
+			// With data-shimmer-no-children: exactly one block for the whole logo
+			const withHatch = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<a class="logo" data-shimmer-no-children style="display:inline-block;width:120px;height:32px;">
+						<span class="logo-mark" .innerHTML=${svg}></span>
+					</a>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await withHatch.updateComplete;
+			const withBlocks = withHatch.shadowRoot?.querySelectorAll(".shimmer-block");
+
+			expect(withBlocks?.length).to.equal(1);
+			expect(withoutBlocks?.length ?? 0).to.be.greaterThanOrEqual(1);
+		});
+	});
+
 	describe("masked graphic icons", () => {
 		it("hides mask-image icons while loading and restores them after", async () => {
 			const el = await fixture<PhantomUi>(html`
