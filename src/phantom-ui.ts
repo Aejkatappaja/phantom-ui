@@ -8,7 +8,13 @@ import {
 	extractContainerInfo,
 	extractElementInfo,
 } from "./dom-measurement.js";
-import { injectLightDomStyles } from "./light-dom-styles.js";
+import {
+	GRAPHIC_ATTR,
+	hideShadowRoot,
+	injectLightDomStyles,
+	isMaskedGraphic,
+	unhideShadowRoot,
+} from "./light-dom-styles.js";
 import { phantomUiStyles } from "./phantom-ui.styles.js";
 
 export type { PhantomUiAttributes, SolidPhantomUiAttributes } from "./types.js";
@@ -119,6 +125,10 @@ export class PhantomUi extends LitElement {
 	@property({ attribute: "loading-label" })
 	loadingLabel = "Loading";
 
+	/** Measure inside open shadow roots of slotted custom elements (design systems built with Stencil, Lit, FAST). Resolves slots to their projected content. */
+	@property({ type: Boolean, attribute: "pierce-shadow" })
+	pierceShadow = false;
+
 	@state()
 	private _blocks: ElementInfo[] = [];
 
@@ -130,6 +140,8 @@ export class PhantomUi extends LitElement {
 	private _loadHandler: (() => void) | null = null;
 	private _measureScheduled = false;
 	private _revealTimeout: ReturnType<typeof setTimeout> | null = null;
+	private _hiddenRoots = new Set<ShadowRoot>();
+	private _markedGraphics = new Set<Element>();
 
 	override connectedCallback(): void {
 		super.connectedCallback();
@@ -140,6 +152,56 @@ export class PhantomUi extends LitElement {
 		super.disconnectedCallback();
 		this._teardownObservers();
 		this._clearRevealTimeout();
+		this._restoreShadowContent();
+		this._restoreGraphics();
+	}
+
+	/**
+	 * Inject hiding styles into every open shadow root under the slotted elements.
+	 * Light-DOM hiding rules cannot cross shadow boundaries, so pierced components
+	 * would otherwise show their real content through the shimmer overlay.
+	 */
+	private _hideShadowContent(roots: Element[]): void {
+		const visit = (el: Element): void => {
+			if (el.shadowRoot) {
+				hideShadowRoot(el.shadowRoot);
+				this._hiddenRoots.add(el.shadowRoot);
+				for (const child of el.shadowRoot.children) visit(child);
+			}
+			for (const child of el.children) visit(child);
+		};
+		for (const el of roots) visit(el);
+	}
+
+	private _restoreShadowContent(): void {
+		for (const root of this._hiddenRoots) unhideShadowRoot(root);
+		this._hiddenRoots.clear();
+	}
+
+	/**
+	 * Icons drawn with CSS mask-image and tinted via background-color are neither
+	 * <img> nor <svg>, so the media-hiding rules miss them and they show through
+	 * the shimmer. CSS can't select "has a mask", so detect them at runtime and
+	 * mark them with GRAPHIC_ATTR, which the hiding rules target. Walks light DOM
+	 * and (when piercing) shadow roots.
+	 */
+	private _markGraphics(roots: Element[]): void {
+		const visit = (el: Element): void => {
+			if (isMaskedGraphic(el)) {
+				el.setAttribute(GRAPHIC_ATTR, "");
+				this._markedGraphics.add(el);
+			}
+			if (this.pierceShadow && el.shadowRoot) {
+				for (const child of el.shadowRoot.children) visit(child);
+			}
+			for (const child of el.children) visit(child);
+		};
+		for (const el of roots) visit(el);
+	}
+
+	private _restoreGraphics(): void {
+		for (const el of this._markedGraphics) el.removeAttribute(GRAPHIC_ATTR);
+		this._markedGraphics.clear();
 	}
 
 	override willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
@@ -178,11 +240,15 @@ export class PhantomUi extends LitElement {
 					this._blocks = [];
 					this._revealTimeout = null;
 					this.style.minHeight = "";
+					this._restoreShadowContent();
+					this._restoreGraphics();
 				}, this.reveal * 1000);
 			} else {
 				this._blocks = [];
 				this._teardownObservers();
 				this.style.minHeight = "";
+				this._restoreShadowContent();
+				this._restoreGraphics();
 			}
 		}
 	}
@@ -240,8 +306,13 @@ export class PhantomUi extends LitElement {
 		const assignedElements = slot.assignedElements({ flatten: true });
 		const allBlocks: ElementInfo[] = [];
 
+		if (this.pierceShadow) {
+			this._hideShadowContent(assignedElements);
+		}
+		this._markGraphics(assignedElements);
+
 		for (const el of assignedElements) {
-			const blocks = extractElementInfo(el, hostRect);
+			const blocks = extractElementInfo(el, hostRect, this.pierceShadow);
 			allBlocks.push(...blocks);
 		}
 

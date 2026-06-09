@@ -43,6 +43,7 @@ export default defineConfig({
 						{ label: "Installation", slug: "guides/installation" },
 						{ label: "Quick Start", slug: "guides/quick-start" },
 						{ label: "Data Fetching", slug: "guides/data-fetching" },
+						{ label: "Design Systems (Shadow DOM)", slug: "guides/design-systems" },
 					],
 				},
 				{

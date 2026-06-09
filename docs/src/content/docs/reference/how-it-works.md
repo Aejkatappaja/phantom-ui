@@ -13,6 +13,7 @@ The real content is rendered in the DOM but styled to be invisible:
 
 - `color: transparent` hides text while preserving layout
 - `opacity: 0` hides images, SVGs, videos, and canvases
+- icons drawn with CSS `mask-image` (tinted via `background-color`) are detected at runtime and hidden too, including masks on `::before` / `::after` pseudo-elements
 - `pointer-events: none` prevents interaction
 - Container backgrounds and borders remain visible, giving a natural card outline
 
@@ -53,6 +54,10 @@ If an element has this attribute, it and all descendants are skipped entirely du
 ### `data-shimmer-no-children`
 
 If an element has this attribute, it is captured as a single block without recursing into children. Useful for dense groups that should appear as one placeholder.
+
+### Mask-image icons
+
+Many design systems render icons as an element (or its `::before` / `::after` pseudo-element) with a CSS `mask-image` and a `background-color` for the tint, rather than as an `<img>` or `<svg>`. CSS selectors can't target "has a mask", so phantom-ui detects these at runtime via `getComputedStyle` and hides them like real media during loading. Works in light DOM and inside pierced shadow roots.
 
 ### Zero-dimension elements
 

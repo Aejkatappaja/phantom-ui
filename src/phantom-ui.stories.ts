@@ -550,3 +550,51 @@ export const DebugMode: Story = {
 		debug: { control: "boolean" },
 	},
 };
+
+// Mock shadow:true component (mirrors a Stencil/Lit design-system primitive)
+// so the pierce-shadow story works inside Storybook without extra deps.
+if (!customElements.get("demo-card")) {
+	customElements.define(
+		"demo-card",
+		class extends HTMLElement {
+			connectedCallback() {
+				if (this.shadowRoot) return;
+				const root = this.attachShadow({ mode: "open" });
+				root.innerHTML = `
+					<style>
+						.card { display: flex; flex-direction: column; gap: 8px; width: 320px;
+							padding: 20px; background: #16213e; border-radius: 12px; color: #e0e0e0; }
+						h3 { margin: 0; font-size: 16px; }
+						p { margin: 0; font-size: 14px; line-height: 1.5; }
+					</style>
+					<div class="card">
+						<h3><slot name="title"></slot></h3>
+						<p><slot name="body"></slot></p>
+					</div>`;
+			}
+		},
+	);
+}
+
+export const ShadowDomPiercing: Story = {
+	render: (args) => html`
+    <p style="font-family: system-ui; font-size: 13px; color: #8899aa; max-width: 360px; margin: 0 0 16px;">
+      A shadow:true component. With <code>pierce-shadow</code> off it's one block;
+      on, phantom-ui measures the title and body inside the shadow root.
+    </p>
+    <phantom-ui ?loading=${args.loading} ?pierce-shadow=${args["pierce-shadow"]}>
+      <demo-card>
+        <span slot="title">Sarah Chen</span>
+        <span slot="body">Building scalable distributed systems and mentoring junior engineers.</span>
+      </demo-card>
+    </phantom-ui>
+  `,
+	args: {
+		loading: true,
+		"pierce-shadow": true,
+	},
+	argTypes: {
+		loading: { control: "boolean" },
+		"pierce-shadow": { control: "boolean" },
+	},
+};

@@ -153,6 +153,16 @@
             },
             {
               "kind": "field",
+              "name": "pierceShadow",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Measure inside open shadow roots of slotted custom elements (design systems built with Stencil, Lit, FAST). Resolves slots to their projected content.",
+              "attribute": "pierce-shadow"
+            },
+            {
+              "kind": "field",
               "name": "_blocks",
               "type": {
                 "text": "ElementInfo[]"
@@ -213,6 +223,76 @@
               },
               "privacy": "private",
               "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "_hiddenRoots",
+              "privacy": "private",
+              "default": "new Set<ShadowRoot>()"
+            },
+            {
+              "kind": "field",
+              "name": "_markedGraphics",
+              "privacy": "private",
+              "default": "new Set<Element>()"
+            },
+            {
+              "kind": "method",
+              "name": "_hideShadowContent",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "roots",
+                  "type": {
+                    "text": "Element[]"
+                  }
+                }
+              ],
+              "description": "Inject hiding styles into every open shadow root under the slotted elements.\nLight-DOM hiding rules cannot cross shadow boundaries, so pierced components\nwould otherwise show their real content through the shimmer overlay."
+            },
+            {
+              "kind": "method",
+              "name": "_restoreShadowContent",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
+            },
+            {
+              "kind": "method",
+              "name": "_markGraphics",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "parameters": [
+                {
+                  "name": "roots",
+                  "type": {
+                    "text": "Element[]"
+                  }
+                }
+              ],
+              "description": "Icons drawn with CSS mask-image and tinted via background-color are neither\n<img> nor <svg>, so the media-hiding rules miss them and they show through\nthe shimmer. CSS can't select \"has a mask\", so detect them at runtime and\nmark them with GRAPHIC_ATTR, which the hiding rules target. Walks light DOM\nand (when piercing) shadow roots."
+            },
+            {
+              "kind": "method",
+              "name": "_restoreGraphics",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              }
             },
             {
               "kind": "method",
@@ -387,6 +467,15 @@
               "name": "loading-label",
               "default": "\"Loading\"",
               "fieldName": "loadingLabel"
+            },
+            {
+              "name": "pierce-shadow",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "description": "Measure inside open shadow roots of slotted custom elements (design systems built with Stencil, Lit, FAST). Resolves slots to their projected content.",
+              "fieldName": "pierceShadow"
             }
           ],
           "superclass": {

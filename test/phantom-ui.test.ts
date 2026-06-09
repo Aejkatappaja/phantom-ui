@@ -450,4 +450,190 @@ describe("phantom-ui", () => {
 		const blocksAfter = el.shadowRoot?.querySelectorAll(".shimmer-block");
 		expect(blocksAfter?.length).to.be.greaterThan(countBefore);
 	});
+
+	describe("pierce-shadow", () => {
+		// Minimal Stencil-like component: shadow:true with a slot, mirroring k-text
+		class MockText extends HTMLElement {
+			connectedCallback() {
+				if (this.shadowRoot) return;
+				const root = this.attachShadow({ mode: "open" });
+				const p = document.createElement("p");
+				p.style.cssText = "font-size:16px;line-height:24px;margin:0;";
+				p.appendChild(document.createElement("slot"));
+				root.appendChild(p);
+			}
+		}
+		// Component with multiple internal elements + named slots, mirroring k-header
+		class MockHeader extends HTMLElement {
+			connectedCallback() {
+				if (this.shadowRoot) return;
+				const root = this.attachShadow({ mode: "open" });
+				root.innerHTML = `
+					<header style="display:flex;gap:12px;align-items:center;height:48px;">
+						<div class="start"><slot name="start"></slot></div>
+						<a class="logo" href="./" style="width:120px;height:32px;display:block;background:#333;"></a>
+						<div class="end"><slot name="end"></slot></div>
+					</header>`;
+			}
+		}
+		before(() => {
+			if (!customElements.get("mock-text")) customElements.define("mock-text", MockText);
+			if (!customElements.get("mock-header")) customElements.define("mock-header", MockHeader);
+		});
+
+		it("does not pierce shadow by default (single block at host boundary)", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<mock-text style="display:block;width:200px;">Hello world</mock-text>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const blocks = el.shadowRoot?.querySelectorAll(".shimmer-block");
+			// Without piercing, mock-text has no light element children -> measured as one leaf
+			expect(blocks?.length).to.equal(1);
+		});
+
+		it("measures the inner text box when pierce-shadow is set", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<mock-text style="display:block;width:200px;">Hello world</mock-text>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const blocks = el.shadowRoot?.querySelectorAll(".shimmer-block");
+			expect(blocks?.length).to.be.greaterThanOrEqual(1);
+		});
+
+		it("measures inner elements of a shadow component with named slots", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<mock-header style="display:block;width:600px;">
+						<button slot="start" style="width:32px;height:32px;">M</button>
+					</mock-header>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const blocks = el.shadowRoot?.querySelectorAll(".shimmer-block");
+			// At least the logo anchor + the projected hamburger button
+			expect(blocks?.length).to.be.greaterThanOrEqual(2);
+		});
+
+		it("reflects pierce-shadow as a property", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<div style="width:100px;height:40px;">x</div>
+				</phantom-ui>
+			`);
+			expect(el.pierceShadow).to.equal(true);
+		});
+	});
+
+	describe("inline SVG with text layer", () => {
+		it("data-shimmer-no-children collapses an SVG-with-text wrapper to one block", async () => {
+			const svg = `<svg width="120" height="32" viewBox="0 0 120 32" xmlns="http://www.w3.org/2000/svg">
+				<rect width="120" height="32" rx="4"/>
+				<text x="10" y="20" font-size="14">LOGO</text>
+			</svg>`;
+
+			// Without the escape hatch: the wrapper recurses and can yield multiple blocks
+			const without = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<a class="logo" style="display:inline-block;width:120px;height:32px;">
+						<span class="logo-mark" .innerHTML=${svg}></span>
+					</a>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await without.updateComplete;
+			const withoutBlocks = without.shadowRoot?.querySelectorAll(".shimmer-block");
+
+			// With data-shimmer-no-children: exactly one block for the whole logo
+			const withHatch = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<a class="logo" data-shimmer-no-children style="display:inline-block;width:120px;height:32px;">
+						<span class="logo-mark" .innerHTML=${svg}></span>
+					</a>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await withHatch.updateComplete;
+			const withBlocks = withHatch.shadowRoot?.querySelectorAll(".shimmer-block");
+
+			expect(withBlocks?.length).to.equal(1);
+			expect(withoutBlocks?.length ?? 0).to.be.greaterThanOrEqual(1);
+		});
+	});
+
+	describe("masked graphic icons", () => {
+		it("hides mask-image icons while loading and restores them after", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="display:flex;gap:8px;">
+						<span
+							class="icon"
+							style="display:inline-block;width:24px;height:24px;
+								-webkit-mask-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22><rect width=%2224%22 height=%2224%22/></svg>');
+								mask-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22><rect width=%2224%22 height=%2224%22/></svg>');
+								background-color:#7aa2f7;"
+						></span>
+						<span style="width:120px;height:16px;display:inline-block;">Label</span>
+					</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			const icon = el.querySelector(".icon") as HTMLElement;
+			expect(icon.hasAttribute("data-phantom-graphic")).to.be.true;
+
+			el.loading = false;
+			await el.updateComplete;
+			expect(icon.hasAttribute("data-phantom-graphic")).to.be.false;
+		});
+
+		it("detects mask-image on ::before pseudo-elements", async () => {
+			const style = document.createElement("style");
+			style.textContent = `
+				.pseudo-icon::before {
+					content: "";
+					display: block;
+					width: 24px;
+					height: 24px;
+					background-color: #7aa2f7;
+					-webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22><rect width=%2224%22 height=%2224%22/></svg>');
+					mask-image: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22><rect width=%2224%22 height=%2224%22/></svg>');
+				}
+			`;
+			document.head.appendChild(style);
+
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="display:flex;">
+						<i class="pseudo-icon"></i>
+					</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const icon = el.querySelector(".pseudo-icon") as HTMLElement;
+			expect(icon.hasAttribute("data-phantom-graphic")).to.be.true;
+
+			document.head.removeChild(style);
+		});
+
+		it("does not mark plain elements as graphics", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div class="plain" style="width:100px;height:40px;background:#1a1b26;">Text</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const plain = el.querySelector(".plain") as HTMLElement;
+			expect(plain.hasAttribute("data-phantom-graphic")).to.be.false;
+		});
+	});
 });

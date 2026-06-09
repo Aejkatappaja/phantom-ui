@@ -57,6 +57,22 @@ function isLeafElement(element: Element): boolean {
 	return true;
 }
 
+/**
+ * In shadow-pierce mode, an element whose only element children are <slot> (or void)
+ * is treated as a leaf. Its box is the measurable unit: text projected through the slot
+ * gives it size (e.g. Stencil's `<p><slot/></p>` text component), and slot regions with
+ * no element assignments still render a block instead of vanishing.
+ */
+function hasOnlySlotChildren(element: Element): boolean {
+	if (element.children.length === 0) return false;
+	for (const child of element.children) {
+		if (child.tagName !== "SLOT" && !VOID_TAGS.has(child.tagName)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 function hasTextContent(element: Element): boolean {
 	for (const node of element.childNodes) {
 		if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
@@ -66,10 +82,23 @@ function hasTextContent(element: Element): boolean {
 	return false;
 }
 
-export function extractElementInfo(element: Element, parentRect: DOMRect): ElementInfo[] {
+export function extractElementInfo(
+	element: Element,
+	parentRect: DOMRect,
+	pierceShadow = false,
+): ElementInfo[] {
 	const results: ElementInfo[] = [];
 
 	function walk(el: Element): void {
+		// Resolve a <slot> to its projected light-DOM elements, measured at their
+		// real positions. Text-only slots (no element assignments) are covered by
+		// the parent's hasOnlySlotChildren leaf rule, so nothing is lost here.
+		if (el.tagName === "SLOT") {
+			const assigned = (el as HTMLSlotElement).assignedElements({ flatten: true });
+			for (const a of assigned) walk(a);
+			return;
+		}
+
 		const rect = el.getBoundingClientRect();
 
 		const overrideW = Number(el.getAttribute("data-shimmer-width")) || 0;
@@ -86,7 +115,18 @@ export function extractElementInfo(element: Element, parentRect: DOMRect): Eleme
 			return;
 		}
 
-		const shouldCapture = el.hasAttribute("data-shimmer-no-children") || isLeafElement(el);
+		// Descend into an open shadow root instead of stopping at the component
+		// boundary. The slotted light-DOM content is reached via the <slot>
+		// resolution above, so it is never measured twice.
+		if (pierceShadow && el.shadowRoot && el.shadowRoot.children.length > 0) {
+			for (const child of el.shadowRoot.children) walk(child);
+			return;
+		}
+
+		const shouldCapture =
+			el.hasAttribute("data-shimmer-no-children") ||
+			isLeafElement(el) ||
+			(pierceShadow && hasOnlySlotChildren(el));
 
 		if (shouldCapture) {
 			const style = getComputedStyle(el);

@@ -450,6 +450,7 @@ The `postinstall` script automatically detects SSR frameworks and adds this impo
 | `fallback-radius` | `number` | `4` | Border radius (px) for flat elements like text |
 | `debug` | `boolean` | `false` | Outline each measured block with an index for inspection |
 | `loading-label` | `string` | `Loading` | Accessible label announced by screen readers while loading (set as `aria-label`) |
+| `pierce-shadow` | `boolean` | `false` | Measure inside open shadow roots of slotted components (Stencil, Lit design systems) |
 
 ## Fine-grained control
 
@@ -509,7 +510,7 @@ This is useful with framework loops where the list is empty before data loads:
 
 ## How it works
 
-1. Your real content is rendered in the DOM with `color: transparent` and media elements hidden. Container backgrounds and borders stay visible, preserving the natural card/section outline.
+1. Your real content is rendered in the DOM with `color: transparent` and media elements hidden. Icons drawn with CSS `mask-image` (including on `::before` / `::after`) are detected at runtime and hidden too. Container backgrounds and borders stay visible, preserving the natural card/section outline.
 
 2. The component walks the DOM tree and identifies "leaf" elements: text nodes, images, buttons, inputs, and anything without child elements. Container divs are recursed into, not captured.
 
