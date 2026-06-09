@@ -190,3 +190,24 @@ Accessible label announced by screen readers while loading. Set as `aria-label` 
 ```html
 <phantom-ui loading loading-label="Loading article">...</phantom-ui>
 ```
+
+## `pierce-shadow`
+
+| Type | Default |
+| --- | --- |
+| `boolean` | `false` |
+
+Measure inside the open shadow roots of slotted custom elements, instead of treating each component as a single block. Use it when wrapping components from a design system built with Stencil, Lit, or other Web Component tooling, where the structure lives inside shadow roots.
+
+phantom-ui walks into each open shadow root, resolves default and named slots to their projected content, and hides the shadow content while loading. Closed shadow roots (`mode: "closed"`) are not reachable.
+
+```html
+<phantom-ui loading pierce-shadow>
+  <my-card>
+    <h3 slot="title">Placeholder</h3>
+    <p slot="body">A short bio goes here.</p>
+  </my-card>
+</phantom-ui>
+```
+
+See the [Design Systems guide](/phantom-ui/guides/design-systems/) for details and limitations.
