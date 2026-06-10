@@ -30,7 +30,7 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
   </TabItem>
 </Tabs>
 
-The `postinstall` script generates a `phantom-ui.d.ts` file for JSX types automatically.
+Run `npx @aejkatappaja/phantom-ui init` once to generate a `phantom-ui.d.ts` file for JSX types (or create it manually — see [TypeScript](#typescript) below).
 
 ## Usage
 
@@ -71,7 +71,7 @@ export default component$(() => {
 
 ## TypeScript
 
-If the postinstall did not generate `src/phantom-ui.d.ts`, create it manually:
+If you prefer not to run `init`, create `src/phantom-ui.d.ts` manually:
 
 ```typescript
 import type { PhantomUiAttributes } from "@aejkatappaja/phantom-ui";
