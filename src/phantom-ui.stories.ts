@@ -551,6 +551,47 @@ export const DebugMode: Story = {
 	},
 };
 
+export const ReducedMotion: Story = {
+	render: (args) => html`
+    ${cardStyles}
+    <p style="font-family: system-ui; font-size: 13px; color: #8899aa; max-width: 360px; margin: 0 0 16px;">
+      With <code>prefers-reduced-motion: reduce</code> every animation mode
+      degrades to the static solid look (no sweep, no pulse, no scale) while
+      keeping the block backgrounds. Emulate it via DevTools &rarr; Rendering
+      &rarr; "Emulate CSS media feature prefers-reduced-motion".
+    </p>
+    <phantom-ui ?loading=${args.loading} animation=${args.animation}>
+      <div class="card">
+        <div class="card-header">
+          <img class="avatar" src="https://i.pravatar.cc/96?img=32" alt="Avatar" />
+          <div class="card-header-text">
+            <h3>Marie Duarte</h3>
+            <p>Accessibility Engineer</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <p>Ships interfaces that respect every user's motion preferences.</p>
+        </div>
+        <div class="card-footer">
+          <span class="tag">WCAG</span>
+          <span class="tag">CSS</span>
+        </div>
+      </div>
+    </phantom-ui>
+  `,
+	args: {
+		loading: true,
+		animation: "shimmer",
+	},
+	argTypes: {
+		loading: { control: "boolean" },
+		animation: {
+			control: "select",
+			options: ["shimmer", "pulse", "breathe", "solid"],
+		},
+	},
+};
+
 // Mock shadow:true component (mirrors a Stencil/Lit design-system primitive)
 // so the pierce-shadow story works inside Storybook without extra deps.
 if (!customElements.get("demo-card")) {
