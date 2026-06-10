@@ -693,4 +693,59 @@ describe("phantom-ui", () => {
 			);
 		});
 	});
+
+	describe("attribute-based loading (React 18)", () => {
+		it('strips loading="false" set as an attribute and reveals content', async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<p style="width:150px;height:20px;">Hello after load</p>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			// React 18 sets the attribute (not the property) on update.
+			el.setAttribute("loading", "false");
+			await el.updateComplete;
+
+			expect(el.loading).to.be.false;
+			expect(el.hasAttribute("loading")).to.be.false;
+			expect(el.shadowRoot?.querySelector(".shimmer-overlay")).to.not.exist;
+
+			const p = el.querySelector("p") as HTMLElement;
+			const style = getComputedStyle(p);
+			expect(style.webkitTextFillColor).to.not.equal("transparent");
+			expect(style.pointerEvents).to.not.equal("none");
+		});
+
+		it('treats static loading="false" markup as not loading', async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading="false">
+					<p style="width:150px;height:20px;">Visible</p>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			expect(el.loading).to.be.false;
+			expect(el.hasAttribute("loading")).to.be.false;
+			const p = el.querySelector("p") as HTMLElement;
+			expect(getComputedStyle(p).pointerEvents).to.not.equal("none");
+		});
+
+		it("still removes the attribute when loading is cleared via the property", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<p style="width:150px;height:20px;">Hello</p>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			el.loading = false;
+			await el.updateComplete;
+
+			expect(el.hasAttribute("loading")).to.be.false;
+		});
+	});
 });
