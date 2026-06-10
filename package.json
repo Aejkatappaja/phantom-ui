@@ -31,7 +31,6 @@
 		"src/cli/init.mjs",
 		"custom-elements.json"
 	],
-	"postinstall": "node ./src/cli/init.mjs || true",
 	"scripts": {
 		"build": "npm run build:esm && npm run build:cdn && npm run build:types && npm run build:ssr && cem analyze",
 		"build:ssr": "cp src/ssr.css dist/ssr.css",

@@ -170,12 +170,10 @@ function main() {
 	const root = findProjectRoot();
 	if (!root) process.exit(0);
 
-	const isPostinstall = process.env.npm_lifecycle_event === "postinstall";
 	const deps = readDeps(root);
 	const framework = detectFramework(deps);
 
 	if (!framework) {
-		if (isPostinstall) process.exit(0);
 		console.log("Could not detect framework from package.json.");
 		console.log("Run this command from your project root.");
 		process.exit(1);
@@ -188,7 +186,7 @@ function main() {
 		if (!existsSync(outPath)) {
 			writeFileSync(outPath, template);
 			console.log(`phantom-ui: created ${outPath} (${framework} JSX types)`);
-		} else if (!isPostinstall) {
+		} else {
 			console.log(`${outPath} already exists. Skipping.`);
 		}
 	}
@@ -199,10 +197,10 @@ function main() {
 		if (entryFile) {
 			if (injectCSSImport(entryFile)) {
 				console.log(`phantom-ui: added SSR styles import in ${entryFile}`);
-			} else if (!isPostinstall) {
+			} else {
 				console.log("phantom-ui: SSR styles import already present. Skipping.");
 			}
-		} else if (!isPostinstall) {
+		} else {
 			console.log(`phantom-ui: detected ${ssrFramework} but could not find layout entry file.`);
 			console.log(`Add this to your layout/root file: ${CSS_IMPORT}`);
 		}
