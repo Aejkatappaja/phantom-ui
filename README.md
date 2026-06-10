@@ -546,6 +546,12 @@ phantom-ui {
 }
 ```
 
+For live theming (e.g. a dark-mode toggle with no re-render), pass a `var()` reference through an attribute so it re-resolves on paint:
+
+```html
+<phantom-ui shimmer-color="var(--brand-shimmer)" background-color="var(--brand-bg)">
+```
+
 ## Custom Elements Manifest
 
 The package ships a `custom-elements.json` manifest, which gives IDE autocomplete, Storybook autodocs, and framework tooling the full picture of attributes, properties, slots, and types.

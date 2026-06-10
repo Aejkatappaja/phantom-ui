@@ -23,6 +23,12 @@ import "./types.js";
 type Animation = "shimmer" | "pulse" | "breathe" | "solid";
 type ShimmerDirection = "ltr" | "rtl" | "ttb" | "btt";
 
+const DEFAULT_SHIMMER_COLOR = "rgba(128, 128, 128, 0.3)";
+const DEFAULT_SHIMMER_BG = "rgba(128, 128, 128, 0.2)";
+const DEFAULT_DURATION = 1.5;
+
+type OverlayVar = "--shimmer-color" | "--shimmer-bg" | "--shimmer-duration" | "--reveal-duration";
+
 /**
  * `<phantom-ui>` -- A structure-aware shimmer skeleton loader.
  *
@@ -76,15 +82,15 @@ export class PhantomUi extends LitElement {
 
 	/** Color of the animated gradient wave. Only used in `animation="shimmer"` mode. */
 	@property({ attribute: "shimmer-color" })
-	shimmerColor = "rgba(128, 128, 128, 0.3)";
+	shimmerColor = DEFAULT_SHIMMER_COLOR;
 
 	/** Background color of each shimmer block. Applies to all animation modes. */
 	@property({ attribute: "background-color" })
-	backgroundColor = "rgba(128, 128, 128, 0.2)";
+	backgroundColor = DEFAULT_SHIMMER_BG;
 
 	/** Animation cycle duration in seconds */
 	@property({ type: Number })
-	duration = 1.5;
+	duration = DEFAULT_DURATION;
 
 	/** Border radius applied to elements with border-radius: 0 (like text) */
 	@property({ type: Number, attribute: "fallback-radius" })
@@ -254,13 +260,24 @@ export class PhantomUi extends LitElement {
 	}
 
 	override render() {
-		const overlayStyles = styleMap({
-			"--shimmer-color": this.shimmerColor,
-			"--shimmer-duration": `${this.duration}s`,
-			"--shimmer-bg": this.backgroundColor,
-			"--reveal-duration": `${this.reveal}s`,
-			"--shimmer-direction": this.shimmerDirection,
-		});
+		// Only write a custom property inline when the consumer actually customized it.
+		// An inline declaration shadows inherited values, so emitting the defaults here
+		// would make page-level theming (`phantom-ui { --shimmer-color: ... }`) inert.
+		// Omitting them lets the inherited value, then the :host default, take over.
+		const overlayVars: Partial<Record<OverlayVar, string>> = {};
+		if (this.shimmerColor !== DEFAULT_SHIMMER_COLOR) {
+			overlayVars["--shimmer-color"] = this.shimmerColor;
+		}
+		if (this.backgroundColor !== DEFAULT_SHIMMER_BG) {
+			overlayVars["--shimmer-bg"] = this.backgroundColor;
+		}
+		if (this.duration !== DEFAULT_DURATION) {
+			overlayVars["--shimmer-duration"] = `${this.duration}s`;
+		}
+		if (this.reveal !== 0) {
+			overlayVars["--reveal-duration"] = `${this.reveal}s`;
+		}
+		const overlayStyles = styleMap(overlayVars);
 
 		const showOverlay = this.loading || this._revealing;
 

@@ -53,3 +53,18 @@ The defaults use neutral grays that work on both light and dark backgrounds. Ove
   --shimmer-bg: rgba(0, 0, 0, 0.06);
 }
 ```
+
+## Live theming with `var()` in attributes
+
+Passing a `var()` reference through an attribute keeps the value unresolved until the browser paints it, so it re-resolves live whenever the referenced token changes, with no re-render:
+
+```html
+<phantom-ui shimmer-color="var(--brand-shimmer)" background-color="var(--brand-bg)">
+```
+
+```css
+:root { --brand-shimmer: rgba(0, 0, 0, 0.08); --brand-bg: rgba(0, 0, 0, 0.06); }
+.dark { --brand-shimmer: rgba(255, 255, 255, 0.3); --brand-bg: rgba(255, 255, 255, 0.08); }
+```
+
+Toggling a `.dark` class on an ancestor updates the shimmer instantly, the component never re-measures.

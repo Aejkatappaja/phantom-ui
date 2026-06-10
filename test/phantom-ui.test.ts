@@ -636,4 +636,61 @@ describe("phantom-ui", () => {
 			expect(plain.hasAttribute("data-phantom-graphic")).to.be.false;
 		});
 	});
+
+	describe("theming via CSS custom properties", () => {
+		async function overlayOf(el: PhantomUi): Promise<HTMLElement> {
+			await nextFrame();
+			await el.updateComplete;
+			return el.shadowRoot?.querySelector(".shimmer-overlay") as HTMLElement;
+		}
+
+		it("does not write default custom properties inline on the overlay", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			const overlay = await overlayOf(el);
+			expect(overlay.style.getPropertyValue("--shimmer-color")).to.equal("");
+			expect(overlay.style.getPropertyValue("--shimmer-bg")).to.equal("");
+			expect(overlay.style.getPropertyValue("--shimmer-duration")).to.equal("");
+		});
+
+		it("lets a value set on the host inherit down to the overlay", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			el.style.setProperty("--shimmer-color", "rgb(255, 0, 0)");
+			const overlay = await overlayOf(el);
+			expect(getComputedStyle(overlay).getPropertyValue("--shimmer-color").trim()).to.equal(
+				"rgb(255, 0, 0)",
+			);
+		});
+
+		it("writes the value inline when customized per-instance via attribute", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading shimmer-color="rgb(0, 128, 0)" duration="3">
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			const overlay = await overlayOf(el);
+			expect(overlay.style.getPropertyValue("--shimmer-color")).to.equal("rgb(0, 128, 0)");
+			expect(overlay.style.getPropertyValue("--shimmer-duration")).to.equal("3s");
+		});
+
+		it("a per-instance attribute overrides an inherited host value", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading shimmer-color="rgb(0, 128, 0)">
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			el.style.setProperty("--shimmer-color", "rgb(255, 0, 0)");
+			const overlay = await overlayOf(el);
+			expect(getComputedStyle(overlay).getPropertyValue("--shimmer-color").trim()).to.equal(
+				"rgb(0, 128, 0)",
+			);
+		});
+	});
 });
