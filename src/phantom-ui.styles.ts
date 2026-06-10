@@ -183,4 +183,18 @@ export const phantomUiStyles = css`
 	.debug-label[data-kind="container"] {
 		background: rgba(122, 162, 247, 0.95);
 	}
+
+	/* Reduced motion — degrade every animation mode to the static solid look
+	   (WCAG 2.3.3: the infinite shimmer/pulse/breathe animations stop; blocks
+	   keep their static background, exactly like animation="solid"). */
+	@media (prefers-reduced-motion: reduce) {
+		.shimmer-block,
+		:host([animation]) .shimmer-block {
+			animation: none;
+		}
+
+		.shimmer-block::after {
+			display: none;
+		}
+	}
 `;
