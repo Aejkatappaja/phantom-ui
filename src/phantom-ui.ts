@@ -234,6 +234,15 @@ export class PhantomUi extends LitElement {
 		}
 
 		if (changedProperties.has("loading")) {
+			// React 18 (and any attribute-based binding) sets loading="false" as an
+			// attribute. The converter resolves the property to false, but Lit suppresses
+			// reflection during attributeChangedCallback, so the attribute lingers and the
+			// presence-based hiding selectors (:host([loading]), phantom-ui[loading]) keep
+			// the content hidden. Strip the stale attribute to match the property path.
+			if (!this.loading && this.hasAttribute("loading")) {
+				this.removeAttribute("loading");
+			}
+
 			if (this.loading) {
 				this._revealing = false;
 				this._clearRevealTimeout();

@@ -65,6 +65,8 @@ phantom-ui treats `loading="false"` as falsy, so you can pass booleans directly:
 <phantom-ui loading={isLoading}>
 ```
 
+This works the same in React 18 and React 19. React 18 sets `loading` as a string attribute (`"true"` / `"false"`); the component resolves it to a boolean and clears the stale attribute when it becomes falsy, so content is revealed correctly when loading ends.
+
 ## TypeScript
 
 If the postinstall did not generate `src/phantom-ui.d.ts`, create it manually:
