@@ -40,5 +40,8 @@
   },
   "dependencies": {
     "@aejkatappaja/phantom-ui": "file:../.."
+  },
+  "overrides": {
+    "shell-quote": "^1.8.4"
   }
 }
