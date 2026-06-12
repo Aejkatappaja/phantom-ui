@@ -692,6 +692,67 @@ describe("phantom-ui", () => {
 				"rgb(0, 128, 0)",
 			);
 		});
+
+		it("removing a numeric attribute restores the default instead of a stale inline value", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading duration="3">
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			let overlay = await overlayOf(el);
+			expect(overlay.style.getPropertyValue("--shimmer-duration")).to.equal("3s");
+
+			el.removeAttribute("duration");
+			overlay = await overlayOf(el);
+			// Lit's Number converter yields null on removal — it must not be
+			// serialized as "--shimmer-duration: nulls" (which computes to 0s
+			// and shadows inherited theming).
+			expect(overlay.style.getPropertyValue("--shimmer-duration")).to.equal("");
+		});
+
+		it("removing a numeric attribute lets an inherited host value apply again", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading duration="3">
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			el.style.setProperty("--shimmer-duration", "9s");
+			let overlay = await overlayOf(el);
+			expect(getComputedStyle(overlay).getPropertyValue("--shimmer-duration").trim()).to.equal(
+				"3s",
+			);
+
+			el.removeAttribute("duration");
+			overlay = await overlayOf(el);
+			expect(getComputedStyle(overlay).getPropertyValue("--shimmer-duration").trim()).to.equal(
+				"9s",
+			);
+		});
+
+		it("an invalid numeric attribute does not emit a broken custom property", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading duration="oops">
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			const overlay = await overlayOf(el);
+			// NaN must not be serialized as "--shimmer-duration: NaNs".
+			expect(overlay.style.getPropertyValue("--shimmer-duration")).to.equal("");
+		});
+
+		it("removing the reveal attribute does not leave a stale --reveal-duration", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading reveal="2">
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			let overlay = await overlayOf(el);
+			expect(overlay.style.getPropertyValue("--reveal-duration")).to.equal("2s");
+
+			el.removeAttribute("reveal");
+			overlay = await overlayOf(el);
+			expect(overlay.style.getPropertyValue("--reveal-duration")).to.equal("");
+		});
 	});
 
 	describe("attribute-based loading (React 18)", () => {
