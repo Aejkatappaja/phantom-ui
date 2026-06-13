@@ -1,0 +1,12 @@
+language js
+
+// Forbid inline `type` specifiers inside a value import/export, e.g.
+// `import { html, type TemplateResult } from "lit"`. Type-only imports must
+// live in a dedicated `import type { ... }` statement so a single statement
+// never mixes type and value imports. A separate `import type {}` has no
+// per-specifier `type` modifier, so it is not matched. `type X = ...` aliases
+// are a different node and excluded defensively.
+`type $name` where {
+	$name <: not within `type $_ = $_` ,
+	register_diagnostic(span=$name, message="Do not mix type and value imports. Put type-only imports in a separate `import type { ... }` statement.", severity="error")
+}
