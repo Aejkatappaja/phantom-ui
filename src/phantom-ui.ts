@@ -153,6 +153,15 @@ export class PhantomUi extends LitElement {
 	override connectedCallback(): void {
 		super.connectedCallback();
 		injectLightDomStyles();
+		// On reconnection (the element was moved in the DOM), Lit does not schedule an
+		// update, so observers, inert markers, and graphic hiding are not restored on
+		// their own. Re-initialize them when reconnecting while loading. Guard on
+		// hasUpdated so the very first connect, where updated() already runs the setup,
+		// does not do it twice.
+		if (this.hasUpdated && this.loading) {
+			this._setupObservers();
+			this._scheduleMeasure();
+		}
 	}
 
 	override disconnectedCallback(): void {
@@ -366,10 +375,14 @@ export class PhantomUi extends LitElement {
 		const hostRect = this.getBoundingClientRect();
 		if (hostRect.width === 0 || hostRect.height === 0) return;
 
-		if (this._mutationObserver) this._mutationObserver.disconnect();
-
 		const slot = this.shadowRoot?.querySelector("slot");
 		if (!slot) return;
+
+		// Disconnect only after the slot guard: an early return here would otherwise
+		// leave the observer permanently disconnected and stop all re-measures. The
+		// attribute writes below (graphics/inert markers) must not be observed, so the
+		// observer stays off until it is re-observed at the end of this method.
+		if (this._mutationObserver) this._mutationObserver.disconnect();
 
 		const assignedElements = slot.assignedElements({ flatten: true });
 		const allBlocks: ElementInfo[] = [];
