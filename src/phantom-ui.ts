@@ -273,6 +273,10 @@ export class PhantomUi extends LitElement {
 		// An inline declaration shadows inherited values, so emitting the defaults here
 		// would make page-level theming (`phantom-ui { --shimmer-color: ... }`) inert.
 		// Omitting them lets the inherited value, then the :host default, take over.
+		// Numeric attributes need the finiteness check: removing the attribute makes
+		// Lit's Number converter yield null, and an invalid value yields NaN — both
+		// would otherwise pass the !== guard and be serialized as "nulls"/"NaNs",
+		// breaking the animation shorthand AND shadowing inherited theming.
 		const overlayVars: Partial<Record<OverlayVar, string>> = {};
 		if (this.shimmerColor !== DEFAULT_SHIMMER_COLOR) {
 			overlayVars["--shimmer-color"] = this.shimmerColor;
@@ -280,10 +284,10 @@ export class PhantomUi extends LitElement {
 		if (this.backgroundColor !== DEFAULT_SHIMMER_BG) {
 			overlayVars["--shimmer-bg"] = this.backgroundColor;
 		}
-		if (this.duration !== DEFAULT_DURATION) {
+		if (Number.isFinite(this.duration) && this.duration !== DEFAULT_DURATION) {
 			overlayVars["--shimmer-duration"] = `${this.duration}s`;
 		}
-		if (this.reveal !== 0) {
+		if (Number.isFinite(this.reveal) && this.reveal > 0) {
 			overlayVars["--reveal-duration"] = `${this.reveal}s`;
 		}
 		const overlayStyles = styleMap(overlayVars);
