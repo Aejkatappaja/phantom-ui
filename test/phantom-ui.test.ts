@@ -809,4 +809,86 @@ describe("phantom-ui", () => {
 			expect(el.hasAttribute("loading")).to.be.false;
 		});
 	});
+
+	describe("accessibility: inert during loading", () => {
+		it("makes slotted content inert (out of tab order) while loading", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div><button id="btn">Action</button></div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const btn = el.querySelector("#btn") as HTMLButtonElement;
+			btn.focus();
+			expect(document.activeElement).to.not.equal(btn);
+		});
+
+		it("keeps data-shimmer-ignore elements interactive", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div>
+						<button id="hidden">Hidden</button>
+						<button id="keep" data-shimmer-ignore>Cancel</button>
+					</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const keep = el.querySelector("#keep") as HTMLButtonElement;
+			const hidden = el.querySelector("#hidden") as HTMLButtonElement;
+			keep.focus();
+			expect(document.activeElement).to.equal(keep);
+			hidden.focus();
+			expect(document.activeElement).to.not.equal(hidden);
+		});
+
+		it("restores interactivity when loading ends", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div><button id="btn">Action</button></div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			el.loading = false;
+			await el.updateComplete;
+			const btn = el.querySelector("#btn") as HTMLButtonElement;
+			btn.focus();
+			expect(document.activeElement).to.equal(btn);
+		});
+
+		it("does not clobber a consumer's own inert on restore", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div id="wrap" inert><button>Action</button></div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			el.loading = false;
+			await el.updateComplete;
+			const wrap = el.querySelector("#wrap") as HTMLElement;
+			expect(wrap.hasAttribute("inert")).to.be.true;
+		});
+
+		it("inerts content added during loading", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div id="wrap"><button id="first">First</button></div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const wrap = el.querySelector("#wrap") as HTMLElement;
+			const late = document.createElement("button");
+			late.id = "late";
+			wrap.appendChild(late);
+			await nextFrame();
+			await nextFrame();
+			await el.updateComplete;
+			late.focus();
+			expect(document.activeElement).to.not.equal(late);
+		});
+	});
 });

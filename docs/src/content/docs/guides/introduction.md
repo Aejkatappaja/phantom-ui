@@ -30,7 +30,7 @@ When `loading` is removed, the shimmer disappears and real content is revealed i
 - **Multiple animation modes** -- shimmer, pulse, breathe, or solid
 - **Stagger effect** -- blocks animate with progressive delay for a wave effect
 - **Smooth reveal** -- configurable fade-out transition when loading ends
-- **Accessible** -- `aria-busy` set automatically on the host element
+- **Accessible** -- `aria-busy` on the host, plus `inert` on placeholder content so it stays out of the tab order and the accessibility tree while loading
 - **Dark mode friendly** -- default semi-transparent white colors work on any background
 - **Micro-frontend ready** -- safe to import multiple times across lazy-loaded modules, dynamic imports, and HMR environments
 - **~8kb gzipped** -- CDN bundle with Lit included

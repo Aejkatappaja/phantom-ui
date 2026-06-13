@@ -458,7 +458,7 @@ Running `npx @aejkatappaja/phantom-ui init` detects SSR frameworks and adds this
 
 Data attributes let you control which elements get shimmer treatment and how they are measured:
 
-**`data-shimmer-ignore`** keeps an element and all its descendants visible during loading. Useful for logos, brand marks, or live indicators that should always be shown.
+**`data-shimmer-ignore`** keeps an element and all its descendants visible and interactive during loading (never made `inert`). Useful for logos, brand marks, or live indicators that should always be shown.
 
 **`data-shimmer-no-children`** captures the element as one single shimmer block instead of recursing into its children. Useful for dense metric groups that should appear as a single placeholder.
 
@@ -522,7 +522,7 @@ This is useful with framework loops where the list is empty before data loads:
 
 5. A `ResizeObserver`, `MutationObserver`, and media `load` listener re-measure automatically when the layout changes (window resize, content injection, DOM mutations, or images/videos finishing loading).
 
-6. When `loading` is removed, the overlay is destroyed and real content is revealed. `aria-busy` is set automatically on the host element to communicate loading state to assistive technologies.
+6. When `loading` is removed, the overlay is destroyed and real content is revealed. `aria-busy` is set automatically on the host element to communicate loading state to assistive technologies, and the placeholder content is made `inert` while loading so it stays out of the tab order and the accessibility tree (elements marked `data-shimmer-ignore` stay interactive).
 
 ## Performance
 

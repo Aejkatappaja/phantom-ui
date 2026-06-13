@@ -43,13 +43,17 @@ A `ResizeObserver`, `MutationObserver`, and media `load` listener watch for layo
 
 ### 6. Reveal
 
-When `loading` is removed, the overlay is destroyed. The invisible styles are removed and real content appears.
+When `loading` is removed, the overlay is destroyed. The invisible styles are removed, the `inert` markers are cleared, and real content appears.
 
 ## Special behaviors
 
+### Accessibility
+
+`aria-busy` is set on the host while loading. The slotted content is also made [`inert`](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/inert) so it is removed from the tab order and the accessibility tree: invisible placeholder elements stay out of keyboard navigation and screen reader output, and cannot be activated. Because `inert` is inherited and cannot be cancelled by a descendant, phantom-ui marks the largest subtrees that contain no `data-shimmer-ignore` element and leaves those subtrees interactive. It only sets `inert` on elements it owns, so a consumer's own `inert` is preserved. `inert` is applied in JavaScript, so during server-side rendering before hydration only the visual hiding applies.
+
 ### `data-shimmer-ignore`
 
-If an element has this attribute, it and all descendants are skipped entirely during the DOM walk. The element stays visible during loading.
+If an element has this attribute, it and all descendants are skipped entirely during the DOM walk. The element stays visible and interactive during loading (it is never made `inert`, unlike the rest of the slotted content).
 
 ### `data-shimmer-no-children`
 

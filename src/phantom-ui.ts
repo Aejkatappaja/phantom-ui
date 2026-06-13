@@ -148,6 +148,7 @@ export class PhantomUi extends LitElement {
 	private _revealTimeout: ReturnType<typeof setTimeout> | null = null;
 	private _hiddenRoots = new Set<ShadowRoot>();
 	private _markedGraphics = new Set<Element>();
+	private _inertedElements = new Set<Element>();
 
 	override connectedCallback(): void {
 		super.connectedCallback();
@@ -160,6 +161,7 @@ export class PhantomUi extends LitElement {
 		this._clearRevealTimeout();
 		this._restoreShadowContent();
 		this._restoreGraphics();
+		this._restoreInert();
 	}
 
 	/**
@@ -210,6 +212,40 @@ export class PhantomUi extends LitElement {
 		this._markedGraphics.clear();
 	}
 
+	/**
+	 * While loading, slotted content is visually hidden but stays focusable,
+	 * keyboard-activatable, and exposed to screen readers (the CSS hiding only sets
+	 * pointer-events/opacity/transparent text, none of which affect the tab order or
+	 * the accessibility tree). Mark it `inert` to remove it from both.
+	 *
+	 * `inert` is inherited and cannot be cancelled by a descendant, so we cannot just
+	 * inert the assigned elements: that would force any nested `data-shimmer-ignore`
+	 * element inert too, defeating the one feature meant to stay interactive. Instead
+	 * we inert the largest subtrees that contain no `data-shimmer-ignore`, and recurse
+	 * past the ones that do. We only track what we set, so a consumer's own `inert` is
+	 * never cleared on restore. `inert` is inherited through shadow boundaries, so
+	 * pierced shadow content is covered without walking it.
+	 */
+	private _applyInert(roots: Element[]): void {
+		const walk = (el: Element): void => {
+			if (el.hasAttribute("data-shimmer-ignore")) return;
+			if (!el.querySelector("[data-shimmer-ignore]")) {
+				if (!el.hasAttribute("inert")) {
+					el.setAttribute("inert", "");
+					this._inertedElements.add(el);
+				}
+				return;
+			}
+			for (const child of el.children) walk(child);
+		};
+		for (const el of roots) walk(el);
+	}
+
+	private _restoreInert(): void {
+		for (const el of this._inertedElements) el.removeAttribute("inert");
+		this._inertedElements.clear();
+	}
+
 	override willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
 		if (changedProperties.has("loading") && !this.loading) {
 			if (this.reveal > 0 && this._blocks.length > 0) {
@@ -257,6 +293,7 @@ export class PhantomUi extends LitElement {
 					this.style.minHeight = "";
 					this._restoreShadowContent();
 					this._restoreGraphics();
+					this._restoreInert();
 				}, this.reveal * 1000);
 			} else {
 				this._blocks = [];
@@ -264,6 +301,7 @@ export class PhantomUi extends LitElement {
 				this.style.minHeight = "";
 				this._restoreShadowContent();
 				this._restoreGraphics();
+				this._restoreInert();
 			}
 		}
 	}
@@ -340,6 +378,8 @@ export class PhantomUi extends LitElement {
 			this._hideShadowContent(assignedElements);
 		}
 		this._markGraphics(assignedElements);
+		this._restoreInert();
+		this._applyInert(assignedElements);
 
 		for (const el of assignedElements) {
 			const blocks = extractElementInfo(el, hostRect, this.pierceShadow);
