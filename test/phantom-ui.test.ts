@@ -891,4 +891,41 @@ describe("phantom-ui", () => {
 			expect(document.activeElement).to.not.equal(late);
 		});
 	});
+
+	describe("reconnection", () => {
+		it("re-initializes observers and inert when moved in the DOM while loading", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div id="card"><button id="btn">Action</button></div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const before =
+				el.shadowRoot?.querySelectorAll(".shimmer-block, .shimmer-container-block").length ?? 0;
+
+			const host = document.createElement("div");
+			document.body.appendChild(host);
+			host.appendChild(el);
+			await nextFrame();
+			await el.updateComplete;
+
+			const btn = el.querySelector("#btn") as HTMLButtonElement;
+			btn.focus();
+			expect(document.activeElement).to.not.equal(btn);
+
+			const card = el.querySelector("#card") as HTMLElement;
+			const p = document.createElement("p");
+			p.style.cssText = "width:120px;height:20px;";
+			card.appendChild(p);
+			await nextFrame();
+			await nextFrame();
+			await el.updateComplete;
+			const after =
+				el.shadowRoot?.querySelectorAll(".shimmer-block, .shimmer-container-block").length ?? 0;
+			expect(after).to.be.greaterThan(before);
+
+			host.remove();
+		});
+	});
 });
