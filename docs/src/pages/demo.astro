@@ -1221,6 +1221,23 @@ document.addEventListener("DOMContentLoaded", function () {
 		box-shadow: 0 0 8px rgba(122,162,247,0.3);
 	}
 
+	.ghost-toggle:focus-visible,
+	.gear-btn:focus-visible,
+	.theme-toggle:focus-visible,
+	.pill:focus-visible,
+	.sw:focus-visible,
+	.cta:focus-visible,
+	.cta-sm:focus-visible,
+	.p-btn:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 2px;
+	}
+
+	input[type="range"]:focus-visible {
+		outline: 2px solid var(--accent);
+		outline-offset: 4px;
+	}
+
 	.showcase { max-width: 1200px; margin: 0 auto; padding: 32px 32px 0; }
 
 	.dash-shell { margin-bottom: 16px; }
