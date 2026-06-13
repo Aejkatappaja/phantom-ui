@@ -78,6 +78,25 @@
 
   .note-ignore { font-size: 11px; color: #e94560; margin-top: 8px; }
   .note-no-children { font-size: 11px; color: #4ecca3; margin-top: 4px; }
+
+  .card-actions { display: flex; gap: 8px; align-items: center; margin-top: 12px; }
+  .demo-btn {
+    background: #3b4261; color: #c0caf5; border: 1px solid #565f89;
+    border-radius: 6px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer;
+  }
+  .demo-btn:focus-visible, .demo-link:focus-visible { outline: 2px solid #7aa2f7; outline-offset: 2px; }
+  .demo-link { color: #7aa2f7; font-size: 13px; }
+
+  /* Icon drawn via CSS mask-image + background tint (not <img>/<svg>): exercises
+     phantom-ui's runtime masked-graphic detection. */
+  .mask-icon {
+    display: inline-block; width: 20px; height: 20px; background: #7aa2f7;
+    -webkit-mask: var(--icon) center / contain no-repeat;
+    mask: var(--icon) center / contain no-repeat;
+    --icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>');
+  }
+
+  .controls label small { color: #565f89; }
 </style>
 </head>
 <body>
@@ -93,12 +112,29 @@
       </label>
 
       <label>
+        <div class="row">
+          <input type="checkbox" id="ctl-debug">
+          <span>debug</span>
+        </div>
+      </label>
+
+      <label>
         <span>animation</span>
         <select id="ctl-animation">
           <option value="shimmer" selected>shimmer</option>
           <option value="pulse">pulse</option>
           <option value="breathe">breathe</option>
           <option value="solid">solid</option>
+        </select>
+      </label>
+
+      <label>
+        <span>shimmer-direction <small>(shimmer mode)</small></span>
+        <select id="ctl-shimmer-direction">
+          <option value="ltr" selected>ltr</option>
+          <option value="rtl">rtl</option>
+          <option value="ttb">ttb</option>
+          <option value="btt">btt</option>
         </select>
       </label>
 
@@ -149,6 +185,11 @@
           <output id="out-bg-alpha">0.2</output>
         </div>
       </label>
+
+      <label>
+        <span>loading-label <small>(screen reader)</small></span>
+        <input type="text" id="ctl-loading-label" value="Loading">
+      </label>
     </div>
 
     <div class="preview">
@@ -157,7 +198,7 @@
           <div class="card-header">
             <div class="avatar"></div>
             <div class="card-header-text">
-              <h3>Jane Doe</h3>
+              <h3>Jane Doe <span class="mask-icon" aria-label="verified"></span></h3>
               <p>Software Engineer</p>
             </div>
           </div>
@@ -168,6 +209,11 @@
             <span class="tag">TypeScript</span>
             <span class="tag">Lit</span>
             <span class="tag">CSS</span>
+          </div>
+          <div class="card-actions">
+            <button class="demo-btn" type="button">Follow</button>
+            <a class="demo-link" href="#x">Profile</a>
+            <button class="demo-btn" type="button" data-shimmer-ignore>Close (kept)</button>
           </div>
           <p class="note-ignore" data-shimmer-ignore>data-shimmer-ignore (always visible)</p>
           <div class="note-no-children" data-shimmer-no-children>
@@ -188,6 +234,18 @@
 
     document.getElementById("ctl-animation").addEventListener("change", (e) => {
       el.setAttribute("animation", e.target.value);
+    });
+
+    document.getElementById("ctl-shimmer-direction").addEventListener("change", (e) => {
+      el.setAttribute("shimmer-direction", e.target.value);
+    });
+
+    document.getElementById("ctl-debug").addEventListener("change", (e) => {
+      el.toggleAttribute("debug", e.target.checked);
+    });
+
+    document.getElementById("ctl-loading-label").addEventListener("input", (e) => {
+      el.setAttribute("loading-label", e.target.value);
     });
 
     const ranges = [
