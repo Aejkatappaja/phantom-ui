@@ -7,7 +7,7 @@ These attributes go on **child elements** inside `<phantom-ui>`, not on the comp
 
 ## `data-shimmer-ignore`
 
-Excludes an element and all its descendants from shimmer. The element stays fully visible during loading.
+Excludes an element and all its descendants from shimmer. The element stays fully visible and interactive during loading (it keeps focus and is never made `inert`).
 
 Use this for logos, brand marks, live indicators, or anything that should always be shown.
 
