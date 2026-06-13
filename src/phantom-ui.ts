@@ -2,6 +2,14 @@ import type { CSSResult } from "lit";
 import { html, LitElement, nothing } from "lit";
 import { property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
+import {
+	DEFAULT_DURATION,
+	DEFAULT_SHIMMER_BG,
+	DEFAULT_SHIMMER_COLOR,
+	GRAPHIC_ATTR,
+	SHIMMER_IGNORE_ATTR,
+	TAG_NAME,
+} from "./constants.js";
 import type { ContainerInfo, ElementInfo } from "./dom-measurement.js";
 import {
 	createResizeObserver,
@@ -9,7 +17,6 @@ import {
 	extractElementInfo,
 } from "./dom-measurement.js";
 import {
-	GRAPHIC_ATTR,
 	hideShadowRoot,
 	injectLightDomStyles,
 	isMaskedGraphic,
@@ -19,13 +26,7 @@ import { phantomUiStyles } from "./phantom-ui.styles.js";
 
 export type { PhantomUiAttributes, SolidPhantomUiAttributes } from "./types.js";
 import "./types.js";
-
-type Animation = "shimmer" | "pulse" | "breathe" | "solid";
-type ShimmerDirection = "ltr" | "rtl" | "ttb" | "btt";
-
-const DEFAULT_SHIMMER_COLOR = "rgba(128, 128, 128, 0.3)";
-const DEFAULT_SHIMMER_BG = "rgba(128, 128, 128, 0.2)";
-const DEFAULT_DURATION = 1.5;
+import type { Animation, ShimmerDirection } from "./types.js";
 
 type OverlayVar = "--shimmer-color" | "--shimmer-bg" | "--shimmer-duration" | "--reveal-duration";
 
@@ -173,88 +174,6 @@ export class PhantomUi extends LitElement {
 		this._restoreInert();
 	}
 
-	/**
-	 * Inject hiding styles into every open shadow root under the slotted elements.
-	 * Light-DOM hiding rules cannot cross shadow boundaries, so pierced components
-	 * would otherwise show their real content through the shimmer overlay.
-	 */
-	private _hideShadowContent(roots: Element[]): void {
-		const visit = (el: Element): void => {
-			if (el.shadowRoot) {
-				hideShadowRoot(el.shadowRoot);
-				this._hiddenRoots.add(el.shadowRoot);
-				for (const child of el.shadowRoot.children) visit(child);
-			}
-			for (const child of el.children) visit(child);
-		};
-		for (const el of roots) visit(el);
-	}
-
-	private _restoreShadowContent(): void {
-		for (const root of this._hiddenRoots) unhideShadowRoot(root);
-		this._hiddenRoots.clear();
-	}
-
-	/**
-	 * Icons drawn with CSS mask-image and tinted via background-color are neither
-	 * <img> nor <svg>, so the media-hiding rules miss them and they show through
-	 * the shimmer. CSS can't select "has a mask", so detect them at runtime and
-	 * mark them with GRAPHIC_ATTR, which the hiding rules target. Walks light DOM
-	 * and (when piercing) shadow roots.
-	 */
-	private _markGraphics(roots: Element[]): void {
-		const visit = (el: Element): void => {
-			if (isMaskedGraphic(el)) {
-				el.setAttribute(GRAPHIC_ATTR, "");
-				this._markedGraphics.add(el);
-			}
-			if (this.pierceShadow && el.shadowRoot) {
-				for (const child of el.shadowRoot.children) visit(child);
-			}
-			for (const child of el.children) visit(child);
-		};
-		for (const el of roots) visit(el);
-	}
-
-	private _restoreGraphics(): void {
-		for (const el of this._markedGraphics) el.removeAttribute(GRAPHIC_ATTR);
-		this._markedGraphics.clear();
-	}
-
-	/**
-	 * While loading, slotted content is visually hidden but stays focusable,
-	 * keyboard-activatable, and exposed to screen readers (the CSS hiding only sets
-	 * pointer-events/opacity/transparent text, none of which affect the tab order or
-	 * the accessibility tree). Mark it `inert` to remove it from both.
-	 *
-	 * `inert` is inherited and cannot be cancelled by a descendant, so we cannot just
-	 * inert the assigned elements: that would force any nested `data-shimmer-ignore`
-	 * element inert too, defeating the one feature meant to stay interactive. Instead
-	 * we inert the largest subtrees that contain no `data-shimmer-ignore`, and recurse
-	 * past the ones that do. We only track what we set, so a consumer's own `inert` is
-	 * never cleared on restore. `inert` is inherited through shadow boundaries, so
-	 * pierced shadow content is covered without walking it.
-	 */
-	private _applyInert(roots: Element[]): void {
-		const walk = (el: Element): void => {
-			if (el.hasAttribute("data-shimmer-ignore")) return;
-			if (!el.querySelector("[data-shimmer-ignore]")) {
-				if (!el.hasAttribute("inert")) {
-					el.setAttribute("inert", "");
-					this._inertedElements.add(el);
-				}
-				return;
-			}
-			for (const child of el.children) walk(child);
-		};
-		for (const el of roots) walk(el);
-	}
-
-	private _restoreInert(): void {
-		for (const el of this._inertedElements) el.removeAttribute("inert");
-		this._inertedElements.clear();
-	}
-
 	override willUpdate(changedProperties: Map<PropertyKey, unknown>): void {
 		if (changedProperties.has("loading") && !this.loading) {
 			if (this.reveal > 0 && this._blocks.length > 0) {
@@ -354,9 +273,42 @@ export class PhantomUi extends LitElement {
               ${this._renderBlocks()}
             </div>
           `
-					: ""
+					: nothing
 			}
     `;
+	}
+
+	private _renderBlocks() {
+		return this._blocks.map((block, index) => {
+			const radius = block.borderRadius || `${this.fallbackRadius}px`;
+			const base = {
+				left: `${block.x}px`,
+				top: `${block.y}px`,
+				width: `${block.width}px`,
+				height: `${block.height}px`,
+				"border-radius": radius,
+			};
+
+			if (block.isContainer) {
+				const styles: Record<string, string> = { ...base };
+				if (block.containerBg) styles.background = block.containerBg;
+				if (block.containerBorder) styles.border = block.containerBorder;
+				if (block.containerShadow) styles["box-shadow"] = block.containerShadow;
+				return html`<div
+          class="shimmer-container-block"
+          style=${styleMap(styles)}
+        >${this.debug ? html`<span class="debug-label" data-kind="container">C${index}</span>` : nothing}</div>`;
+			}
+
+			const styles: Record<string, string> = {
+				...base,
+				background: `var(--shimmer-bg, ${this.backgroundColor})`,
+			};
+			if (this.stagger > 0) {
+				styles["animation-delay"] = `${index * this.stagger}s`;
+			}
+			return html`<div class="shimmer-block" style=${styleMap(styles)}>${this.debug ? html`<span class="debug-label">${index}</span>` : nothing}</div>`;
+		});
 	}
 
 	private _scheduleMeasure(): void {
@@ -495,40 +447,89 @@ export class PhantomUi extends LitElement {
 		}
 	}
 
-	private _renderBlocks() {
-		return this._blocks.map((block, index) => {
-			const radius = block.borderRadius || `${this.fallbackRadius}px`;
-			const base = {
-				left: `${block.x}px`,
-				top: `${block.y}px`,
-				width: `${block.width}px`,
-				height: `${block.height}px`,
-				"border-radius": radius,
-			};
-
-			if (block.isContainer) {
-				const styles: Record<string, string> = { ...base };
-				if (block.containerBg) styles.background = block.containerBg;
-				if (block.containerBorder) styles.border = block.containerBorder;
-				if (block.containerShadow) styles["box-shadow"] = block.containerShadow;
-				return html`<div
-          class="shimmer-container-block"
-          style=${styleMap(styles)}
-        >${this.debug ? html`<span class="debug-label" data-kind="container">C${index}</span>` : nothing}</div>`;
+	/**
+	 * Inject hiding styles into every open shadow root under the slotted elements.
+	 * Light-DOM hiding rules cannot cross shadow boundaries, so pierced components
+	 * would otherwise show their real content through the shimmer overlay.
+	 */
+	private _hideShadowContent(roots: Element[]): void {
+		const visit = (el: Element): void => {
+			if (el.shadowRoot) {
+				hideShadowRoot(el.shadowRoot);
+				this._hiddenRoots.add(el.shadowRoot);
+				for (const child of el.shadowRoot.children) visit(child);
 			}
+			for (const child of el.children) visit(child);
+		};
+		for (const el of roots) visit(el);
+	}
 
-			const styles: Record<string, string> = {
-				...base,
-				background: `var(--shimmer-bg, ${this.backgroundColor})`,
-			};
-			if (this.stagger > 0) {
-				styles["animation-delay"] = `${index * this.stagger}s`;
+	private _restoreShadowContent(): void {
+		for (const root of this._hiddenRoots) unhideShadowRoot(root);
+		this._hiddenRoots.clear();
+	}
+
+	/**
+	 * Icons drawn with CSS mask-image and tinted via background-color are neither
+	 * <img> nor <svg>, so the media-hiding rules miss them and they show through
+	 * the shimmer. CSS can't select "has a mask", so detect them at runtime and
+	 * mark them with GRAPHIC_ATTR, which the hiding rules target. Walks light DOM
+	 * and (when piercing) shadow roots.
+	 */
+	private _markGraphics(roots: Element[]): void {
+		const visit = (el: Element): void => {
+			if (isMaskedGraphic(el)) {
+				el.setAttribute(GRAPHIC_ATTR, "");
+				this._markedGraphics.add(el);
 			}
-			return html`<div class="shimmer-block" style=${styleMap(styles)}>${this.debug ? html`<span class="debug-label">${index}</span>` : nothing}</div>`;
-		});
+			if (this.pierceShadow && el.shadowRoot) {
+				for (const child of el.shadowRoot.children) visit(child);
+			}
+			for (const child of el.children) visit(child);
+		};
+		for (const el of roots) visit(el);
+	}
+
+	private _restoreGraphics(): void {
+		for (const el of this._markedGraphics) el.removeAttribute(GRAPHIC_ATTR);
+		this._markedGraphics.clear();
+	}
+
+	/**
+	 * While loading, slotted content is visually hidden but stays focusable,
+	 * keyboard-activatable, and exposed to screen readers (the CSS hiding only sets
+	 * pointer-events/opacity/transparent text, none of which affect the tab order or
+	 * the accessibility tree). Mark it `inert` to remove it from both.
+	 *
+	 * `inert` is inherited and cannot be cancelled by a descendant, so we cannot just
+	 * inert the assigned elements: that would force any nested `data-shimmer-ignore`
+	 * element inert too, defeating the one feature meant to stay interactive. Instead
+	 * we inert the largest subtrees that contain no `data-shimmer-ignore`, and recurse
+	 * past the ones that do. We only track what we set, so a consumer's own `inert` is
+	 * never cleared on restore. `inert` is inherited through shadow boundaries, so
+	 * pierced shadow content is covered without walking it.
+	 */
+	private _applyInert(roots: Element[]): void {
+		const walk = (el: Element): void => {
+			if (el.hasAttribute(SHIMMER_IGNORE_ATTR)) return;
+			if (!el.querySelector(`[${SHIMMER_IGNORE_ATTR}]`)) {
+				if (!el.hasAttribute("inert")) {
+					el.setAttribute("inert", "");
+					this._inertedElements.add(el);
+				}
+				return;
+			}
+			for (const child of el.children) walk(child);
+		};
+		for (const el of roots) walk(el);
+	}
+
+	private _restoreInert(): void {
+		for (const el of this._inertedElements) el.removeAttribute("inert");
+		this._inertedElements.clear();
 	}
 }
 
-if (!customElements.get("phantom-ui")) {
-	customElements.define("phantom-ui", PhantomUi);
+if (!customElements.get(TAG_NAME)) {
+	customElements.define(TAG_NAME, PhantomUi);
 }

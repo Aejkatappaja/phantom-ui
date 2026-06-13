@@ -1,10 +1,13 @@
 import type { PhantomUi } from "./phantom-ui.js";
 
+export type ShimmerDirection = "ltr" | "rtl" | "ttb" | "btt";
+export type Animation = "shimmer" | "pulse" | "breathe" | "solid";
+
 export interface PhantomUiAttributes {
 	/** Show the shimmer overlay (`true`) or the real content (`false`). Treats the string `"false"` as falsy. */
 	loading?: boolean;
 	/** Direction of the shimmer sweep: `"ltr"`, `"rtl"`, `"ttb"`, or `"btt"`. Only used in `animation="shimmer"` mode. */
-	"shimmer-direction"?: "ltr" | "rtl" | "ttb" | "btt";
+	"shimmer-direction"?: ShimmerDirection;
 	/** Color of the animated gradient wave. Only used in `animation="shimmer"` mode. */
 	"shimmer-color"?: string;
 	/** Background color of each shimmer block. Applies to all animation modes. */
@@ -14,7 +17,7 @@ export interface PhantomUiAttributes {
 	/** Border radius (px) applied to elements that have none (like text). */
 	"fallback-radius"?: number;
 	/** Animation mode: `"shimmer"` (gradient sweep), `"pulse"` (opacity), `"breathe"` (scale + fade), or `"solid"` (static). */
-	animation?: "shimmer" | "pulse" | "breathe" | "solid";
+	animation?: Animation;
 	/** Delay in seconds between each block's animation start. `0` = no stagger. */
 	stagger?: number;
 	/** Fade-out duration in seconds when loading ends. `0` = instant. */
