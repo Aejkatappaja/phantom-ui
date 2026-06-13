@@ -8,6 +8,13 @@
  * and @findify/skeleton-generator (~2019).
  */
 
+import {
+	SHIMMER_HEIGHT_ATTR,
+	SHIMMER_IGNORE_ATTR,
+	SHIMMER_NO_CHILDREN_ATTR,
+	SHIMMER_WIDTH_ATTR,
+} from "./constants.js";
+
 interface BaseInfo {
 	x: number;
 	y: number;
@@ -101,8 +108,8 @@ export function extractElementInfo(
 
 		const rect = el.getBoundingClientRect();
 
-		const overrideW = Number(el.getAttribute("data-shimmer-width")) || 0;
-		const overrideH = Number(el.getAttribute("data-shimmer-height")) || 0;
+		const overrideW = Number(el.getAttribute(SHIMMER_WIDTH_ATTR)) || 0;
+		const overrideH = Number(el.getAttribute(SHIMMER_HEIGHT_ATTR)) || 0;
 		const hasOverride = overrideW > 0 || overrideH > 0;
 		const w = overrideW || rect.width;
 		const h = overrideH || rect.height;
@@ -111,7 +118,7 @@ export function extractElementInfo(
 			return;
 		}
 
-		if (el.hasAttribute("data-shimmer-ignore")) {
+		if (el.hasAttribute(SHIMMER_IGNORE_ATTR)) {
 			return;
 		}
 
@@ -124,7 +131,7 @@ export function extractElementInfo(
 		}
 
 		const shouldCapture =
-			el.hasAttribute("data-shimmer-no-children") ||
+			el.hasAttribute(SHIMMER_NO_CHILDREN_ATTR) ||
 			isLeafElement(el) ||
 			(pierceShadow && hasOnlySlotChildren(el));
 

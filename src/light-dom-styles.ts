@@ -1,3 +1,5 @@
+import { GRAPHIC_ATTR, SHIMMER_IGNORE_ATTR, TAG_NAME } from "./constants.js";
+
 /** Elements hidden by opacity (rather than transparent text) while loading. */
 const MEDIA_SELECTOR = 'img, svg, video, canvas, button, [role="button"]';
 
@@ -19,32 +21,24 @@ const LIGHT_DOM_STYLE_ID = "phantom-ui-loading-styles";
 export function injectLightDomStyles(): void {
 	if (document.getElementById(LIGHT_DOM_STYLE_ID)) return;
 	const mediaList = MEDIA_SELECTOR.split(", ")
-		.map((sel) => `phantom-ui[loading] ${sel}`)
+		.map((sel) => `${TAG_NAME}[loading] ${sel}`)
 		.join(",\n\t\t\t");
 	const ignoreMediaList = MEDIA_SELECTOR.split(", ")
-		.map((sel) => `phantom-ui[loading] [data-shimmer-ignore] ${sel}`)
+		.map((sel) => `${TAG_NAME}[loading] [${SHIMMER_IGNORE_ATTR}] ${sel}`)
 		.join(",\n\t\t\t");
 
 	const style = document.createElement("style");
 	style.id = LIGHT_DOM_STYLE_ID;
 	style.textContent = `
-		phantom-ui[loading] * { ${HIDE_TEXT} }
+		${TAG_NAME}[loading] * { ${HIDE_TEXT} }
 		${mediaList},
-		phantom-ui[loading] [${GRAPHIC_ATTR}] { opacity: 0 !important; }
-		phantom-ui[loading] [data-shimmer-ignore],
-		phantom-ui[loading] [data-shimmer-ignore] * { ${SHOW_TEXT} }
+		${TAG_NAME}[loading] [${GRAPHIC_ATTR}] { opacity: 0 !important; }
+		${TAG_NAME}[loading] [${SHIMMER_IGNORE_ATTR}],
+		${TAG_NAME}[loading] [${SHIMMER_IGNORE_ATTR}] * { ${SHOW_TEXT} }
 		${ignoreMediaList} { opacity: 1 !important; }
 	`;
 	document.head.appendChild(style);
 }
-
-/**
- * Marker attribute set at measure time on elements rendered as graphics through
- * CSS (mask-image icons tinted with background-color) rather than as <img>/<svg>.
- * The media-hiding rules can't select these via CSS, so phantom-ui detects them
- * at runtime, marks them, and the hiding rules target the marker.
- */
-export const GRAPHIC_ATTR = "data-phantom-graphic";
 
 /**
  * True when the element is painted via a CSS mask (the icon-as-mask pattern),
@@ -69,7 +63,7 @@ const SHADOW_HIDE_STYLE_ID = "phantom-ui-shadow-hide";
  * style is added while loading and removed on reveal/teardown.
  */
 const SHADOW_HIDE_CSS = `
-	:host([data-shimmer-ignore]) *, [data-shimmer-ignore] * {
+	:host([${SHIMMER_IGNORE_ATTR}]) *, [${SHIMMER_IGNORE_ATTR}] * {
 		-webkit-text-fill-color: initial !important;
 		opacity: 1 !important;
 	}
