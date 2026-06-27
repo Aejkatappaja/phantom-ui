@@ -35,7 +35,7 @@
     "typescript-eslint": "8.38.0",
     "typescript-plugin-css-modules": "latest",
     "undici": "*",
-    "vite": "7.3.2",
+    "vite": "7.3.5",
     "vite-tsconfig-paths": "^4.2.1"
   },
   "dependencies": {
