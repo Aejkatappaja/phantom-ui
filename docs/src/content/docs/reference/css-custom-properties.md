@@ -13,6 +13,7 @@ You can override the shimmer appearance globally or per-instance using CSS custo
 | `--shimmer-duration` | `1.5s` | Animation cycle |
 | `--shimmer-bg` | `rgba(128, 128, 128, 0.2)` | Block background |
 | `--reveal-duration` | `0s` | Fade-out transition when loading ends |
+| `--phantom-content-opacity` | `0.5` | Dim level of the visible content in `mode="overlay"` (`1` = full opacity, light only) |
 
 ## Global override
 

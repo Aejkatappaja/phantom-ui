@@ -928,4 +928,58 @@ describe("phantom-ui", () => {
 			host.remove();
 		});
 	});
+
+	describe("overlay mode", () => {
+		it("keeps slotted content visible and keyboard-reachable but not clickable while loading", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading mode="overlay">
+					<div><button id="btn">Action</button><p>Stale row</p></div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			const p = el.querySelector("p") as HTMLElement;
+			expect(getComputedStyle(p).webkitTextFillColor).to.not.equal("transparent");
+
+			// Stale content is dimmed and non-clickable during the refresh, but stays
+			// in the a11y tree and keyboard-reachable (aria-busy announces the update).
+			const div = el.querySelector("div") as HTMLElement;
+			expect(getComputedStyle(div).pointerEvents).to.equal("none");
+
+			const btn = el.querySelector("#btn") as HTMLButtonElement;
+			btn.focus();
+			expect(document.activeElement).to.equal(btn);
+		});
+
+		it("measures the content and renders glint blocks over it", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading mode="overlay">
+					<div style="width:200px;height:60px;">Grid</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			// Overlay is structure-aware: it still measures and renders blocks, which
+			// become transparent glints (via --shimmer-bg: transparent) over the
+			// visible content rather than opaque placeholders.
+			expect(el.shadowRoot?.querySelectorAll(".shimmer-block").length).to.be.greaterThan(0);
+			expect(el.getAttribute("aria-busy")).to.equal("true");
+		});
+
+		it("removes the overlay when loading ends", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading mode="overlay">
+					<div style="width:200px;height:60px;">Grid</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			el.loading = false;
+			await el.updateComplete;
+
+			expect(el.shadowRoot?.querySelector(".shimmer-overlay")).to.not.exist;
+		});
+	});
 });

@@ -85,6 +85,13 @@
 					<button class="pill" data-value="solid">solid</button>
 				</div>
 			</div>
+			<div class="ctrl-group">
+				<span class="ctrl-label">Mode</span>
+				<div class="pills" data-control="mode">
+					<button class="pill active" data-value="skeleton">skeleton</button>
+					<button class="pill" data-value="overlay">overlay</button>
+				</div>
+			</div>
 			<div class="ctrl-group" id="direction-group">
 				<span class="ctrl-label">Direction</span>
 				<div class="pills" data-control="shimmer-direction">
@@ -745,6 +752,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		var animGroup = inner.querySelector('[data-control="animation"]').parentElement.cloneNode(true);
 		sheetBody.appendChild(animGroup);
+
+		var modeGroup = inner.querySelector('[data-control="mode"]').parentElement.cloneNode(true);
+		sheetBody.appendChild(modeGroup);
 
 		var dirRow = document.createElement("div");
 		dirRow.className = "sheet-row";

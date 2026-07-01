@@ -11,33 +11,33 @@
  * <phantom-ui loading> is hidden even before JavaScript executes.
  */
 
-phantom-ui[loading] * {
+phantom-ui[loading]:not([mode="overlay"]) * {
 	-webkit-text-fill-color: transparent !important;
 	pointer-events: none;
 	user-select: none;
 }
 
-phantom-ui[loading] img,
-phantom-ui[loading] svg,
-phantom-ui[loading] video,
-phantom-ui[loading] canvas,
-phantom-ui[loading] button,
-phantom-ui[loading] [role="button"] {
+phantom-ui[loading]:not([mode="overlay"]) img,
+phantom-ui[loading]:not([mode="overlay"]) svg,
+phantom-ui[loading]:not([mode="overlay"]) video,
+phantom-ui[loading]:not([mode="overlay"]) canvas,
+phantom-ui[loading]:not([mode="overlay"]) button,
+phantom-ui[loading]:not([mode="overlay"]) [role="button"] {
 	opacity: 0 !important;
 }
 
-phantom-ui[loading] [data-shimmer-ignore],
-phantom-ui[loading] [data-shimmer-ignore] * {
+phantom-ui[loading]:not([mode="overlay"]) [data-shimmer-ignore],
+phantom-ui[loading]:not([mode="overlay"]) [data-shimmer-ignore] * {
 	-webkit-text-fill-color: initial !important;
 	pointer-events: auto;
 	user-select: auto;
 }
 
-phantom-ui[loading] [data-shimmer-ignore] img,
-phantom-ui[loading] [data-shimmer-ignore] svg,
-phantom-ui[loading] [data-shimmer-ignore] video,
-phantom-ui[loading] [data-shimmer-ignore] canvas,
-phantom-ui[loading] [data-shimmer-ignore] button,
-phantom-ui[loading] [data-shimmer-ignore] [role="button"] {
+phantom-ui[loading]:not([mode="overlay"]) [data-shimmer-ignore] img,
+phantom-ui[loading]:not([mode="overlay"]) [data-shimmer-ignore] svg,
+phantom-ui[loading]:not([mode="overlay"]) [data-shimmer-ignore] video,
+phantom-ui[loading]:not([mode="overlay"]) [data-shimmer-ignore] canvas,
+phantom-ui[loading]:not([mode="overlay"]) [data-shimmer-ignore] button,
+phantom-ui[loading]:not([mode="overlay"]) [data-shimmer-ignore] [role="button"] {
 	opacity: 1 !important;
 }

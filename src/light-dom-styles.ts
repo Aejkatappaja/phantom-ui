@@ -20,21 +20,23 @@ const LIGHT_DOM_STYLE_ID = "phantom-ui-loading-styles";
 
 export function injectLightDomStyles(): void {
 	if (document.getElementById(LIGHT_DOM_STYLE_ID)) return;
+	// Overlay mode keeps content visible, so the hiding rules must not apply to it.
+	const loading = `${TAG_NAME}[loading]:not([mode="overlay"])`;
 	const mediaList = MEDIA_SELECTOR.split(", ")
-		.map((sel) => `${TAG_NAME}[loading] ${sel}`)
+		.map((sel) => `${loading} ${sel}`)
 		.join(",\n\t\t\t");
 	const ignoreMediaList = MEDIA_SELECTOR.split(", ")
-		.map((sel) => `${TAG_NAME}[loading] [${SHIMMER_IGNORE_ATTR}] ${sel}`)
+		.map((sel) => `${loading} [${SHIMMER_IGNORE_ATTR}] ${sel}`)
 		.join(",\n\t\t\t");
 
 	const style = document.createElement("style");
 	style.id = LIGHT_DOM_STYLE_ID;
 	style.textContent = `
-		${TAG_NAME}[loading] * { ${HIDE_TEXT} }
+		${loading} * { ${HIDE_TEXT} }
 		${mediaList},
-		${TAG_NAME}[loading] [${GRAPHIC_ATTR}] { opacity: 0 !important; }
-		${TAG_NAME}[loading] [${SHIMMER_IGNORE_ATTR}],
-		${TAG_NAME}[loading] [${SHIMMER_IGNORE_ATTR}] * { ${SHOW_TEXT} }
+		${loading} [${GRAPHIC_ATTR}] { opacity: 0 !important; }
+		${loading} [${SHIMMER_IGNORE_ATTR}],
+		${loading} [${SHIMMER_IGNORE_ATTR}] * { ${SHOW_TEXT} }
 		${ignoreMediaList} { opacity: 1 !important; }
 	`;
 	document.head.appendChild(style);

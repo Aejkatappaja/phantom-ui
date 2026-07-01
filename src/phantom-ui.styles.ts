@@ -10,19 +10,42 @@ export const phantomUiStyles = css`
 		--shimmer-bg: rgba(128, 128, 128, 0.2);
 	}
 
-	:host([loading]) ::slotted(*) {
+	:host([loading]:not([mode="overlay"])) ::slotted(*) {
 		-webkit-text-fill-color: transparent !important;
 		pointer-events: none;
 		user-select: none;
 	}
 
-	:host([loading]) ::slotted(img),
-	:host([loading]) ::slotted(svg),
-	:host([loading]) ::slotted(video),
-	:host([loading]) ::slotted(canvas),
-	:host([loading]) ::slotted(button),
-	:host([loading]) ::slotted([role="button"]) {
+	:host([loading]:not([mode="overlay"])) ::slotted(img),
+	:host([loading]:not([mode="overlay"])) ::slotted(svg),
+	:host([loading]:not([mode="overlay"])) ::slotted(video),
+	:host([loading]:not([mode="overlay"])) ::slotted(canvas),
+	:host([loading]:not([mode="overlay"])) ::slotted(button),
+	:host([loading]:not([mode="overlay"])) ::slotted([role="button"]) {
 		opacity: 0 !important;
+	}
+
+	/*
+	 * Overlay mode: keep the content visible and dimmed, and turn each measured
+	 * block into a transparent glint that sweeps over the matching element (a
+	 * structure-aware stale-while-revalidate refresh). Setting --shimmer-bg to
+	 * transparent makes both the block fill and the gradient edges transparent, so
+	 * the same block + direction + reduced-motion rules become a pure light sweep.
+	 */
+	:host([mode="overlay"]) {
+		--shimmer-bg: transparent;
+	}
+
+	:host([loading][mode="overlay"]) ::slotted(*) {
+		opacity: var(--phantom-content-opacity, 0.5);
+		pointer-events: none;
+		transition: opacity 0.2s ease-out;
+	}
+
+	/* Container blocks replicate card backgrounds for count > 1, which would cover
+	   the visible content. Overlay never duplicates rows, so hide them. */
+	:host([mode="overlay"]) .shimmer-container-block {
+		display: none;
 	}
 
 	.shimmer-overlay {
