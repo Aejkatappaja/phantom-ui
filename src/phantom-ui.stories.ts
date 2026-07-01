@@ -551,6 +551,42 @@ export const DebugMode: Story = {
 	},
 };
 
+export const OverlayMode: Story = {
+	render: (args) => html`
+    ${cardStyles}
+    <p style="font-family: system-ui; font-size: 13px; color: #8899aa; max-width: 360px; margin: 0 0 16px;">
+      <code>mode="overlay"</code> keeps the existing content visible and dimmed while a light
+      sweeps over it, for refresh / stale-while-revalidate states (a grid you already have data
+      for and are refetching). The content stays readable and interactive. Adjust the dim with
+      the <code>--phantom-content-opacity</code> CSS variable.
+    </p>
+    <phantom-ui ?loading=${args.loading} mode="overlay">
+      <div class="card">
+        <div class="card-header">
+          <img class="avatar" src="https://i.pravatar.cc/96?img=32" alt="Avatar" />
+          <div class="card-header-text">
+            <h3>Marie Duarte</h3>
+            <p>Last loaded result</p>
+          </div>
+        </div>
+        <div class="card-body">
+          <p>This row stays visible and clickable while the new data is being fetched.</p>
+        </div>
+        <div class="card-footer">
+          <span class="tag">Refresh</span>
+          <span class="tag">SWR</span>
+        </div>
+      </div>
+    </phantom-ui>
+  `,
+	args: {
+		loading: true,
+	},
+	argTypes: {
+		loading: { control: "boolean" },
+	},
+};
+
 export const ReducedMotion: Story = {
 	render: (args) => html`
     ${cardStyles}

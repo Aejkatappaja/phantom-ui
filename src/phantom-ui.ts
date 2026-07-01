@@ -21,7 +21,7 @@ import { phantomUiStyles } from "./phantom-ui.styles.js";
 
 export type { PhantomUiAttributes, SolidPhantomUiAttributes } from "./types.js";
 import "./types.js";
-import type { Animation, ShimmerDirection } from "./types.js";
+import type { Animation, Mode, ShimmerDirection } from "./types.js";
 
 type OverlayVar = "--shimmer-color" | "--shimmer-bg" | "--shimmer-duration" | "--reveal-duration";
 
@@ -95,6 +95,14 @@ export class PhantomUi extends LitElement {
 	/** Animation mode: "shimmer" (gradient sweep), "pulse" (opacity), "breathe" (scale + fade), or "solid" (static) */
 	@property({ reflect: true })
 	animation: Animation = "shimmer";
+
+	/**
+	 * Loading style. "skeleton" (default) measures the slotted content and shows
+	 * placeholder blocks. "overlay" keeps the existing content visible and dimmed,
+	 * sweeping a light band over it, for refresh / stale-while-revalidate states.
+	 */
+	@property({ reflect: true })
+	mode: Mode = "skeleton";
 
 	/** Delay in seconds between each block's animation start (0 = no stagger) */
 	@property({ type: Number })
@@ -298,14 +306,18 @@ export class PhantomUi extends LitElement {
 		const assignedElements = slot.assignedElements({ flatten: true });
 		const allBlocks: ElementInfo[] = [];
 
-		this._visibility.apply(assignedElements);
+		// Overlay mode keeps the content visible (a glint sweeps over each element),
+		// so it must not hide/inert anything. It also never duplicates rows.
+		if (this.mode !== "overlay") {
+			this._visibility.apply(assignedElements);
+		}
 
 		for (const el of assignedElements) {
 			const blocks = extractElementInfo(el, hostRect, this.pierceShadow);
 			allBlocks.push(...blocks);
 		}
 
-		if (this.count > 1 && allBlocks.length > 0) {
+		if (this.count > 1 && allBlocks.length > 0 && this.mode !== "overlay") {
 			let slotHeight = 0;
 			for (const el of assignedElements) {
 				const rect = el.getBoundingClientRect();

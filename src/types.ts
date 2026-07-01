@@ -2,6 +2,7 @@ import type { PhantomUi } from "./phantom-ui.js";
 
 export type ShimmerDirection = "ltr" | "rtl" | "ttb" | "btt";
 export type Animation = "shimmer" | "pulse" | "breathe" | "solid";
+export type Mode = "skeleton" | "overlay";
 
 export interface PhantomUiAttributes {
 	/** Show the shimmer overlay (`true`) or the real content (`false`). Treats the string `"false"` as falsy. */
@@ -18,6 +19,8 @@ export interface PhantomUiAttributes {
 	"fallback-radius"?: number;
 	/** Animation mode: `"shimmer"` (gradient sweep), `"pulse"` (opacity), `"breathe"` (scale + fade), or `"solid"` (static). */
 	animation?: Animation;
+	/** Loading style: `"skeleton"` (default, measures content and shows placeholder blocks) or `"overlay"` (keeps the existing content visible and dimmed with a light sweep over it, for refresh / stale-while-revalidate). */
+	mode?: Mode;
 	/** Delay in seconds between each block's animation start. `0` = no stagger. */
 	stagger?: number;
 	/** Fade-out duration in seconds when loading ends. `0` = instant. */

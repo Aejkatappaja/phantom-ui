@@ -83,6 +83,17 @@
             },
             {
               "kind": "field",
+              "name": "mode",
+              "type": {
+                "text": "Mode"
+              },
+              "default": "\"skeleton\"",
+              "description": "Loading style. \"skeleton\" (default) measures the slotted content and shows\nplaceholder blocks. \"overlay\" keeps the existing content visible and dimmed,\nsweeping a light band over it, for refresh / stale-while-revalidate states.",
+              "attribute": "mode",
+              "reflects": true
+            },
+            {
+              "kind": "field",
               "name": "stagger",
               "type": {
                 "text": "number"
@@ -389,6 +400,15 @@
               "name": "loading-label",
               "default": "\"Loading\"",
               "fieldName": "loadingLabel"
+            },
+            {
+              "name": "mode",
+              "type": {
+                "text": "Mode"
+              },
+              "default": "\"skeleton\"",
+              "description": "Loading style. \"skeleton\" (default) measures the slotted content and shows\nplaceholder blocks. \"overlay\" keeps the existing content visible and dimmed,\nsweeping a light band over it, for refresh / stale-while-revalidate states.",
+              "fieldName": "mode"
             },
             {
               "name": "pierce-shadow",

@@ -62,6 +62,34 @@ function UserProfile({ userId }: { userId: string }) {
 }
 ```
 
+## First load vs refetch (`mode="overlay"`)
+
+TanStack Query and SWR distinguish the first load (no data yet) from a background refetch (you already have a result and are refreshing it). phantom-ui mirrors that with `mode`: `skeleton` for the first load, `overlay` to keep the stale result on screen while it refreshes.
+
+```tsx
+const { data: users, isLoading, isFetching } = useQuery({
+  queryKey: ["users"],
+  queryFn: () => fetch("/api/users").then((r) => r.json()),
+});
+
+// isLoading  -> first load, no data yet   -> skeleton (hide, show blocks)
+// isFetching -> refetch, data already here -> overlay (dim the stale result)
+return (
+  <phantom-ui
+    loading={isLoading || isFetching}
+    mode={isLoading ? "skeleton" : "overlay"}
+  >
+    <div className="grid">
+      {users?.map((u) => (
+        <div key={u.id} className="row">{u.name}</div>
+      ))}
+    </div>
+  </phantom-ui>
+);
+```
+
+In `overlay` mode the previous result stays visible and dimmed while a light glint sweeps over it. It is not clickable during the refresh (so users can't act on data that's about to change), but stays readable and announced with `aria-busy`. Tune the dim with the `--phantom-content-opacity` CSS variable. SWR exposes the same split via `isLoading` and `isValidating`.
+
 ## Vue + composables
 
 ```vue

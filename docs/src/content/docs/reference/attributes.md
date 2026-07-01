@@ -40,6 +40,25 @@ Animation mode for the shimmer blocks. Four modes available:
 
 When the user's system asks for reduced motion (`prefers-reduced-motion: reduce`), every mode automatically degrades to the static `solid` look — the infinite sweep/pulse/breathe animations stop and blocks keep their static background. No attribute or configuration needed.
 
+## `mode`
+
+| Type | Default | Reflects |
+| --- | --- | --- |
+| `string` | `skeleton` | Yes |
+
+Loading style.
+
+- `skeleton` (default) -- hides the slotted content, measures it, and shows placeholder blocks. Use it for the first load when there is no data yet.
+- `overlay` -- keeps the existing content visible and dimmed, and sweeps a light glint over each element. Use it for refresh / stale-while-revalidate states (a grid you already have data for and are refetching).
+
+```html
+<phantom-ui loading mode="overlay">
+  <!-- the previous result stays visible (dimmed, not clickable) while it refreshes -->
+</phantom-ui>
+```
+
+In `overlay` mode the content is not hidden, so it stays readable and in the accessibility tree (not made `inert`), and the light follows your DOM structure just like the skeleton. It is not clickable while loading (`pointer-events: none`), so users cannot act on stale data before the refresh lands. Dim the content with the `--phantom-content-opacity` CSS variable (default `0.5`; set it to `1` for full opacity with light only). `count` and `count-gap` do not apply in this mode.
+
 ## `stagger`
 
 | Type | Default |

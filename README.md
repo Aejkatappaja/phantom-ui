@@ -441,6 +441,7 @@ Running `npx @aejkatappaja/phantom-ui init` detects SSR frameworks and adds this
 | --- | --- | --- | --- |
 | `loading` | `boolean` | `false` | Show shimmer overlay or real content |
 | `animation` | `string` | `shimmer` | Animation mode: `shimmer`, `pulse`, `breathe`, or `solid` |
+| `mode` | `string` | `skeleton` | `skeleton` (hide content, show blocks) or `overlay` (keep content dimmed, sweep light over it for refresh) |
 | `shimmer-direction` | `string` | `ltr` | Direction of the shimmer sweep: `ltr`, `rtl`, `ttb`, or `btt` (shimmer mode only) |
 | `shimmer-color` | `string` | `rgba(128,128,128,0.3)` | Color of the animated gradient sweep (shimmer mode only) |
 | `background-color` | `string` | `rgba(128,128,128,0.2)` | Background of each shimmer block (all modes) |
@@ -453,6 +454,18 @@ Running `npx @aejkatappaja/phantom-ui init` detects SSR frameworks and adds this
 | `debug` | `boolean` | `false` | Outline each measured block with an index for inspection |
 | `loading-label` | `string` | `Loading` | Accessible label announced by screen readers while loading (set as `aria-label`) |
 | `pierce-shadow` | `boolean` | `false` | Measure inside open shadow roots of slotted components (Stencil, Lit design systems) |
+
+## Refresh mode (`mode="overlay"`)
+
+The default `skeleton` mode is for the first load: it hides the content and shows placeholder blocks. For a refresh / stale-while-revalidate state, where you already have a result and are refetching, use `mode="overlay"`:
+
+```html
+<phantom-ui loading mode="overlay">
+  <div class="grid"><!-- the previous result --></div>
+</phantom-ui>
+```
+
+The existing content stays visible and dimmed while a light glint sweeps over each element (structure-aware, just like the skeleton). It is not clickable during the refresh (`pointer-events: none`) so users cannot act on stale data, but it stays readable and in the accessibility tree (`aria-busy` announces the update). Dim it with `--phantom-content-opacity` (default `0.5`, set to `1` for full opacity with light only). `count` / `count-gap` do not apply here.
 
 ## Fine-grained control
 
