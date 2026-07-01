@@ -8,6 +8,10 @@ const tokyoNight = (await bundledThemes["tokyo-night"]()).default;
 export default defineConfig({
 	site: "https://aejkatappaja.github.io",
 	base: "/phantom-ui",
+	prefetch: {
+		prefetchAll: true,
+		defaultStrategy: "viewport",
+	},
 	integrations: [
 		starlight({
 			expressiveCode: {
@@ -17,6 +21,7 @@ export default defineConfig({
 			components: {
 				ThemeSelect: "./src/components/ThemeToggle.astro",
 				Header: "./src/components/Header.astro",
+				Head: "./src/components/Head.astro",
 			},
 			title: "phantom-ui",
 			logo: {
@@ -72,7 +77,13 @@ export default defineConfig({
 				},
 				{
 					label: "Playground",
-					items: [{ label: "Live Demo", link: "/demo/" }],
+					items: [
+						{
+							label: "Live Demo",
+							link: "/demo/",
+							attrs: { "data-astro-reload": true },
+						},
+					],
 				},
 				{
 					label: "Changelog",

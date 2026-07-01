@@ -1,5 +1,7 @@
 # build output
 dist/
+# generated at build by scripts/generate-changelog.mjs
+src/content/docs/changelog.md
 # generated types
 .astro/
 
