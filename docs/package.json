@@ -3,8 +3,11 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
+    "sync-cdn": "node scripts/sync-cdn.mjs",
+    "predev": "node scripts/sync-cdn.mjs",
     "dev": "astro dev",
     "start": "astro dev",
+    "prebuild": "node scripts/sync-cdn.mjs",
     "build": "node scripts/generate-changelog.mjs && astro build",
     "preview": "astro preview",
     "astro": "astro"
