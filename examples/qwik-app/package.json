@@ -42,6 +42,7 @@
     "@aejkatappaja/phantom-ui": "file:../.."
   },
   "overrides": {
-    "shell-quote": "^1.8.4"
+    "shell-quote": "^1.8.4",
+    "js-yaml": "^4.2.0"
   }
 }

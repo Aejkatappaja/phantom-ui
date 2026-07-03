@@ -28,6 +28,8 @@
     "typescript": "~5.9.2"
   },
   "overrides": {
-    "vite": ">=7.3.2"
+    "vite": ">=7.3.2",
+    "sigstore": "4.1.1",
+    "@sigstore/verify": "3.1.1"
   }
 }
