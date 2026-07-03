@@ -27,5 +27,8 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
     "vite": "^8.0.16"
+  },
+  "overrides": {
+    "js-yaml": "^4.2.0"
   }
 }
