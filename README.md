@@ -72,9 +72,9 @@ yarn dlx @aejkatappaja/phantom-ui init  # yarn
 
 It detects your project setup and handles two things:
 
-**JSX type declarations** — For React, Solid, and Qwik, it generates a `phantom-ui.d.ts` in your `src/` directory so `<phantom-ui>` is recognized in JSX. Vue, Svelte, and Angular work out of the box without any type declaration.
+**JSX type declarations**: For React, Solid, and Qwik, it generates a `phantom-ui.d.ts` in your `src/` directory so `<phantom-ui>` is recognized in JSX. Vue, Svelte, and Angular work out of the box without any type declaration.
 
-**SSR pre-hydration CSS** — For Next.js, Nuxt, SvelteKit, Remix, and Qwik, it adds `import "@aejkatappaja/phantom-ui/ssr.css"` to your layout file to prevent content flash before hydration (see [Pre-hydration CSS](#pre-hydration-css)).
+**SSR pre-hydration CSS**: For Next.js, Nuxt, SvelteKit, Remix, and Qwik, it adds `import "@aejkatappaja/phantom-ui/ssr.css"` to your layout file to prevent content flash before hydration (see [Pre-hydration CSS](#pre-hydration-css)).
 
 Nothing runs on install: the library deliberately has no `postinstall` hook, so your source is never modified unless you ask for it. Prefer not to run the command at all? Both steps are tiny and documented below for manual setup.
 
@@ -418,7 +418,7 @@ Before JavaScript loads, content inside `<phantom-ui loading>` can briefly flash
 import "@aejkatappaja/phantom-ui/ssr.css";
 ```
 
-Running `npx @aejkatappaja/phantom-ui init` detects SSR frameworks and adds this import to your layout file (e.g. `app/layout.tsx` for Next.js, `app.vue` for Nuxt, `+layout.svelte` for SvelteKit) — or just add the line yourself. If you use the CDN build, add the rules directly in your `<head>`:
+Running `npx @aejkatappaja/phantom-ui init` detects SSR frameworks and adds this import to your layout file (e.g. `app/layout.tsx` for Next.js, `app.vue` for Nuxt, `+layout.svelte` for SvelteKit). Or add the line yourself. If you use the CDN build, add the rules directly in your `<head>`:
 
 ```html
 <style>
