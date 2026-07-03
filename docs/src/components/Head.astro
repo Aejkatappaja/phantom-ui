@@ -5,3 +5,23 @@ import { ClientRouter } from "astro:transitions";
 
 <Default><slot /></Default>
 <ClientRouter />
+
+<script is:inline>
+	// View transitions swap the <html> attributes on navigation, which resets
+	// Starlight's data-theme to the server default (dark). Starlight's own theme
+	// script only runs on the first load, so re-apply the stored theme after each
+	// swap, before the page paints, to avoid a flash back to dark.
+	if (!window.__phantomThemeSwap) {
+		window.__phantomThemeSwap = true;
+		document.addEventListener("astro:after-swap", () => {
+			const stored = localStorage.getItem("starlight-theme");
+			const theme =
+				stored === "light" || stored === "dark"
+					? stored
+					: window.matchMedia("(prefers-color-scheme: light)").matches
+						? "light"
+						: "dark";
+			document.documentElement.dataset.theme = theme;
+		});
+	}
+</script>
