@@ -455,6 +455,8 @@ Running `npx @aejkatappaja/phantom-ui init` detects SSR frameworks and adds this
 | `loading-label` | `string` | `Loading` | Accessible label announced by screen readers while loading (set as `aria-label`) |
 | `pierce-shadow` | `boolean` | `false` | Measure inside open shadow roots of slotted components (Stencil, Lit design systems) |
 
+> Using a Web Component design system? See the [Shadow DOM guide](https://aejkatappaja.github.io/phantom-ui/guides/design-systems/) for how `pierce-shadow` measures inside your components.
+
 ## Refresh mode (`mode="overlay"`)
 
 The default `skeleton` mode is for the first load: it hides the content and shows placeholder blocks. For a refresh / stale-while-revalidate state, where you already have a result and are refetching, use `mode="overlay"`:
