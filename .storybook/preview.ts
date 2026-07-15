@@ -1,11 +1,11 @@
-import type { Preview } from "@storybook/web-components";
-import { setCustomElementsManifest } from "@storybook/web-components";
+import type { Preview } from "@storybook/web-components-vite";
+import { setCustomElementsManifest } from "@storybook/web-components-vite";
 import customElements from "../custom-elements.json" with { type: "json" };
 
 setCustomElementsManifest(customElements);
 
 const preview: Preview = {
-	parameters: {
+    parameters: {
 		controls: {
 			matchers: {
 				color: /(background|color)$/i,
@@ -13,14 +13,21 @@ const preview: Preview = {
 			},
 		},
 		backgrounds: {
-			default: "dark",
-			values: [
-				{ name: "dark", value: "#1a1a2e" },
-				{ name: "light", value: "#ffffff" },
-				{ name: "gray", value: "#f5f5f5" },
-			],
-		},
+            options: {
+                dark: { name: "dark", value: "#1a1a2e" },
+                light: { name: "light", value: "#ffffff" },
+                gray: { name: "gray", value: "#f5f5f5" }
+            }
+        },
 	},
+
+    initialGlobals: {
+        backgrounds: {
+            value: "dark"
+        }
+    },
+
+    tags: ["autodocs"]
 };
 
 export default preview;
