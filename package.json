@@ -71,7 +71,7 @@
 		"@storybook/addon-essentials": "8.6.18",
 		"@storybook/web-components": "8.6.18",
 		"@storybook/web-components-vite": "8.6.18",
-		"@web/dev-server-esbuild": "^1.0.5",
+		"@web/dev-server-esbuild": "^2.0.0",
 		"@web/test-runner": "^1.0.0",
 		"@web/test-runner-playwright": "^1.0.0",
 		"husky": "^9.1.7",
