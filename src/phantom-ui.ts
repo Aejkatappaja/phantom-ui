@@ -20,6 +20,7 @@ import { injectLightDomStyles } from "./light-dom-styles.js";
 import { phantomUiStyles } from "./phantom-ui.styles.js";
 
 export type { PhantomUiAttributes, SolidPhantomUiAttributes } from "./types.js";
+
 import "./types.js";
 import type { Animation, Mode, ShimmerDirection } from "./types.js";
 
