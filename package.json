@@ -75,7 +75,7 @@
 		"@web/test-runner": "^0.20.2",
 		"@web/test-runner-playwright": "^0.11.1",
 		"husky": "^9.1.7",
-		"lint-staged": "^16.4.0",
+		"lint-staged": "^17.0.8",
 		"storybook": "8.6.18",
 		"typescript": "^6.0.3"
 	},
