@@ -62,7 +62,7 @@
 	],
 	"license": "MIT",
 	"dependencies": {
-		"lit": "^3.2.0"
+		"lit": "^3.3.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.4",
