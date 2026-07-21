@@ -4,3 +4,10 @@ storybook-static
 *.tsbuildinfo
 tmp
 .DS_Store
+
+# Example app lockfiles: dev-only transitive-dependency noise (Dependabot),
+# and the examples are demos, not the shipped package. Kept for react-query-demo
+# (runs on StackBlitz, needs reproducible install).
+examples/*/package-lock.json
+examples/*/bun.lock
+!examples/react-query-demo/package-lock.json
