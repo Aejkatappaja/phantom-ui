@@ -6,6 +6,51 @@ function nextFrame(): Promise<void> {
 	return new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
 }
 
+/**
+ * getComputedStyle never returns the keyword `transparent`; CSSOM serializes it to this.
+ * Comparing against the keyword makes an assertion vacuous in both directions.
+ */
+const TRANSPARENT = "rgba(0, 0, 0, 0)";
+
+/**
+ * Query helpers that assert what they found instead of casting. A missing or
+ * wrong-typed node fails here with the selector in the message, rather than as a
+ * confusing `undefined` further down the test.
+ */
+function queryAs<T extends Element>(scope: ParentNode, selector: string, type: new () => T): T {
+	const found = scope.querySelector(selector);
+	if (!(found instanceof type)) {
+		throw new Error(
+			`expected ${selector} to match a ${type.name}, got ${found?.nodeName ?? "null"}`,
+		);
+	}
+	return found;
+}
+
+const query = (scope: ParentNode, selector: string) => queryAs(scope, selector, HTMLElement);
+/** For nodes that may be SVG: computed style only needs an Element. */
+const queryEl = (scope: ParentNode, selector: string) => queryAs(scope, selector, Element);
+
+function queryAll(scope: ParentNode, selector: string): HTMLElement[] {
+	return [...scope.querySelectorAll(selector)].filter((n) => n instanceof HTMLElement);
+}
+
+function shadowOf(el: Element): ShadowRoot {
+	const { shadowRoot } = el;
+	if (!shadowRoot) throw new Error(`expected an open shadow root on <${el.localName}>`);
+	return shadowRoot;
+}
+
+/** Settle a measure pass, then read the rendered overlay blocks. */
+async function blocksOf(el: PhantomUi): Promise<HTMLElement[]> {
+	await nextFrame();
+	await el.updateComplete;
+	return queryAll(shadowOf(el), ".shimmer-block");
+}
+
+const widthsOf = async (el: PhantomUi) =>
+	(await blocksOf(el)).map((b) => Math.round(Number.parseFloat(b.style.width)));
+
 describe("phantom-ui", () => {
 	it("is registered as a custom element", () => {
 		expect(customElements.get("phantom-ui")).to.not.be.undefined;
@@ -302,7 +347,7 @@ describe("phantom-ui", () => {
 		await el.updateComplete;
 		const blocks = el.shadowRoot?.querySelectorAll(".shimmer-block");
 		expect(blocks.length).to.be.greaterThanOrEqual(2);
-		const secondStyle = (blocks[1] as HTMLElement).getAttribute("style") || "";
+		const secondStyle = blocks[1].getAttribute("style") || "";
 		expect(secondStyle).to.include("animation-delay");
 	});
 
@@ -370,7 +415,7 @@ describe("phantom-ui", () => {
 		`);
 		await nextFrame();
 		await el.updateComplete;
-		const block = el.shadowRoot?.querySelector(".shimmer-block") as HTMLElement;
+		const block = query(shadowOf(el), ".shimmer-block");
 		expect(block).to.exist;
 		expect(block.style.width).to.equal("200px");
 		expect(block.style.height).to.equal("40px");
@@ -401,9 +446,9 @@ describe("phantom-ui", () => {
 		`);
 		await nextFrame();
 		await el.updateComplete;
-		const p = el.querySelector("[data-shimmer-ignore]") as HTMLElement;
+		const p = query(el, "[data-shimmer-ignore]");
 		const style = getComputedStyle(p);
-		expect(style.webkitTextFillColor).to.not.equal("transparent");
+		expect(style.webkitTextFillColor).to.not.equal(TRANSPARENT);
 		expect(style.pointerEvents).to.not.equal("none");
 	});
 
@@ -419,7 +464,7 @@ describe("phantom-ui", () => {
 		`);
 		await nextFrame();
 		await el.updateComplete;
-		const img = el.querySelector("[data-shimmer-ignore] img") as HTMLElement;
+		const img = query(el, "[data-shimmer-ignore] img");
 		const style = getComputedStyle(img);
 		expect(style.opacity).to.equal("1");
 	});
@@ -451,6 +496,72 @@ describe("phantom-ui", () => {
 		expect(blocksAfter?.length).to.be.greaterThan(countBefore);
 	});
 
+	// A consumer that renders <phantom-ui> inside its own shadow root: design systems, and
+	// Angular ViewEncapsulation.ShadowDom. Document styles do not cross into a shadow tree,
+	// so the hiding rules have to be adopted into the host's own root, not the document.
+	// Covers three paths nothing else reaches: a <slot> that is not its parent's only
+	// child (so the parent is not a leaf and the walker must resolve the slot), a reveal
+	// interrupted before its timeout fires, and background-color written inline.
+	describe("edge cases", () => {
+		it("resolves a <slot> sitting beside other elements in a pierced root", async () => {
+			if (!customElements.get("mixed-slot")) {
+				customElements.define(
+					"mixed-slot",
+					class extends HTMLElement {
+						connectedCallback() {
+							if (this.shadowRoot) return;
+							this.attachShadow({ mode: "open" }).innerHTML =
+								'<div><span style="display:block;width:30px;height:10px"></span><slot></slot></div>';
+						}
+					},
+				);
+			}
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<mixed-slot style="display:block;width:200px">
+						<p class="projected" style="width:90px;height:14px;margin:0">projected</p>
+					</mixed-slot>
+				</phantom-ui>
+			`);
+			const widths = await widthsOf(el);
+			// 30px from the shadow span, 90px from the light-DOM child reached via the slot.
+			expect(widths).to.include(30);
+			expect(widths).to.include(90);
+		});
+
+		it("cancels a pending reveal when loading restarts", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading reveal="1">
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			el.loading = false;
+			await el.updateComplete;
+			el.loading = true;
+			await el.updateComplete;
+
+			// The interrupted timeout must not fire later and wipe the blocks.
+			await aTimeout(1200);
+			expect(el.shadowRoot?.querySelectorAll(".shimmer-block").length).to.be.greaterThan(0);
+			expect(el.getAttribute("aria-busy")).to.equal("true");
+		});
+
+		it("writes background-color inline only when customized", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading background-color="rgb(1, 2, 3)">
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			const overlay = query(shadowOf(el), ".shimmer-overlay");
+			expect(overlay.style.getPropertyValue("--shimmer-bg")).to.equal("rgb(1, 2, 3)");
+		});
+	});
+
 	describe("pierce-shadow", () => {
 		// Minimal Stencil-like component: shadow:true with a slot, mirroring k-text
 		class MockText extends HTMLElement {
@@ -476,9 +587,73 @@ describe("phantom-ui", () => {
 					</header>`;
 			}
 		}
+		const MASK_URL =
+			"url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22><rect width=%2224%22 height=%2224%22/></svg>')";
+		// Wraps a <mock-text> inside its own shadow root, so the controller has to cross
+		// two shadow boundaries. Also carries a mask-image icon that only the shadow-piercing
+		// pass can reach.
+		class MockNested extends HTMLElement {
+			connectedCallback() {
+				if (this.shadowRoot) return;
+				const root = this.attachShadow({ mode: "open" });
+				root.innerHTML = `
+					<div style="display:flex;gap:8px;align-items:center;">
+						<span class="inner-icon" style="display:inline-block;width:24px;height:24px;
+							-webkit-mask-image:${MASK_URL};mask-image:${MASK_URL};background-color:#7aa2f7;"></span>
+						<mock-text style="display:block;width:120px;">Nested</mock-text>
+					</div>`;
+			}
+		}
 		before(() => {
 			if (!customElements.get("mock-text")) customElements.define("mock-text", MockText);
 			if (!customElements.get("mock-header")) customElements.define("mock-header", MockHeader);
+			if (!customElements.get("mock-nested")) customElements.define("mock-nested", MockNested);
+		});
+
+		// Behaviour-level counterpart to the stylesheet-injection test above: whatever
+		// mechanism hides pierced shadow content, the computed style is what matters.
+		it("hides text inside a pierced shadow root and restores it", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<mock-text style="display:block;width:200px;">Hello world</mock-text>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			const host = query(el, "mock-text");
+			const inner = query(shadowOf(host), "p");
+			expect(getComputedStyle(inner).webkitTextFillColor).to.equal(TRANSPARENT);
+
+			el.loading = false;
+			await el.updateComplete;
+			expect(getComputedStyle(inner).webkitTextFillColor).to.not.equal(TRANSPARENT);
+		});
+
+		// Deliberately a change with no layout effect: anything that resizes the host is
+		// already caught by the ResizeObserver, so it would not prove the shadow root is
+		// observed. An attribute write inside the root is invisible to every other signal.
+		// Adopting into a root the host component owns means the host can drop our sheet
+		// by reassigning its own array (design systems that swap styles on re-render do
+		// this). Text stays hidden either way because -webkit-text-fill-color inherits
+		// across the boundary, but media opacity does not, so the next measure pass has
+		// to put the sheet back.
+		it("marks mask-image icons living inside a shadow root", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<mock-nested style="display:block;width:200px;"></mock-nested>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			const outer = query(el, "mock-nested");
+			const icon = query(shadowOf(outer), ".inner-icon");
+			expect(icon.hasAttribute("data-phantom-graphic")).to.be.true;
+
+			el.loading = false;
+			await el.updateComplete;
+			expect(icon.hasAttribute("data-phantom-graphic")).to.be.false;
 		});
 
 		it("does not pierce shadow by default (single block at host boundary)", async () => {
@@ -567,6 +742,95 @@ describe("phantom-ui", () => {
 		});
 	});
 
+	// Asserted through computed style only, never through the stylesheet that produces it:
+	// the rules reach the page as an adopted sheet, a <style> fallback, a sheet adopted
+	// into each pierced root, or ssr.css. These stay valid whichever one does the work.
+	describe("content hiding while loading", () => {
+		const IMG_SRC =
+			"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+		async function hidingFixture(loading = true): Promise<PhantomUi> {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui ?loading=${loading}>
+					<p class="direct" style="width:150px;height:20px;">Direct child</p>
+					<div style="width:200px;">
+						<p class="nested" style="width:150px;height:20px;">Nested descendant</p>
+						<img class="nested-img" style="width:48px;height:48px;" src="${IMG_SRC}" />
+					</div>
+					<img class="direct-img" style="width:48px;height:48px;" src="${IMG_SRC}" />
+					<button class="direct-btn" style="width:80px;height:24px;">Go</button>
+					<span class="fake-btn" role="button" style="display:block;width:80px;height:24px;">Go</span>
+					<svg class="direct-svg" width="24" height="24"><rect width="24" height="24" /></svg>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			return el;
+		}
+
+		const styleOf = (el: PhantomUi, sel: string) => getComputedStyle(queryEl(el, sel));
+
+		// Nested text is only reached through the descendant combinator, so covering both
+		// depths catches a rule that matches direct children alone.
+		for (const sel of [".direct", ".nested"]) {
+			it(`makes text in ${sel} invisible and unselectable while loading`, async () => {
+				const el = await hidingFixture();
+				const style = styleOf(el, sel);
+				expect(style.webkitTextFillColor).to.equal(TRANSPARENT);
+				expect(style.pointerEvents).to.equal("none");
+			});
+		}
+
+		for (const sel of [".direct-img", ".nested-img", ".direct-btn", ".fake-btn", ".direct-svg"]) {
+			it(`hides the graphic ${sel} while loading`, async () => {
+				const el = await hidingFixture();
+				expect(getComputedStyle(queryEl(el, sel)).opacity).to.equal("0");
+			});
+		}
+
+		it("applies nothing when not loading", async () => {
+			const el = await hidingFixture(false);
+			expect(styleOf(el, ".direct").webkitTextFillColor).to.not.equal(TRANSPARENT);
+			expect(styleOf(el, ".nested").webkitTextFillColor).to.not.equal(TRANSPARENT);
+			expect(styleOf(el, ".direct-img").opacity).to.equal("1");
+			expect(styleOf(el, ".nested-img").opacity).to.equal("1");
+		});
+
+		it("restores everything when loading ends", async () => {
+			const el = await hidingFixture();
+			el.loading = false;
+			await el.updateComplete;
+			expect(styleOf(el, ".direct").webkitTextFillColor).to.not.equal(TRANSPARENT);
+			expect(styleOf(el, ".nested").webkitTextFillColor).to.not.equal(TRANSPARENT);
+			expect(styleOf(el, ".direct").pointerEvents).to.not.equal("none");
+			expect(styleOf(el, ".direct-img").opacity).to.equal("1");
+			expect(styleOf(el, ".nested-img").opacity).to.equal("1");
+			expect(styleOf(el, ".direct-svg").opacity).to.equal("1");
+		});
+
+		// A CSP without `unsafe-inline` blocks <style> elements but not constructed
+		// stylesheets, so the delivery mechanism is load-bearing, not an implementation
+		// detail. Going back to an injected <style> would silently break strict-CSP hosts.
+		// Assert on booleans, never on the node itself: chai inspects the value it was
+		// given to build the failure message, and a live DOM node stalls the runner
+		// instead of reporting.
+		// Idempotency is keyed on the sheet being present, not on a "already ran" flag, so
+		// anything that replaces document.adoptedStyleSheets wholesale (view transitions,
+		// SPA head managers) is repaired the next time an instance connects.
+		it("leaves content alone in overlay mode", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading mode="overlay">
+					<p class="direct" style="width:150px;height:20px;">Still readable</p>
+					<img class="direct-img" style="width:48px;height:48px;" src="${IMG_SRC}" />
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+			expect(styleOf(el, ".direct").webkitTextFillColor).to.not.equal(TRANSPARENT);
+			expect(styleOf(el, ".direct-img").opacity).to.not.equal("0");
+		});
+	});
+
 	describe("masked graphic icons", () => {
 		it("hides mask-image icons while loading and restores them after", async () => {
 			const el = await fixture<PhantomUi>(html`
@@ -586,7 +850,7 @@ describe("phantom-ui", () => {
 			await nextFrame();
 			await el.updateComplete;
 
-			const icon = el.querySelector(".icon") as HTMLElement;
+			const icon = query(el, ".icon");
 			expect(icon.hasAttribute("data-phantom-graphic")).to.be.true;
 
 			el.loading = false;
@@ -618,7 +882,7 @@ describe("phantom-ui", () => {
 			`);
 			await nextFrame();
 			await el.updateComplete;
-			const icon = el.querySelector(".pseudo-icon") as HTMLElement;
+			const icon = query(el, ".pseudo-icon");
 			expect(icon.hasAttribute("data-phantom-graphic")).to.be.true;
 
 			document.head.removeChild(style);
@@ -632,7 +896,7 @@ describe("phantom-ui", () => {
 			`);
 			await nextFrame();
 			await el.updateComplete;
-			const plain = el.querySelector(".plain") as HTMLElement;
+			const plain = query(el, ".plain");
 			expect(plain.hasAttribute("data-phantom-graphic")).to.be.false;
 		});
 	});
@@ -641,7 +905,7 @@ describe("phantom-ui", () => {
 		async function overlayOf(el: PhantomUi): Promise<HTMLElement> {
 			await nextFrame();
 			await el.updateComplete;
-			return el.shadowRoot?.querySelector(".shimmer-overlay") as HTMLElement;
+			return query(shadowOf(el), ".shimmer-overlay");
 		}
 
 		it("does not write default custom properties inline on the overlay", async () => {
@@ -753,6 +1017,99 @@ describe("phantom-ui", () => {
 			overlay = await overlayOf(el);
 			expect(overlay.style.getPropertyValue("--reveal-duration")).to.equal("");
 		});
+
+		// The animation shorthands reference --shimmer-duration with no fallback, so the
+		// :host declaration is the only thing keeping them from resolving to 0s.
+		it("resolves the default duration from :host into the block animations", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			await overlayOf(el);
+			const block = query(shadowOf(el), ".shimmer-block");
+			expect(getComputedStyle(block, "::after").animationDuration).to.equal("1.5s");
+
+			el.animation = "pulse";
+			await el.updateComplete;
+			expect(getComputedStyle(block).animationDuration).to.equal("1.5s");
+		});
+	});
+
+	describe("block border radius", () => {
+		it("keeps the measured radius of an element that has one", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="width:100px;height:40px;border-radius:8px;">Text</div>
+				</phantom-ui>
+			`);
+			const [block] = await blocksOf(el);
+			expect(block.style.borderRadius).to.equal("8px");
+		});
+
+		it("falls back to fallback-radius when the element has none", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading fallback-radius="6">
+					<div style="width:100px;height:40px;">Text</div>
+				</phantom-ui>
+			`);
+			const [block] = await blocksOf(el);
+			expect(block.style.borderRadius).to.equal("6px");
+		});
+	});
+
+	// A table cell stretches to its column, so measuring the cell box would draw a
+	// full-width bar for two characters of text. The engine measures the text instead.
+	describe("table cells", () => {
+		const table = (cell: string, width = 600) =>
+			`<table style="width:${width}px;table-layout:fixed;border-collapse:collapse;"><tbody><tr>${cell}</tr></tbody></table>`;
+
+		async function widthsOfTable(markup: string): Promise<number[]> {
+			const host = document.createElement("phantom-ui");
+			host.setAttribute("loading", "");
+			host.innerHTML = markup;
+			document.body.appendChild(host);
+			const widths = await widthsOf(host);
+			host.remove();
+			return widths;
+		}
+
+		for (const tag of ["td", "th"] as const) {
+			it(`measures the text width, not the column width, in a <${tag}>`, async () => {
+				const [width] = await widthsOfTable(
+					table(`<${tag} style="width:600px;padding:0;">Hi</${tag}>`),
+				);
+				expect(width).to.be.greaterThan(0);
+				expect(width).to.be.lessThan(100);
+			});
+		}
+
+		it("clamps to the cell width when the text overflows it", async () => {
+			const [width] = await widthsOfTable(
+				table(
+					'<td style="width:40px;padding:0;overflow:hidden;">Far more text than forty pixels can hold</td>',
+					40,
+				),
+			);
+			expect(width).to.equal(40);
+		});
+
+		it("lets data-shimmer-width override the text measurement", async () => {
+			const [width] = await widthsOfTable(
+				table('<td style="width:600px;padding:0;" data-shimmer-width="200">Hi</td>'),
+			);
+			expect(width).to.equal(200);
+		});
+
+		it("leaves non-cell elements at their full box width", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="width:600px;height:20px;">Hi</div>
+				</phantom-ui>
+			`);
+			const [width] = await widthsOf(el);
+			expect(width).to.equal(600);
+		});
 	});
 
 	describe("attribute-based loading (React 18)", () => {
@@ -773,9 +1130,9 @@ describe("phantom-ui", () => {
 			expect(el.hasAttribute("loading")).to.be.false;
 			expect(el.shadowRoot?.querySelector(".shimmer-overlay")).to.not.exist;
 
-			const p = el.querySelector("p") as HTMLElement;
+			const p = query(el, "p");
 			const style = getComputedStyle(p);
-			expect(style.webkitTextFillColor).to.not.equal("transparent");
+			expect(style.webkitTextFillColor).to.not.equal(TRANSPARENT);
 			expect(style.pointerEvents).to.not.equal("none");
 		});
 
@@ -790,7 +1147,7 @@ describe("phantom-ui", () => {
 
 			expect(el.loading).to.be.false;
 			expect(el.hasAttribute("loading")).to.be.false;
-			const p = el.querySelector("p") as HTMLElement;
+			const p = query(el, "p");
 			expect(getComputedStyle(p).pointerEvents).to.not.equal("none");
 		});
 
@@ -819,7 +1176,7 @@ describe("phantom-ui", () => {
 			`);
 			await nextFrame();
 			await el.updateComplete;
-			const btn = el.querySelector("#btn") as HTMLButtonElement;
+			const btn = queryAs(el, "#btn", HTMLButtonElement);
 			btn.focus();
 			expect(document.activeElement).to.not.equal(btn);
 		});
@@ -835,8 +1192,8 @@ describe("phantom-ui", () => {
 			`);
 			await nextFrame();
 			await el.updateComplete;
-			const keep = el.querySelector("#keep") as HTMLButtonElement;
-			const hidden = el.querySelector("#hidden") as HTMLButtonElement;
+			const keep = queryAs(el, "#keep", HTMLButtonElement);
+			const hidden = queryAs(el, "#hidden", HTMLButtonElement);
 			keep.focus();
 			expect(document.activeElement).to.equal(keep);
 			hidden.focus();
@@ -853,7 +1210,7 @@ describe("phantom-ui", () => {
 			await el.updateComplete;
 			el.loading = false;
 			await el.updateComplete;
-			const btn = el.querySelector("#btn") as HTMLButtonElement;
+			const btn = queryAs(el, "#btn", HTMLButtonElement);
 			btn.focus();
 			expect(document.activeElement).to.equal(btn);
 		});
@@ -868,7 +1225,7 @@ describe("phantom-ui", () => {
 			await el.updateComplete;
 			el.loading = false;
 			await el.updateComplete;
-			const wrap = el.querySelector("#wrap") as HTMLElement;
+			const wrap = query(el, "#wrap");
 			expect(wrap.hasAttribute("inert")).to.be.true;
 		});
 
@@ -880,7 +1237,7 @@ describe("phantom-ui", () => {
 			`);
 			await nextFrame();
 			await el.updateComplete;
-			const wrap = el.querySelector("#wrap") as HTMLElement;
+			const wrap = query(el, "#wrap");
 			const late = document.createElement("button");
 			late.id = "late";
 			wrap.appendChild(late);
@@ -910,11 +1267,11 @@ describe("phantom-ui", () => {
 			await nextFrame();
 			await el.updateComplete;
 
-			const btn = el.querySelector("#btn") as HTMLButtonElement;
+			const btn = queryAs(el, "#btn", HTMLButtonElement);
 			btn.focus();
 			expect(document.activeElement).to.not.equal(btn);
 
-			const card = el.querySelector("#card") as HTMLElement;
+			const card = query(el, "#card");
 			const p = document.createElement("p");
 			p.style.cssText = "width:120px;height:20px;";
 			card.appendChild(p);
@@ -939,15 +1296,15 @@ describe("phantom-ui", () => {
 			await nextFrame();
 			await el.updateComplete;
 
-			const p = el.querySelector("p") as HTMLElement;
-			expect(getComputedStyle(p).webkitTextFillColor).to.not.equal("transparent");
+			const p = query(el, "p");
+			expect(getComputedStyle(p).webkitTextFillColor).to.not.equal(TRANSPARENT);
 
 			// Stale content is dimmed and non-clickable during the refresh, but stays
 			// in the a11y tree and keyboard-reachable (aria-busy announces the update).
-			const div = el.querySelector("div") as HTMLElement;
+			const div = query(el, "div");
 			expect(getComputedStyle(div).pointerEvents).to.equal("none");
 
-			const btn = el.querySelector("#btn") as HTMLButtonElement;
+			const btn = queryAs(el, "#btn", HTMLButtonElement);
 			btn.focus();
 			expect(document.activeElement).to.equal(btn);
 		});
