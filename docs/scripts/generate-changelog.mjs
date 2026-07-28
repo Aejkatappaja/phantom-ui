@@ -14,9 +14,12 @@ function run(cmd) {
 	return execSync(cmd, { cwd: join(root, ".."), encoding: "utf8" }).trim();
 }
 
+// Prereleases are handed to testers directly and never sit on the `latest` npm tag.
+// Listing one here badges it as the current version, which misrepresents what a plain
+// install gives you.
 const tags = JSON.parse(
-	run(`gh release list --repo ${repo} --limit 50 --json tagName,publishedAt`)
-);
+	run(`gh release list --repo ${repo} --limit 50 --json tagName,publishedAt,isPrerelease`)
+).filter((release) => !release.isPrerelease);
 tags.sort((a, b) => b.tagName.localeCompare(a.tagName, undefined, { numeric: true }));
 
 let md = `---
