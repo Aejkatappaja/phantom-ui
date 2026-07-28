@@ -20,6 +20,13 @@ jobs:
           registry-url: https://registry.npmjs.org
       - run: bun install --frozen-lockfile
       - run: bun run build
-      - run: npm publish --access public --provenance
+      # npm tags every publish `latest` by default, including versions carrying a
+      # prerelease identifier. Publishing 1.5.0-beta.0 through this workflow would
+      # hand it to everyone running a plain install. The tag follows the GitHub
+      # release's own prerelease flag instead, so there is nothing to remember at
+      # publish time.
+      - name: Publish
+        run: npm publish --access public --provenance --tag "$NPM_TAG"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TAG: ${{ github.event.release.prerelease && 'beta' || 'latest' }}
