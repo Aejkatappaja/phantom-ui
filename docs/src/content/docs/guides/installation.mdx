@@ -40,17 +40,38 @@ No build step needed. Drop in a script tag:
 <script src="https://cdn.jsdelivr.net/npm/@aejkatappaja/phantom-ui/dist/phantom-ui.cdn.js"></script>
 ```
 
-This bundles Lit and the component into a single ~8kb gzipped file. The `<phantom-ui>` tag is available immediately.
+This bundles Lit and the component into a single file, ~34kb minified and ~11.5kb gzipped. The `<phantom-ui>` tag is available immediately.
+
+## Vendoring a single file
+
+If a registry install is not an option, or you would rather keep a copy inside your repo, use the standalone ES module. It is the same code as the CDN build with Lit bundled in, but as an ES module you can import:
+
+```ts
+import "@aejkatappaja/phantom-ui/standalone";
+```
+
+Or copy `dist/phantom-ui.standalone.js` into your project and import it by path. The element registers itself on import, so `<phantom-ui>` works from that point on with no package manager involved at runtime.
+
+One caveat for TypeScript. The element's public type extends `LitElement`, so typed property access (`host.loading`) needs Lit's declarations even though its runtime code is already inside the bundle. Install them as a dev-only dependency:
+
+```sh
+npm i -D lit
+```
+
+Without them the element still works, it is just untyped. JSX attribute typing through `PhantomUiAttributes` does not depend on Lit.
+
+The library is MIT, so vendoring is fine. Record the version you copied next to the file: a vendored copy receives no updates, and it is easy to spend time on a bug that is already fixed upstream.
 
 ## What gets installed
 
 ```
 node_modules/@aejkatappaja/phantom-ui/
   dist/
-    phantom-ui.js        # ES module (Lit as external)
-    phantom-ui.cdn.js    # IIFE standalone (Lit included)
-    phantom-ui.d.ts      # TypeScript declarations
-  custom-elements.json   # IDE/Storybook manifest
+    phantom-ui.js             # ES module (Lit as external)
+    phantom-ui.cdn.js         # IIFE standalone (Lit included)
+    phantom-ui.standalone.js  # ES module standalone (Lit included)
+    phantom-ui.d.ts           # TypeScript declarations
+  custom-elements.json        # IDE/Storybook manifest
   package.json
   LICENSE
   README.md
