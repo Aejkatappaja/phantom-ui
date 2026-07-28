@@ -157,6 +157,18 @@ export const phantomUiStyles = css`
 		display: none;
 	}
 
+	/* Overlay paints nothing but the glint: its block fill is transparent by design, so
+	   every path that suppresses the glint leaves the refresh with no indication at all.
+	   Keep a flat veil in those cases. pulse and breathe animate the block, so they
+	   animate the veil with it; solid holds it static. */
+	:host([mode="overlay"][animation="pulse"]) .shimmer-block::after,
+	:host([mode="overlay"][animation="breathe"]) .shimmer-block::after,
+	:host([mode="overlay"][animation="solid"]) .shimmer-block::after {
+		display: block;
+		animation: none;
+		background: var(--shimmer-color);
+	}
+
 	:host([debug]) .shimmer-block {
 		outline: 1px dashed rgba(247, 118, 142, 0.9);
 		outline-offset: -1px;
@@ -195,6 +207,15 @@ export const phantomUiStyles = css`
 
 		.shimmer-block::after {
 			display: none;
+		}
+
+		/* Skeleton keeps its static block fill, so dropping the glint still leaves the
+		   placeholder visible. Overlay has no fill to fall back on, so it keeps the veil,
+		   held static by the animation: none above. */
+		:host([mode="overlay"]) .shimmer-block::after {
+			display: block;
+			animation: none;
+			background: var(--shimmer-color);
 		}
 	}
 `;

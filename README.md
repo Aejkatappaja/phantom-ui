@@ -469,6 +469,8 @@ The default `skeleton` mode is for the first load: it hides the content and show
 
 The existing content stays visible and dimmed while a light glint sweeps over each element (structure-aware, just like the skeleton). It is not clickable during the refresh (`pointer-events: none`) so users cannot act on stale data, but it stays readable and in the accessibility tree (`aria-busy` announces the update). Dim it with `--phantom-content-opacity` (default `0.5`, set to `1` for full opacity with light only). `count` / `count-gap` do not apply here.
 
+The sweep is the `shimmer` animation. With `pulse` or `breathe` the light is held as a steady veil over each element and animated by that mode instead, `solid` holds it static, and the same static veil is used when the system asks for reduced motion. The refresh stays visible in every case.
+
 ## Fine-grained control
 
 Data attributes let you control which elements get shimmer treatment and how they are measured:
