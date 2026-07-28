@@ -44,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [react-app, vue-app, solid-app, qwik-app, angular-app]
+        app: [react-app, vue-app, solid-app, qwik-app, angular-app, stencil-app]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

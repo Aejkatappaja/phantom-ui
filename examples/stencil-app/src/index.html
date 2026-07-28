@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>phantom-ui + Stencil · Shadow DOM piercing</title>
+
+  <!-- Stencil components -->
+  <script type="module" src="/build/phantom-demo.esm.js"></script>
+  <script nomodule src="/build/phantom-demo.js"></script>
+
+  <!-- phantom-ui (copied from the @beta package by stencil.config copy target) -->
+  <script src="/phantom-ui.cdn.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, sans-serif;
+      background: #0a0b10;
+      color: #c0caf5;
+      margin: 0 auto;
+      padding: 40px;
+      max-width: 880px;
+    }
+    h1 { font-size: 22px; }
+    p.lead { color: #787c99; }
+    code { background: #1a1b26; padding: 2px 6px; border-radius: 4px; color: #9ece6a; font-size: 13px; }
+    .toolbar { display: flex; gap: 12px; margin: 24px 0; }
+    button {
+      background: #7aa2f7; color: #0a0b10; border: none;
+      border-radius: 8px; padding: 8px 16px; font-weight: 600; cursor: pointer;
+    }
+    button.ghost { background: transparent; color: #7aa2f7; border: 1px solid #2a2b3c; }
+    .block { border: 1px solid #1f2030; border-radius: 12px; padding: 24px; background: #11121a; margin-bottom: 28px; }
+    .block h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; color: #565a6e; margin: 0 0 16px; }
+    .hamburger { font-family: system-ui; }
+  </style>
+</head>
+<body>
+  <h1>phantom-ui + Stencil — Shadow DOM piercing</h1>
+  <p class="lead">
+    Real Stencil components (<code>shadow: true</code>) wrapped in
+    <code>&lt;phantom-ui pierce-shadow&gt;</code>. Toggle to compare.
+  </p>
+
+  <div class="toolbar">
+    <button onclick="toggleLoading()">Toggle loading</button>
+    <button class="ghost" onclick="togglePierce()">pierce-shadow: <span id="ps">on</span></button>
+  </div>
+
+  <div class="block">
+    <h2>k-text (text-only shadow slot)</h2>
+    <phantom-ui loading pierce-shadow class="ph">
+      <k-text variant="heading">Building accessible interfaces for the modern web.</k-text>
+    </phantom-ui>
+  </div>
+
+  <div class="block">
+    <h2>k-header (named slots + inner logo + inline SVG)</h2>
+    <phantom-ui loading pierce-shadow class="ph">
+      <k-header>
+        <button slot="start" class="hamburger" aria-label="menu">☰</button>
+        <nav slot="end">
+          <a href="#">Docs</a>
+          <a href="#">Login</a>
+        </nav>
+      </k-header>
+    </phantom-ui>
+  </div>
+
+  <script>
+    const phs = () => document.querySelectorAll('.ph');
+    function toggleLoading() {
+      phs().forEach((p) => {
+        if (p.hasAttribute('loading')) p.removeAttribute('loading');
+        else p.setAttribute('loading', '');
+      });
+    }
+    let pierce = true;
+    function togglePierce() {
+      pierce = !pierce;
+      document.getElementById('ps').textContent = pierce ? 'on' : 'off';
+      phs().forEach((p) => {
+        if (pierce) p.setAttribute('pierce-shadow', '');
+        else p.removeAttribute('pierce-shadow');
+        if (p.hasAttribute('loading')) {
+          p.removeAttribute('loading');
+          requestAnimationFrame(() => p.setAttribute('loading', ''));
+        }
+      });
+    }
+  </script>
+</body>
+</html>
