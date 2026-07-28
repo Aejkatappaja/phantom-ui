@@ -15,6 +15,7 @@ import {
 	createResizeObserver,
 	extractContainerInfo,
 	extractElementInfo,
+	replicateRows,
 } from "./dom-measurement.js";
 import { injectLightDomStyles } from "./light-dom-styles.js";
 import { phantomUiStyles } from "./phantom-ui.styles.js";
@@ -25,6 +26,12 @@ import "./types.js";
 import type { Animation, Mode, ShimmerDirection } from "./types.js";
 
 type OverlayVar = "--shimmer-color" | "--shimmer-bg" | "--shimmer-duration" | "--reveal-duration";
+
+const MUTATION_OPTIONS: MutationObserverInit = {
+	childList: true,
+	subtree: true,
+	attributes: true,
+};
 
 /**
  * `<phantom-ui>` -- A structure-aware shimmer skeleton loader.
@@ -307,69 +314,42 @@ export class PhantomUi extends LitElement {
 		if (this._mutationObserver) this._mutationObserver.disconnect();
 
 		const assignedElements = slot.assignedElements({ flatten: true });
-		const allBlocks: ElementInfo[] = [];
 
 		// Overlay mode keeps the content visible (a glint sweeps over each element),
-		// so it must not hide/inert anything. It also never duplicates rows.
+		// so it must not hide or inert anything.
 		if (this.mode !== "overlay") {
 			this._visibility.apply(assignedElements);
 		}
 
+		let blocks: ElementInfo[] = [];
 		for (const el of assignedElements) {
-			const blocks = extractElementInfo(el, hostRect, this.pierceShadow);
-			allBlocks.push(...blocks);
+			blocks.push(...extractElementInfo(el, hostRect, this.pierceShadow));
 		}
 
-		if (this.count > 1 && allBlocks.length > 0 && this.mode !== "overlay") {
-			let slotHeight = 0;
-			for (const el of assignedElements) {
-				const rect = el.getBoundingClientRect();
-				slotHeight = Math.max(slotHeight, rect.bottom - hostRect.top);
-			}
-
+		// Overlay sweeps over the real content, so it never stamps extra rows.
+		if (this.count > 1 && blocks.length > 0 && this.mode !== "overlay") {
+			let rowHeight = 0;
 			const containers: ContainerInfo[] = [];
 			for (const el of assignedElements) {
-				const info = extractContainerInfo(el, hostRect);
-				if (info) containers.push(info);
+				rowHeight = Math.max(rowHeight, el.getBoundingClientRect().bottom - hostRect.top);
+				const container = extractContainerInfo(el, hostRect);
+				if (container) containers.push(container);
 			}
 
-			const baseBlocks = [...allBlocks];
-			for (let i = 1; i < this.count; i++) {
-				const offset = i * (slotHeight + this.countGap);
-				for (const c of containers) {
-					allBlocks.push({
-						x: c.x,
-						y: c.y + offset,
-						width: c.width,
-						height: c.height,
-						borderRadius: c.borderRadius,
-						isContainer: true,
-						containerBg: c.backgroundColor,
-						containerBorder: c.border,
-						containerShadow: c.boxShadow,
-					});
-				}
-				for (const block of baseBlocks) {
-					allBlocks.push({
-						...block,
-						y: block.y + offset,
-					});
-				}
-			}
-			const totalHeight = this.count * slotHeight + (this.count - 1) * this.countGap;
-			this.style.minHeight = `${totalHeight}px`;
+			blocks = replicateRows(blocks, containers, {
+				count: this.count,
+				gap: this.countGap,
+				rowHeight,
+			});
+			this.style.minHeight = `${this.count * rowHeight + (this.count - 1) * this.countGap}px`;
 		} else {
 			this.style.minHeight = "";
 		}
 
-		this._blocks = allBlocks;
+		this._blocks = blocks;
 
 		if (this._mutationObserver) {
-			this._mutationObserver.observe(this, {
-				childList: true,
-				subtree: true,
-				attributes: true,
-			});
+			this._mutationObserver.observe(this, MUTATION_OPTIONS);
 		}
 	}
 
@@ -384,11 +364,7 @@ export class PhantomUi extends LitElement {
 			this._scheduleMeasure();
 		});
 
-		this._mutationObserver.observe(this, {
-			childList: true,
-			subtree: true,
-			attributes: true,
-		});
+		this._mutationObserver.observe(this, MUTATION_OPTIONS);
 
 		this._loadHandler = () => this._scheduleMeasure();
 		this.addEventListener("load", this._loadHandler, true);

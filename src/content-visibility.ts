@@ -31,10 +31,26 @@ export class ContentVisibilityController implements ReactiveController {
 		this.restore();
 	}
 
-	/** Hide the given slotted roots. Safe to call on every measure pass. */
+	/**
+	 * Hide the given slotted roots. Safe to call on every measure pass, and re-applied
+	 * each time so a component that swaps its own stylesheets gets the sheet back.
+	 *
+	 * Shadow hiding and graphic marking share one traversal: both cross shadow
+	 * boundaries only when piercing, so running them separately walked the same tree
+	 * twice per pass.
+	 */
 	apply(roots: Element[]): void {
-		if (this.host.pierceShadow) this._hideShadowContent(roots);
-		this._markGraphics(roots);
+		const pierce = this.host.pierceShadow;
+		walkTree(roots, pierce, (el) => {
+			if (pierce && el.shadowRoot) {
+				hideShadowRoot(el.shadowRoot);
+				this._hiddenRoots.add(el.shadowRoot);
+			}
+			if (isMaskedGraphic(el)) {
+				el.setAttribute(GRAPHIC_ATTR, "");
+				this._markedGraphics.add(el);
+			}
+		});
 		// inert is refreshed each pass so structural changes are reflected.
 		this._restoreInert();
 		this._applyInert(roots);
@@ -46,47 +62,9 @@ export class ContentVisibilityController implements ReactiveController {
 		this._restoreInert();
 	}
 
-	/**
-	 * Inject hiding styles into every open shadow root under the slotted elements.
-	 * Light-DOM hiding rules cannot cross shadow boundaries, so pierced components
-	 * would otherwise show their real content through the shimmer overlay.
-	 */
-	private _hideShadowContent(roots: Element[]): void {
-		const visit = (el: Element): void => {
-			if (el.shadowRoot) {
-				hideShadowRoot(el.shadowRoot);
-				this._hiddenRoots.add(el.shadowRoot);
-				for (const child of el.shadowRoot.children) visit(child);
-			}
-			for (const child of el.children) visit(child);
-		};
-		for (const el of roots) visit(el);
-	}
-
 	private _restoreShadowContent(): void {
 		for (const root of this._hiddenRoots) unhideShadowRoot(root);
 		this._hiddenRoots.clear();
-	}
-
-	/**
-	 * Icons drawn with CSS mask-image and tinted via background-color are neither
-	 * <img> nor <svg>, so the media-hiding rules miss them and they show through
-	 * the shimmer. CSS can't select "has a mask", so detect them at runtime and
-	 * mark them with GRAPHIC_ATTR, which the hiding rules target. Walks light DOM
-	 * and (when piercing) shadow roots.
-	 */
-	private _markGraphics(roots: Element[]): void {
-		const visit = (el: Element): void => {
-			if (isMaskedGraphic(el)) {
-				el.setAttribute(GRAPHIC_ATTR, "");
-				this._markedGraphics.add(el);
-			}
-			if (this.host.pierceShadow && el.shadowRoot) {
-				for (const child of el.shadowRoot.children) visit(child);
-			}
-			for (const child of el.children) visit(child);
-		};
-		for (const el of roots) visit(el);
 	}
 
 	private _restoreGraphics(): void {
@@ -122,4 +100,16 @@ export class ContentVisibilityController implements ReactiveController {
 		for (const el of this._inertedElements) el.removeAttribute("inert");
 		this._inertedElements.clear();
 	}
+}
+
+/** Depth-first visit of every element under `roots`, optionally crossing open shadow roots. */
+function walkTree(roots: Element[], pierce: boolean, visit: (el: Element) => void): void {
+	const step = (el: Element): void => {
+		visit(el);
+		if (pierce && el.shadowRoot) {
+			for (const child of el.shadowRoot.children) step(child);
+		}
+		for (const child of el.children) step(child);
+	};
+	for (const el of roots) step(el);
 }

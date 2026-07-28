@@ -1,13 +1,14 @@
-import { css } from "lit";
+import { css, unsafeCSS } from "lit";
+import { DEFAULT_DURATION, DEFAULT_SHIMMER_BG, DEFAULT_SHIMMER_COLOR } from "./constants.js";
 
 export const phantomUiStyles = css`
 	:host {
 		display: block;
 		position: relative;
 		overflow: hidden;
-		--shimmer-color: rgba(128, 128, 128, 0.3);
-		--shimmer-duration: 1.5s;
-		--shimmer-bg: rgba(128, 128, 128, 0.2);
+		--shimmer-color: ${unsafeCSS(DEFAULT_SHIMMER_COLOR)};
+		--shimmer-duration: ${DEFAULT_DURATION}s;
+		--shimmer-bg: ${unsafeCSS(DEFAULT_SHIMMER_BG)};
 	}
 
 	:host([loading]:not([mode="overlay"])) ::slotted(*) {
@@ -70,7 +71,6 @@ export const phantomUiStyles = css`
 		box-sizing: border-box;
 	}
 
-	/* Shimmer mode (default) — ltr */
 	.shimmer-block::after {
 		content: "";
 		position: absolute;
@@ -82,7 +82,7 @@ export const phantomUiStyles = css`
 			var(--shimmer-bg) 70%
 		);
 		background-size: 200% 100%;
-		animation: shimmer-ltr var(--shimmer-duration, 1.5s) linear infinite;
+		animation: shimmer-ltr var(--shimmer-duration) linear infinite;
 	}
 
 	@keyframes shimmer-ltr {
@@ -90,7 +90,6 @@ export const phantomUiStyles = css`
 		100% { background-position: -200% 0; }
 	}
 
-	/* Shimmer rtl */
 	:host([shimmer-direction="rtl"]) .shimmer-block::after {
 		animation-name: shimmer-rtl;
 	}
@@ -100,7 +99,6 @@ export const phantomUiStyles = css`
 		100% { background-position: 200% 0; }
 	}
 
-	/* Shimmer ttb */
 	:host([shimmer-direction="ttb"]) .shimmer-block::after {
 		background: linear-gradient(
 			180deg,
@@ -117,7 +115,6 @@ export const phantomUiStyles = css`
 		100% { background-position: 0 -200%; }
 	}
 
-	/* Shimmer btt */
 	:host([shimmer-direction="btt"]) .shimmer-block::after {
 		background: linear-gradient(
 			180deg,
@@ -134,9 +131,8 @@ export const phantomUiStyles = css`
 		100% { background-position: 0 200%; }
 	}
 
-	/* Pulse mode */
 	:host([animation="pulse"]) .shimmer-block {
-		animation: phantom-pulse var(--shimmer-duration, 1.5s) ease-in-out infinite;
+		animation: phantom-pulse var(--shimmer-duration) ease-in-out infinite;
 	}
 
 	:host([animation="pulse"]) .shimmer-block::after {
@@ -153,9 +149,8 @@ export const phantomUiStyles = css`
 		}
 	}
 
-	/* Breathe mode - subtle scale + fade */
 	:host([animation="breathe"]) .shimmer-block {
-		animation: phantom-breathe var(--shimmer-duration, 1.5s) ease-in-out infinite;
+		animation: phantom-breathe var(--shimmer-duration) ease-in-out infinite;
 	}
 
 	:host([animation="breathe"]) .shimmer-block::after {
@@ -174,12 +169,10 @@ export const phantomUiStyles = css`
 		}
 	}
 
-	/* Solid mode */
 	:host([animation="solid"]) .shimmer-block::after {
 		display: none;
 	}
 
-	/* Debug mode */
 	:host([debug]) .shimmer-block {
 		outline: 1px dashed rgba(247, 118, 142, 0.9);
 		outline-offset: -1px;
