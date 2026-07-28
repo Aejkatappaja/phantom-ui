@@ -7,8 +7,12 @@ tmp
 .DS_Store
 
 # Example app lockfiles: dev-only transitive-dependency noise (Dependabot),
-# and the examples are demos, not the shipped package. Kept for react-query-demo
-# (runs on StackBlitz, needs reproducible install).
+# and the examples are demos, not the shipped package.
+#
+# react-query-demo's was kept for a reproducible StackBlitz install, but a lockfile
+# also freezes the version it was generated with: the public demo was still running
+# phantom-ui 0.10.1 while npm served 1.4.0. Resolving fresh is what keeps a demo
+# honest. Vite is held below 8 by the `^7.1.5` range in package.json, not by the
+# lockfile, so dropping it does not reintroduce the WebContainer crash.
 examples/*/package-lock.json
 examples/*/bun.lock
-!examples/react-query-demo/package-lock.json
