@@ -59,6 +59,20 @@ Or drop in a script tag with no build step:
 <script src="https://cdn.jsdelivr.net/npm/@aejkatappaja/phantom-ui/dist/phantom-ui.cdn.js"></script>
 ```
 
+### Vendoring a single file
+
+If you cannot install from a registry, or you would rather keep a copy in your repo, there is a standalone ES module with Lit bundled in. One file, 34 kB minified, 11.5 kB gzipped, no runtime dependency:
+
+```ts
+import "@aejkatappaja/phantom-ui/standalone";
+```
+
+Or copy `dist/phantom-ui.standalone.js` straight into your project and import it by path. The element registers itself on import, so `<phantom-ui>` works from that point on with no package manager involved.
+
+One caveat if you vendor the file into a TypeScript project: the element's public type extends `LitElement`, so typed access to properties such as `host.loading` still needs Lit's declarations (`npm i -D lit`, types only, since the runtime is already inside the bundle). Without them the element works but is untyped. JSX attribute typing through `PhantomUiAttributes` does not depend on Lit.
+
+The library is MIT, so vendoring is fine. Note the version you copied somewhere near the file, since a vendored copy does not get updates.
+
 ## Optional setup
 
 The component works with zero setup. For an extra convenience pass, run the bundled `init` command once from your project root:
@@ -575,7 +589,7 @@ The package ships a `custom-elements.json` manifest, which gives IDE autocomplet
 
 ## Bundle size
 
-The CDN build (Lit included) is ~22kb / ~8kb gzipped.
+The CDN build (Lit included) is ~34kb / ~11.5kb gzipped.
 
 When used as an ES module with a bundler, Lit is likely already in your dependency tree, bringing the component cost down to under 2kb.
 

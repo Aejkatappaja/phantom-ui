@@ -37,6 +37,7 @@
 			"!**/.storybook",
 			"!**/.claude",
 			"!**/docs",
+			"!**/coverage",
 			"!**/custom-elements.json"
 		]
 	}
