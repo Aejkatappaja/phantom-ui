@@ -37,6 +37,9 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run build
+      # build ends with `cem analyze`, so a stale committed manifest shows up here.
+      - name: Check custom-elements.json is up to date
+        run: git diff --exit-code custom-elements.json
 
   examples:
     name: Build examples

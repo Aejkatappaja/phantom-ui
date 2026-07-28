@@ -34,19 +34,21 @@ type OverlayVar = "--shimmer-color" | "--shimmer-bg" | "--shimmer-duration" | "-
  *
  * @slot - The real content to show (or measure for skeleton generation)
  *
- * @attr {boolean} loading - Show the shimmer overlay or real content. The string `"false"` is treated as falsy.
- * @attr {ShimmerDirection} shimmer-direction - Direction of the shimmer sweep: `ltr`, `rtl`, `ttb`, or `btt` (shimmer mode only)
- * @attr {string} shimmer-color - Color of the animated gradient wave (shimmer mode only)
- * @attr {string} background-color - Background color of each shimmer block (all modes)
+ * @attr {boolean} loading - Whether to show the shimmer overlay or the real content. The string `"false"` is treated as falsy.
+ * @attr {ShimmerDirection} shimmer-direction - Direction of the shimmer sweep. Only used in `animation="shimmer"` mode.
+ * @attr {string} shimmer-color - Color of the animated gradient wave. Only used in `animation="shimmer"` mode.
+ * @attr {string} background-color - Background color of each shimmer block. Applies to all animation modes.
  * @attr {number} duration - Animation cycle duration in seconds
- * @attr {number} fallback-radius - Border radius (px) for elements with no radius
- * @attr {Animation} animation - Animation mode: `shimmer`, `pulse`, `breathe`, or `solid`
+ * @attr {number} fallback-radius - Border radius applied to elements with border-radius: 0 (like text)
+ * @attr {Animation} animation - Animation mode: "shimmer" (gradient sweep), "pulse" (opacity), "breathe" (scale + fade), or "solid" (static)
+ * @attr {Mode} mode - Loading style. "skeleton" (default) measures the slotted content and shows placeholder blocks. "overlay" keeps the existing content visible and dimmed, sweeping a light band over it, for refresh / stale-while-revalidate states.
  * @attr {number} stagger - Delay in seconds between each block's animation start (0 = no stagger)
  * @attr {number} reveal - Fade-out duration in seconds when loading ends (0 = instant)
- * @attr {number} count - Number of skeleton rows to generate from a single template (1 = no repeat)
- * @attr {number} count-gap - Gap in pixels between repeated rows (only used when count > 1)
- * @attr {boolean} debug - Outline each measured block with an index for inspection
- * @attr {string} loading-label - Accessible label announced by screen readers while loading (default "Loading")
+ * @attr {number} count - Number of skeleton rows to generate from a single template element
+ * @attr {number} count-gap - Gap in pixels between each repeated skeleton row (only used when count > 1)
+ * @attr {boolean} debug - Debug mode: outlines each measured block with an index. Useful for inspecting how phantom-ui interprets your DOM.
+ * @attr {string} loading-label - Accessible label announced by screen readers while loading. Set as `aria-label` on the host when `loading` is true.
+ * @attr {boolean} pierce-shadow - Measure inside open shadow roots of slotted custom elements (design systems built with Stencil, Lit, FAST). Resolves slots to their projected content.
  *
  * @example
  * ```tsx
@@ -79,15 +81,15 @@ export class PhantomUi extends LitElement {
 
 	/** Color of the animated gradient wave. Only used in `animation="shimmer"` mode. */
 	@property({ attribute: "shimmer-color" })
-	shimmerColor = DEFAULT_SHIMMER_COLOR;
+	shimmerColor: string = DEFAULT_SHIMMER_COLOR;
 
 	/** Background color of each shimmer block. Applies to all animation modes. */
 	@property({ attribute: "background-color" })
-	backgroundColor = DEFAULT_SHIMMER_BG;
+	backgroundColor: string = DEFAULT_SHIMMER_BG;
 
 	/** Animation cycle duration in seconds */
 	@property({ type: Number })
-	duration = DEFAULT_DURATION;
+	duration: number = DEFAULT_DURATION;
 
 	/** Border radius applied to elements with border-radius: 0 (like text) */
 	@property({ type: Number, attribute: "fallback-radius" })

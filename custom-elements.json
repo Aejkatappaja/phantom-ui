@@ -42,6 +42,9 @@
             {
               "kind": "field",
               "name": "shimmerColor",
+              "type": {
+                "text": "string"
+              },
               "default": "\"rgba(128, 128, 128, 0.3)\"",
               "description": "Color of the animated gradient wave. Only used in `animation=\"shimmer\"` mode.",
               "attribute": "shimmer-color"
@@ -49,6 +52,9 @@
             {
               "kind": "field",
               "name": "backgroundColor",
+              "type": {
+                "text": "string"
+              },
               "default": "\"rgba(128, 128, 128, 0.2)\"",
               "description": "Background color of each shimmer block. Applies to all animation modes.",
               "attribute": "background-color"
@@ -56,6 +62,9 @@
             {
               "kind": "field",
               "name": "duration",
+              "type": {
+                "text": "number"
+              },
               "default": "1.5",
               "description": "Animation cycle duration in seconds",
               "attribute": "duration"
@@ -349,6 +358,15 @@
             },
             {
               "type": {
+                "text": "Mode"
+              },
+              "description": "Loading style. \"skeleton\" (default) measures the slotted content and shows\nplaceholder blocks. \"overlay\" keeps the existing content visible and dimmed,\nsweeping a light band over it, for refresh / stale-while-revalidate states.",
+              "name": "mode",
+              "default": "\"skeleton\"",
+              "fieldName": "mode"
+            },
+            {
+              "type": {
                 "text": "number"
               },
               "description": "Delay in seconds between each block's animation start (0 = no stagger)",
@@ -402,21 +420,12 @@
               "fieldName": "loadingLabel"
             },
             {
-              "name": "mode",
-              "type": {
-                "text": "Mode"
-              },
-              "default": "\"skeleton\"",
-              "description": "Loading style. \"skeleton\" (default) measures the slotted content and shows\nplaceholder blocks. \"overlay\" keeps the existing content visible and dimmed,\nsweeping a light band over it, for refresh / stale-while-revalidate states.",
-              "fieldName": "mode"
-            },
-            {
-              "name": "pierce-shadow",
               "type": {
                 "text": "boolean"
               },
-              "default": "false",
               "description": "Measure inside open shadow roots of slotted custom elements (design systems built with Stencil, Lit, FAST). Resolves slots to their projected content.",
+              "name": "pierce-shadow",
+              "default": "false",
               "fieldName": "pierceShadow"
             }
           ],
