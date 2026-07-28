@@ -3,6 +3,9 @@ import { isDev } from "@builder.io/qwik";
 import { QwikCityProvider, RouterOutlet } from "@builder.io/qwik-city";
 import { RouterHead } from "./components/router-head/router-head";
 
+// Pre-hydration hiding rules. This is the entry the CLI targets for Qwik, so the
+// example doubles as the end-to-end check that ssr.css actually prevents the flash.
+import "@aejkatappaja/phantom-ui/ssr.css";
 import "./global.css";
 
 export default component$(() => {

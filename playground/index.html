@@ -76,6 +76,11 @@
   .card-footer { display: flex; gap: 8px; margin-top: 12px; }
   .tag { background: #3b4261; padding: 4px 10px; border-radius: 12px; font-size: 12px; }
 
+  /* Wide fixed columns so the text-width measurement for table cells is visible:
+     the blocks should hug the text, not span the whole column. */
+  .demo-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+  .demo-table td { padding: 6px 0; font-size: 13px; border-top: 1px solid #292e42; }
+
   .note-ignore { font-size: 11px; color: #e94560; margin-top: 8px; }
   .note-no-children { font-size: 11px; color: #4ecca3; margin-top: 4px; }
 
@@ -116,6 +121,21 @@
           <input type="checkbox" id="ctl-debug">
           <span>debug</span>
         </div>
+      </label>
+
+      <label>
+        <div class="row">
+          <input type="checkbox" id="ctl-pierce-shadow">
+          <span>pierce-shadow</span>
+        </div>
+      </label>
+
+      <label>
+        <span>mode</span>
+        <select id="ctl-mode">
+          <option value="skeleton" selected>skeleton</option>
+          <option value="overlay">overlay</option>
+        </select>
       </label>
 
       <label>
@@ -215,6 +235,13 @@
             <a class="demo-link" href="#x">Profile</a>
             <button class="demo-btn" type="button" data-shimmer-ignore>Close (kept)</button>
           </div>
+          <table class="demo-table">
+            <tbody>
+              <tr><td>Name</td><td>Jane Doe</td></tr>
+              <tr><td>Role</td><td>Engineer</td></tr>
+            </tbody>
+          </table>
+          <demo-badge></demo-badge>
           <p class="note-ignore" data-shimmer-ignore>data-shimmer-ignore (always visible)</p>
           <div class="note-no-children" data-shimmer-no-children>
             <span>data-shimmer-no-children</span>
@@ -226,10 +253,59 @@
   </div>
 
   <script>
+    // Two levels of open shadow root, plus a mask-image icon that only lives inside a
+    // shadow root. Nothing here is reachable without pierce-shadow, so toggling the
+    // checkbox shows exactly what the piercing pass does.
+    const MASK = "url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22><circle cx=%228%22 cy=%228%22 r=%228%22/></svg>')";
+
+    customElements.define("demo-text", class extends HTMLElement {
+      connectedCallback() {
+        if (this.shadowRoot) return;
+        this.attachShadow({ mode: "open" }).innerHTML =
+          `<style>p { margin: 0; font-size: 13px; }</style><p><slot></slot></p>`;
+      }
+    });
+
+    customElements.define("demo-badge", class extends HTMLElement {
+      connectedCallback() {
+        if (this.shadowRoot) return;
+        this.attachShadow({ mode: "open" }).innerHTML = `
+          <style>
+            .wrap { display: flex; align-items: center; gap: 8px; padding: 8px 0; }
+            .icon {
+              width: 16px; height: 16px; background-color: #7aa2f7;
+              -webkit-mask-image: ${MASK}; mask-image: ${MASK};
+            }
+          </style>
+          <div class="wrap">
+            <span class="icon"></span>
+            <demo-text>Nested shadow root (pierce-shadow)</demo-text>
+          </div>`;
+      }
+    });
+
     const el = document.getElementById("target");
 
     document.getElementById("ctl-loading").addEventListener("change", (e) => {
       el.loading = e.target.checked;
+    });
+
+    // Neither pierce-shadow nor mode is in the re-measure condition in updated(), so
+    // bounce loading to force a fresh pass instead of showing a stale skeleton.
+    function remeasure() {
+      if (!el.loading) return;
+      el.loading = false;
+      requestAnimationFrame(() => { el.loading = true; });
+    }
+
+    document.getElementById("ctl-pierce-shadow").addEventListener("change", (e) => {
+      el.toggleAttribute("pierce-shadow", e.target.checked);
+      remeasure();
+    });
+
+    document.getElementById("ctl-mode").addEventListener("change", (e) => {
+      el.setAttribute("mode", e.target.value);
+      remeasure();
     });
 
     document.getElementById("ctl-animation").addEventListener("change", (e) => {

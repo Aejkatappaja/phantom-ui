@@ -84,6 +84,36 @@ jobs:
       # the figure is identical across browsers.
       - run: bun run test:coverage
 
+  smoke:
+    name: Smoke (playground)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('bun.lock') }}
+      - run: npx playwright install --with-deps chromium
+      # The playground loads dist/phantom-ui.cdn.js directly, so this exercises the
+      # built bundle in a real page rather than the source under a test harness.
+      - run: bun run build
+      # Server and smoke share one step: a background process started in its own
+      # step is not guaranteed to outlive it on the runner.
+      - name: Serve the playground and smoke it
+        run: |
+          npx serve -l 4444 --no-clipboard >/dev/null 2>&1 &
+          for _ in $(seq 30); do
+            curl -sf -o /dev/null http://localhost:4444/playground/ && break
+            sleep 1
+          done
+          bun run smoke
+
   build-docs:
     name: Build Docs
     runs-on: ubuntu-latest
