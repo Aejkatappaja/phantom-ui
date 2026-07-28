@@ -35,14 +35,15 @@ phantom-ui now:
 - walks into the open shadow root of each slotted custom element
 - resolves default and named slots to their projected light-DOM content, measured at their real position
 - treats slot-only containers as measurable leaves (so a Stencil text component built as `<p><slot/></p>` is measured correctly)
-- injects hiding styles into each pierced shadow root, since the light-DOM hiding rules cannot cross shadow boundaries
+- applies hiding styles inside each pierced shadow root, since the light-DOM hiding rules cannot cross shadow boundaries
+- watches each pierced shadow root for changes, so a component that re-renders its own internals is re-measured
 
 It works with nested shadow roots and with icons drawn via CSS `mask-image` (a common design-system pattern), which are hidden like real media during loading.
 
 ## Limitations
 
 - **Open shadow roots only.** Components using `mode: "closed"` are not reachable. Stencil and Lit default to open, so most design systems work.
-- **Mutations inside child shadow roots are not observed.** phantom-ui re-measures on resize and on light-DOM mutations, but it does not currently watch for DOM changes happening *inside* a pierced component's shadow root. The initial measurement is correct; dynamic structural changes inside the shadow root won't re-trigger it.
+- **Attribute changes inside a pierced root are filtered.** Every pierced shadow root is watched for structural changes, but only the attributes that affect measurement (`style`, `hidden`, and the `data-shimmer-*` overrides) trigger a re-measure. Design-system components churn `class` and `aria-*` on hover and focus, and re-measuring on each of those would be wasteful.
 - **Double rendering.** Because slotted light-DOM content is measured through slot resolution, it is never measured twice.
 
 ## Stencil example
