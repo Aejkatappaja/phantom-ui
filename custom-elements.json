@@ -243,6 +243,17 @@
             },
             {
               "kind": "method",
+              "name": "_adoptHidingStyles",
+              "privacy": "private",
+              "return": {
+                "type": {
+                  "text": "void"
+                }
+              },
+              "description": "Scope the hiding rules to whichever tree this instance is in: the document, or the\nshadow root of a component that renders phantom-ui inside itself. A detached host\nhas neither (a pending measure can still fire after removal), so it is skipped."
+            },
+            {
+              "kind": "method",
               "name": "_scheduleMeasure",
               "privacy": "private",
               "return": {
