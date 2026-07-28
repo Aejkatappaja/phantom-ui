@@ -188,7 +188,7 @@ export class PhantomUi extends LitElement {
 
 	override connectedCallback(): void {
 		super.connectedCallback();
-		injectLightDomStyles();
+		this._adoptHidingStyles();
 		// On reconnection (the element was moved in the DOM), Lit does not schedule an
 		// update, so observers, inert markers, and graphic hiding are not restored on
 		// their own. Re-initialize them when reconnecting while loading. Guard on
@@ -312,6 +312,18 @@ export class PhantomUi extends LitElement {
     `;
 	}
 
+	/**
+	 * Scope the hiding rules to whichever tree this instance is in: the document, or the
+	 * shadow root of a component that renders phantom-ui inside itself. A detached host
+	 * has neither (a pending measure can still fire after removal), so it is skipped.
+	 */
+	private _adoptHidingStyles(): void {
+		const root = this.getRootNode();
+		if (root instanceof Document || root instanceof ShadowRoot) {
+			injectLightDomStyles(root);
+		}
+	}
+
 	private _scheduleMeasure(): void {
 		if (this._measureScheduled) return;
 		this._measureScheduled = true;
@@ -342,6 +354,11 @@ export class PhantomUi extends LitElement {
 		// Overlay mode keeps the content visible (a glint sweeps over each element),
 		// so it must not hide or inert anything.
 		if (this.mode !== "overlay") {
+			// Re-asserted every pass, not just on connect: when the root is a component's
+			// shadow root, that component can rebuild its own adoptedStyleSheets on
+			// re-render and drop our sheet, with no mutation to observe. Costs one array
+			// membership check once it is already there.
+			this._adoptHidingStyles();
 			this._visibility.apply(assignedElements);
 		}
 

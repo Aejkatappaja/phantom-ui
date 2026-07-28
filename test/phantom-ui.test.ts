@@ -1,6 +1,5 @@
 import { aTimeout, expect, fixture, html } from "@open-wc/testing";
-import type { PhantomUi } from "../src/phantom-ui.js";
-import "../src/phantom-ui.js";
+import { PhantomUi } from "../src/phantom-ui.js";
 
 function nextFrame(): Promise<void> {
 	return new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
@@ -11,6 +10,10 @@ function nextFrame(): Promise<void> {
  * Comparing against the keyword makes an assertion vacuous in both directions.
  */
 const TRANSPARENT = "rgba(0, 0, 0, 0)";
+
+/** Same feature test the source uses to pick its stylesheet delivery. */
+const SUPPORTS_ADOPTING_STYLESHEETS =
+	"adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
 
 /**
  * Query helpers that assert what they found instead of casting. A missing or
@@ -586,6 +589,73 @@ describe("phantom-ui", () => {
 		});
 	});
 
+	describe("hosted inside another shadow root", () => {
+		class OuterHost extends HTMLElement {
+			connectedCallback() {
+				if (this.shadowRoot) return;
+				this.attachShadow({ mode: "open" }).innerHTML = `
+					<phantom-ui loading>
+						<div style="width:200px">
+							<p class="txt" style="width:150px;height:20px">real text</p>
+							<img class="pic" alt="" style="width:40px;height:40px"
+								src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+						</div>
+					</phantom-ui>`;
+			}
+		}
+		before(() => {
+			if (!customElements.get("outer-host")) customElements.define("outer-host", OuterHost);
+		});
+
+		// We adopt into a root the consumer owns, so a component that rebuilds its own
+		// adoptedStyleSheets on re-render drops our sheet, and that produces no
+		// MutationRecord to react to. The next measure pass has to put it back.
+		it("re-adopts after the host component rebuilds its own stylesheets", async function () {
+			if (!SUPPORTS_ADOPTING_STYLESHEETS) this.skip();
+			const el = await fixture<HTMLElement>(
+				html`<outer-host style="display:block;width:300px"></outer-host>`,
+			);
+			await nextFrame();
+			await nextFrame();
+
+			const root = shadowOf(el);
+			const txt = query(root, ".txt");
+			expect(getComputedStyle(txt).webkitTextFillColor, "hidden initially").to.equal(TRANSPARENT);
+
+			const own = new CSSStyleSheet();
+			own.replaceSync("p { color: rebeccapurple; }");
+			root.adoptedStyleSheets = [own];
+			expect(getComputedStyle(txt).webkitTextFillColor, "dropped by the host").to.not.equal(
+				TRANSPARENT,
+			);
+
+			query(root, "phantom-ui").appendChild(document.createElement("span"));
+			await nextFrame();
+			await nextFrame();
+			expect(getComputedStyle(txt).webkitTextFillColor, "restored by the next pass").to.equal(
+				TRANSPARENT,
+			);
+		});
+
+		it("hides slotted content at every depth", async () => {
+			const el = await fixture<HTMLElement>(
+				html`<outer-host style="display:block;width:300px"></outer-host>`,
+			);
+			await nextFrame();
+			await nextFrame();
+
+			const root = shadowOf(el);
+			const inner = queryAs(root, "phantom-ui", PhantomUi);
+			expect(inner.shadowRoot?.querySelectorAll(".shimmer-block").length).to.be.greaterThan(0);
+
+			const txt = query(root, ".txt");
+			const pic = query(root, ".pic");
+			expect(getComputedStyle(txt).webkitTextFillColor, "nested text").to.equal(TRANSPARENT);
+			// Not reachable by ::slotted(), which only matches direct children.
+			expect(getComputedStyle(pic).opacity, "nested media").to.equal("0");
+		});
+	});
+
 	describe("pierce-shadow", () => {
 		// Minimal Stencil-like component: shadow:true with a slot, mirroring k-text
 		class MockText extends HTMLElement {
@@ -663,6 +733,32 @@ describe("phantom-ui", () => {
 			expect(widths(), "override inside the shadow root must be picked up").to.include(80);
 		});
 
+		it("adopts the hiding stylesheet into shadow roots nested inside shadow roots", async function () {
+			if (!SUPPORTS_ADOPTING_STYLESHEETS) this.skip();
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<mock-nested style="display:block;width:200px;"></mock-nested>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			const outer = query(el, "mock-nested");
+			const inner = query(shadowOf(outer), "mock-text");
+			const adopted = (host: HTMLElement) => host.shadowRoot?.adoptedStyleSheets.length ?? 0;
+			expect(adopted(outer)).to.equal(1);
+			expect(adopted(inner)).to.equal(1);
+			// The same sheet instance is shared, never duplicated per root.
+			const shared =
+				outer.shadowRoot?.adoptedStyleSheets[0] === inner.shadowRoot?.adoptedStyleSheets[0];
+			expect(shared, "both roots must adopt the same sheet instance").to.be.true;
+
+			el.loading = false;
+			await el.updateComplete;
+			expect(adopted(outer)).to.equal(0);
+			expect(adopted(inner)).to.equal(0);
+		});
+
 		// Behaviour-level counterpart to the stylesheet-injection test above: whatever
 		// mechanism hides pierced shadow content, the computed style is what matters.
 		it("hides text inside a pierced shadow root and restores it", async () => {
@@ -691,6 +787,31 @@ describe("phantom-ui", () => {
 		// this). Text stays hidden either way because -webkit-text-fill-color inherits
 		// across the boundary, but media opacity does not, so the next measure pass has
 		// to put the sheet back.
+		it("re-adopts the hiding sheet when the host replaces its own stylesheets", async function () {
+			if (!SUPPORTS_ADOPTING_STYLESHEETS) this.skip();
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<mock-nested style="display:block;width:200px;"></mock-nested>
+				</phantom-ui>
+			`);
+			await nextFrame();
+			await el.updateComplete;
+
+			const host = query(el, "mock-nested");
+			const root = shadowOf(host);
+			expect(root.adoptedStyleSheets.length, "adopted while loading").to.equal(1);
+
+			root.adoptedStyleSheets = [];
+			expect(root.adoptedStyleSheets.length, "host wiped it").to.equal(0);
+
+			// A light-DOM mutation is what the host observes, so it drives the next pass.
+			el.appendChild(document.createElement("span"));
+			await nextFrame();
+			await nextFrame();
+			await el.updateComplete;
+			expect(root.adoptedStyleSheets.length, "restored by the next measure").to.equal(1);
+		});
+
 		it("marks mask-image icons living inside a shadow root", async () => {
 			const el = await fixture<PhantomUi>(html`
 				<phantom-ui loading pierce-shadow>
@@ -870,6 +991,34 @@ describe("phantom-ui", () => {
 		// Idempotency is keyed on the sheet being present, not on a "already ran" flag, so
 		// anything that replaces document.adoptedStyleSheets wholesale (view transitions,
 		// SPA head managers) is repaired the next time an instance connects.
+		it("delivers the rules as an adopted stylesheet, never a <style> element", async function () {
+			if (!SUPPORTS_ADOPTING_STYLESHEETS) this.skip();
+			await hidingFixture();
+			const injected = document.querySelector("style#phantom-ui-loading-styles") !== null;
+			expect(injected, "must not inject a <style> element").to.be.false;
+
+			const adopted = document.adoptedStyleSheets.some((sheet) =>
+				[...sheet.cssRules].some((rule) => rule.selectorText?.includes("phantom-ui[loading]")),
+			);
+			expect(adopted, "hiding rules must be adopted on the document").to.be.true;
+		});
+
+		it("re-adopts the document sheet after it is replaced wholesale", async function () {
+			if (!SUPPORTS_ADOPTING_STYLESHEETS) this.skip();
+			await hidingFixture();
+			const ours = () =>
+				document.adoptedStyleSheets.filter((s) =>
+					[...s.cssRules].some((r) => r.selectorText?.includes("phantom-ui[loading]")),
+				).length;
+			expect(ours(), "adopted once loading").to.equal(1);
+
+			document.adoptedStyleSheets = [];
+			expect(ours(), "wiped").to.equal(0);
+
+			await hidingFixture();
+			expect(ours(), "restored on the next connect").to.equal(1);
+		});
+
 		it("leaves content alone in overlay mode", async () => {
 			const el = await fixture<PhantomUi>(html`
 				<phantom-ui loading mode="overlay">
