@@ -49,6 +49,7 @@
 		"test:watch": "web-test-runner --watch",
 		"test:all": "web-test-runner --all-browsers",
 		"test:coverage": "web-test-runner --coverage",
+		"smoke": "node scripts/smoke-playground.mjs",
 		"playground": "bunx --bun serve -l 4444 --no-clipboard"
 	},
 	"keywords": [
@@ -76,6 +77,7 @@
 		"@web/test-runner-playwright": "^1.0.0",
 		"husky": "^9.1.7",
 		"lint-staged": "^17.0.8",
+		"playwright": "1.59.1",
 		"storybook": "^10.5.0",
 		"typescript": "^7.0.2"
 	},
