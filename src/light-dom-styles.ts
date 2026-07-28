@@ -1,44 +1,12 @@
-import { GRAPHIC_ATTR, SHIMMER_IGNORE_ATTR, TAG_NAME } from "./constants.js";
-
-/** Elements hidden by opacity (rather than transparent text) while loading. */
-const MEDIA_SELECTOR = 'img, svg, video, canvas, button, [role="button"]';
-
-/** Make text invisible and block interaction without collapsing layout. */
-const HIDE_TEXT = `
-	-webkit-text-fill-color: transparent !important;
-	pointer-events: none;
-	user-select: none;
-`;
-
-const SHOW_TEXT = `
-	-webkit-text-fill-color: initial !important;
-	pointer-events: auto;
-	user-select: auto;
-`;
+import { LIGHT_DOM_CSS, SHADOW_HIDE_CSS } from "./hiding-css.js";
 
 const LIGHT_DOM_STYLE_ID = "phantom-ui-loading-styles";
 
 export function injectLightDomStyles(): void {
 	if (document.getElementById(LIGHT_DOM_STYLE_ID)) return;
-	// Overlay mode keeps content visible, so the hiding rules must not apply to it.
-	const loading = `${TAG_NAME}[loading]:not([mode="overlay"])`;
-	const mediaList = MEDIA_SELECTOR.split(", ")
-		.map((sel) => `${loading} ${sel}`)
-		.join(",\n\t\t\t");
-	const ignoreMediaList = MEDIA_SELECTOR.split(", ")
-		.map((sel) => `${loading} [${SHIMMER_IGNORE_ATTR}] ${sel}`)
-		.join(",\n\t\t\t");
-
 	const style = document.createElement("style");
 	style.id = LIGHT_DOM_STYLE_ID;
-	style.textContent = `
-		${loading} * { ${HIDE_TEXT} }
-		${mediaList},
-		${loading} [${GRAPHIC_ATTR}] { opacity: 0 !important; }
-		${loading} [${SHIMMER_IGNORE_ATTR}],
-		${loading} [${SHIMMER_IGNORE_ATTR}] * { ${SHOW_TEXT} }
-		${ignoreMediaList} { opacity: 1 !important; }
-	`;
+	style.textContent = LIGHT_DOM_CSS;
 	document.head.appendChild(style);
 }
 
@@ -64,15 +32,6 @@ const SHADOW_HIDE_STYLE_ID = "phantom-ui-shadow-hide";
  * roots we inject an equivalent stylesheet directly into each pierced root. The
  * style is added while loading and removed on reveal/teardown.
  */
-const SHADOW_HIDE_CSS = `
-	:host([${SHIMMER_IGNORE_ATTR}]) *, [${SHIMMER_IGNORE_ATTR}] * {
-		-webkit-text-fill-color: initial !important;
-		opacity: 1 !important;
-	}
-	* { ${HIDE_TEXT} }
-	${MEDIA_SELECTOR}, [${GRAPHIC_ATTR}] { opacity: 0 !important; }
-`;
-
 export function hideShadowRoot(root: ShadowRoot): void {
 	if (root.querySelector(`#${SHADOW_HIDE_STYLE_ID}`)) return;
 	const style = document.createElement("style");
