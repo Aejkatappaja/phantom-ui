@@ -7,6 +7,10 @@ import {
 	DEFAULT_DURATION,
 	DEFAULT_SHIMMER_BG,
 	DEFAULT_SHIMMER_COLOR,
+	SHIMMER_HEIGHT_ATTR,
+	SHIMMER_IGNORE_ATTR,
+	SHIMMER_NO_CHILDREN_ATTR,
+	SHIMMER_WIDTH_ATTR,
 	TAG_NAME,
 } from "./constants.js";
 import { ContentVisibilityController } from "./content-visibility.js";
@@ -31,6 +35,26 @@ const MUTATION_OPTIONS: MutationObserverInit = {
 	childList: true,
 	subtree: true,
 	attributes: true,
+};
+
+/**
+ * Pierced roots belong to third-party components that churn `class`, `aria-*` and
+ * `data-state` on hover, focus and transitions. Watching every attribute there would
+ * schedule a full measure on each of those, so only the ones that change measurement
+ * are observed.
+ */
+const PIERCED_MUTATION_OPTIONS: MutationObserverInit = {
+	childList: true,
+	subtree: true,
+	attributes: true,
+	attributeFilter: [
+		SHIMMER_WIDTH_ATTR,
+		SHIMMER_HEIGHT_ATTR,
+		SHIMMER_IGNORE_ATTR,
+		SHIMMER_NO_CHILDREN_ATTR,
+		"style",
+		"hidden",
+	],
 };
 
 /**
@@ -321,9 +345,10 @@ export class PhantomUi extends LitElement {
 			this._visibility.apply(assignedElements);
 		}
 
+		const piercedRoots = new Set<ShadowRoot>();
 		let blocks: ElementInfo[] = [];
 		for (const el of assignedElements) {
-			blocks.push(...extractElementInfo(el, hostRect, this.pierceShadow));
+			blocks.push(...extractElementInfo(el, hostRect, this.pierceShadow, piercedRoots));
 		}
 
 		// Overlay sweeps over the real content, so it never stamps extra rows.
@@ -350,6 +375,17 @@ export class PhantomUi extends LitElement {
 
 		if (this._mutationObserver) {
 			this._mutationObserver.observe(this, MUTATION_OPTIONS);
+			// One observer, many targets: without these, a pierced component re-rendering
+			// its own shadow content leaves stale blocks. Re-registered on every pass, so
+			// roots that appear or disappear are picked up; disconnect() in
+			// _teardownObservers clears them all at once.
+			//
+			// Note this does not cover a component swapping its own adoptedStyleSheets:
+			// that produces no MutationRecord. The hiding sheet is re-applied by whichever
+			// measure pass runs next, whatever triggers it.
+			for (const root of piercedRoots) {
+				this._mutationObserver.observe(root, PIERCED_MUTATION_OPTIONS);
+			}
 		}
 	}
 

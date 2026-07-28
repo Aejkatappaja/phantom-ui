@@ -535,7 +535,7 @@ This is useful with framework loops where the list is empty before data loads:
 
 4. An absolutely-positioned overlay renders one shimmer block per measured element, with a CSS gradient animation sweeping across each block.
 
-5. A `ResizeObserver`, `MutationObserver`, and media `load` listener re-measure automatically when the layout changes (window resize, content injection, DOM mutations, or images/videos finishing loading).
+5. A `ResizeObserver`, `MutationObserver`, and media `load` listener re-measure automatically when the layout changes (window resize, content injection, DOM mutations, or images/videos finishing loading). With `pierce-shadow`, the pierced shadow roots are watched as well.
 
 6. When `loading` is removed, the overlay is destroyed and real content is revealed. `aria-busy` is set automatically on the host element to communicate loading state to assistive technologies, and the placeholder content is made `inert` while loading so it stays out of the tab order and the accessibility tree (elements marked `data-shimmer-ignore` stay interactive).
 

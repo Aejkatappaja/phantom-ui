@@ -634,6 +634,35 @@ describe("phantom-ui", () => {
 			if (!customElements.get("mock-nested")) customElements.define("mock-nested", MockNested);
 		});
 
+		// Deliberately a change with no layout effect: anything that resizes the host is
+		// already caught by the ResizeObserver, so it would not prove the shadow root is
+		// observed. An attribute write inside the root is invisible to every other signal.
+		it("re-measures on an attribute change inside a pierced shadow root", async () => {
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading pierce-shadow>
+					<mock-nested style="display:block;width:200px;"></mock-nested>
+				</phantom-ui>
+			`);
+			// Let the initial ResizeObserver cascade drain: while measures are still in
+			// flight, a later one would pick the change up by coincidence and the test
+			// would pass with no shadow observation at all.
+			await aTimeout(200);
+			await el.updateComplete;
+
+			const widths = () =>
+				[...(el.shadowRoot?.querySelectorAll(".shimmer-block") ?? [])].map((b) =>
+					Math.round(Number.parseFloat(b.style.width)),
+				);
+			expect(widths(), "icon measured at its own size").to.include(24);
+
+			const root = shadowOf(query(el, "mock-nested"));
+			root.querySelector(".inner-icon")?.setAttribute("data-shimmer-width", "80");
+
+			await aTimeout(200);
+			await el.updateComplete;
+			expect(widths(), "override inside the shadow root must be picked up").to.include(80);
+		});
+
 		// Behaviour-level counterpart to the stylesheet-injection test above: whatever
 		// mechanism hides pierced shadow content, the computed style is what matters.
 		it("hides text inside a pierced shadow root and restores it", async () => {

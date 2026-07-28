@@ -39,7 +39,7 @@ An absolutely-positioned overlay is rendered with one div per measured element. 
 
 ### 5. Re-measure on changes
 
-A `ResizeObserver`, `MutationObserver`, and media `load` listener watch for layout changes. When the container resizes, the DOM mutates, or an image/video finishes loading, measurement is re-triggered on the next animation frame. This means images without explicit `width`/`height` attributes are picked up automatically once they load.
+A `ResizeObserver`, `MutationObserver`, and media `load` listener watch for layout changes. When the container resizes, the DOM mutates, or an image/video finishes loading, measurement is re-triggered on the next animation frame. This means images without explicit `width`/`height` attributes are picked up automatically once they load. In `pierce-shadow` mode the same observer also watches each pierced shadow root, so a component re-rendering its own internals is re-measured too.
 
 ### 6. Reveal
 

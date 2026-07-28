@@ -109,10 +109,16 @@ function hasTextContent(element: Element): boolean {
 	return false;
 }
 
+/**
+ * @param piercedRoots collects every open shadow root reached, so the caller can observe
+ *   them. MutationObserver does not cross shadow boundaries, so a pierced component
+ *   re-rendering its own content is invisible without this.
+ */
 export function extractElementInfo(
 	element: Element,
 	parentRect: DOMRect,
 	pierceShadow = false,
+	piercedRoots?: Set<ShadowRoot>,
 ): ElementInfo[] {
 	const results: ElementInfo[] = [];
 
@@ -143,10 +149,15 @@ export function extractElementInfo(
 
 		// Descend into an open shadow root instead of stopping at the component
 		// boundary. The slotted light-DOM content is reached via the <slot>
-		// resolution above, so it is never measured twice.
-		if (pierceShadow && el.shadowRoot && el.shadowRoot.children.length > 0) {
-			for (const child of el.shadowRoot.children) walk(child);
-			return;
+		// resolution above, so it is never measured twice. An empty root is still
+		// recorded: it can be filled later by an async-rendering component, and only
+		// an observer on it will catch that.
+		if (pierceShadow && el.shadowRoot) {
+			piercedRoots?.add(el.shadowRoot);
+			if (el.shadowRoot.children.length > 0) {
+				for (const child of el.shadowRoot.children) walk(child);
+				return;
+			}
 		}
 
 		const shouldCapture =
