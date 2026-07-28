@@ -37,6 +37,29 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run build
+      # build ends with `cem analyze`, so a stale committed manifest shows up here.
+      - name: Check custom-elements.json is up to date
+        run: git diff --exit-code custom-elements.json
+
+  examples:
+    name: Build examples
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [react-app, vue-app, solid-app, qwik-app, angular-app, stencil-app]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      # They resolve phantom-ui through `file:../..`, so they only catch
+      # regressions once dist/ has been built.
+      - run: bun run build
+      - run: cd examples/${{ matrix.app }} && bun install
+      - run: cd examples/${{ matrix.app }} && bun run build
 
   examples:
     name: Build examples
