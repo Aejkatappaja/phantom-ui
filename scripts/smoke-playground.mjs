@@ -101,6 +101,35 @@ const overlayFill = await page.evaluate(
 );
 check("overlay keeps content readable", overlayFill !== "rgba(0, 0, 0, 0)", overlayFill);
 
+// Reduced motion needs its own context, and the unit suite cannot emulate it. Overlay is
+// the case that matters: its block fill is transparent by design, so stopping the glint
+// used to leave the refresh with nothing painted at all.
+const reduced = await browser.newPage({
+	viewport: { width: 1300, height: 1200 },
+	reducedMotion: "reduce",
+});
+await reduced.goto(URL, { waitUntil: "networkidle", timeout: 60000 });
+await reduced.selectOption("#ctl-mode", "overlay");
+await reduced.waitForTimeout(600);
+const rm = await reduced.evaluate(() => {
+	const block = document.getElementById("target").shadowRoot.querySelector(".shimmer-block");
+	const veil = getComputedStyle(block, "::after");
+	return {
+		display: veil.display,
+		background: veil.backgroundColor,
+		animation: veil.animationName,
+		text: getComputedStyle(document.querySelector("#target .card-body p")).webkitTextFillColor,
+	};
+});
+check(
+	"overlay still paints an indicator under reduced motion",
+	rm.display !== "none" && rm.background !== "rgba(0, 0, 0, 0)",
+	JSON.stringify(rm),
+);
+check("that indicator does not animate", rm.animation === "none", rm.animation);
+check("reduced-motion overlay keeps content readable", rm.text !== "rgba(0, 0, 0, 0)", rm.text);
+await reduced.close();
+
 await browser.close();
 console.log(failures === 0 ? "\nsmoke passed\n" : `\n${failures} smoke failure(s)\n`);
 process.exit(failures === 0 ? 0 : 1);

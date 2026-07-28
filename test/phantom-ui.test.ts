@@ -884,6 +884,27 @@ describe("phantom-ui", () => {
 		});
 	});
 
+	describe("overlay indicator", () => {
+		// Overlay makes the block fill transparent on purpose, so the glint is the only
+		// thing it paints. Every animation mode other than shimmer suppresses that glint,
+		// which used to leave a refresh with no visible indication at all.
+		for (const animation of ["pulse", "breathe", "solid"]) {
+			it(`keeps a veil in overlay mode with animation="${animation}"`, async () => {
+				const el = await fixture<PhantomUi>(html`
+					<phantom-ui loading mode="overlay" animation="${animation}">
+						<p class="row" style="width:150px;height:20px;">Refreshing</p>
+					</phantom-ui>
+				`);
+				const [block] = await blocksOf(el);
+				const veil = getComputedStyle(block, "::after");
+				expect(veil.display).to.not.equal("none");
+				expect(veil.backgroundColor).to.not.equal(TRANSPARENT);
+				// The point of overlay is that the stale content stays legible underneath.
+				expect(getComputedStyle(queryEl(el, ".row")).webkitTextFillColor).to.not.equal(TRANSPARENT);
+			});
+		}
+	});
+
 	describe("masked graphic icons", () => {
 		it("hides mask-image icons while loading and restores them after", async () => {
 			const el = await fixture<PhantomUi>(html`

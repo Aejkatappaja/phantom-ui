@@ -38,7 +38,7 @@ Animation mode for the shimmer blocks. Four modes available:
 <phantom-ui loading animation="solid">...</phantom-ui>
 ```
 
-When the user's system asks for reduced motion (`prefers-reduced-motion: reduce`), every mode automatically degrades to the static `solid` look — the infinite sweep/pulse/breathe animations stop and blocks keep their static background. No attribute or configuration needed.
+When the user's system asks for reduced motion (`prefers-reduced-motion: reduce`), every mode automatically degrades to the static `solid` look: the infinite sweep, pulse and breathe animations stop, and nothing moves. In the default skeleton mode the blocks keep their static background. In `overlay` mode the block fill is transparent by design, so a static veil is kept over each measured element instead, and the refresh is still visible. No attribute or configuration needed.
 
 ## `mode`
 
