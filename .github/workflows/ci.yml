@@ -84,6 +84,21 @@ jobs:
       # the figure is identical across browsers.
       - run: bun run test:coverage
 
+  package:
+    name: Verify package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+      # tsc --noEmit reads src/, so it cannot see what actually ships. This packs the
+      # tarball, installs it, and type-checks it the way a consumer would.
+      - run: bun run verify:package
+
   smoke:
     name: Smoke (playground)
     runs-on: ubuntu-latest
