@@ -85,6 +85,21 @@ function normalizeRadius(radius: string): string {
 	return radius === "0px" ? "" : radius;
 }
 
+/**
+ * Width of the element's own text, measured with a throwaway absolutely-positioned span
+ * so the parent box does not constrain it. Capped at `maxWidth` for text that overflows.
+ */
+function measureTextWidth(element: Element, maxWidth: number): number {
+	const span = document.createElement("span");
+	span.style.visibility = "hidden";
+	span.style.position = "absolute";
+	span.textContent = element.textContent;
+	element.appendChild(span);
+	const { width } = span.getBoundingClientRect();
+	element.removeChild(span);
+	return Math.min(width, maxWidth);
+}
+
 function hasTextContent(element: Element): boolean {
 	for (const node of element.childNodes) {
 		if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
@@ -140,34 +155,17 @@ export function extractElementInfo(
 			(pierceShadow && hasOnlySlotChildren(el));
 
 		if (shouldCapture) {
-			const borderRadius = normalizeRadius(getComputedStyle(el).borderRadius);
-
-			// For table cells with text, measure actual text width
-			if ((el.tagName === "TD" || el.tagName === "TH") && hasTextContent(el) && !overrideW) {
-				const span = document.createElement("span");
-				span.style.visibility = "hidden";
-				span.style.position = "absolute";
-				span.textContent = el.textContent;
-				el.appendChild(span);
-				const spanRect = span.getBoundingClientRect();
-				el.removeChild(span);
-
-				results.push({
-					x: rect.left - parentRect.left,
-					y: rect.top - parentRect.top,
-					width: Math.min(spanRect.width, rect.width),
-					height: h,
-					borderRadius,
-				});
-				return;
-			}
+			// A table cell stretches to its column, so its box would draw a full-width bar
+			// for two characters of text. Measure the text instead.
+			const isTextCell =
+				(el.tagName === "TD" || el.tagName === "TH") && hasTextContent(el) && !overrideW;
 
 			results.push({
 				x: rect.left - parentRect.left,
 				y: rect.top - parentRect.top,
-				width: w,
+				width: isTextCell ? measureTextWidth(el, rect.width) : w,
 				height: h,
-				borderRadius,
+				borderRadius: normalizeRadius(getComputedStyle(el).borderRadius),
 			});
 			return;
 		}
