@@ -100,9 +100,8 @@ export function extractElementInfo(
 		// Resolve a <slot> to its projected light-DOM elements, measured at their
 		// real positions. Text-only slots (no element assignments) are covered by
 		// the parent's hasOnlySlotChildren leaf rule, so nothing is lost here.
-		if (el.tagName === "SLOT") {
-			const assigned = (el as HTMLSlotElement).assignedElements({ flatten: true });
-			for (const a of assigned) walk(a);
+		if (el instanceof HTMLSlotElement) {
+			for (const assigned of el.assignedElements({ flatten: true })) walk(assigned);
 			return;
 		}
 
