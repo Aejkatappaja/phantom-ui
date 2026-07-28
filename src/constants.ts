@@ -1,4 +1,3 @@
-/** The custom element tag name. */
 export const TAG_NAME = "phantom-ui";
 
 /**

@@ -80,6 +80,11 @@ function hasOnlySlotChildren(element: Element): boolean {
 	return true;
 }
 
+/** An unset radius computes to "0px"; normalize it to "" so the caller can fall back. */
+function normalizeRadius(radius: string): string {
+	return radius === "0px" ? "" : radius;
+}
+
 function hasTextContent(element: Element): boolean {
 	for (const node of element.childNodes) {
 		if (node.nodeType === Node.TEXT_NODE && node.textContent?.trim()) {
@@ -135,8 +140,7 @@ export function extractElementInfo(
 			(pierceShadow && hasOnlySlotChildren(el));
 
 		if (shouldCapture) {
-			const style = getComputedStyle(el);
-			const borderRadius = style.borderRadius;
+			const borderRadius = normalizeRadius(getComputedStyle(el).borderRadius);
 
 			// For table cells with text, measure actual text width
 			if ((el.tagName === "TD" || el.tagName === "TH") && hasTextContent(el) && !overrideW) {
@@ -153,7 +157,7 @@ export function extractElementInfo(
 					y: rect.top - parentRect.top,
 					width: Math.min(spanRect.width, rect.width),
 					height: h,
-					borderRadius: borderRadius === "0px" ? "" : borderRadius,
+					borderRadius,
 				});
 				return;
 			}
@@ -163,7 +167,7 @@ export function extractElementInfo(
 				y: rect.top - parentRect.top,
 				width: w,
 				height: h,
-				borderRadius: borderRadius === "0px" ? "" : borderRadius,
+				borderRadius,
 			});
 			return;
 		}
@@ -203,11 +207,42 @@ export function extractContainerInfo(element: Element, parentRect: DOMRect): Con
 		y: rect.top - parentRect.top,
 		width: rect.width,
 		height: rect.height,
-		borderRadius: radius === "0px" ? "" : radius,
+		borderRadius: normalizeRadius(radius),
 		backgroundColor: isTransparent ? "" : bg,
 		border: borderStr,
 		boxShadow: hasShadow ? shadow : "",
 	};
+}
+
+/**
+ * Stamp the measured row `count` times down the page, offsetting each copy by the row
+ * height plus `gap`. Container boxes are re-emitted per copy so repeated cards keep
+ * their background, border and shadow.
+ */
+export function replicateRows(
+	blocks: ElementInfo[],
+	containers: ContainerInfo[],
+	{ count, gap, rowHeight }: { count: number; gap: number; rowHeight: number },
+): ElementInfo[] {
+	const out = [...blocks];
+	for (let i = 1; i < count; i++) {
+		const offset = i * (rowHeight + gap);
+		for (const c of containers) {
+			out.push({
+				x: c.x,
+				y: c.y + offset,
+				width: c.width,
+				height: c.height,
+				borderRadius: c.borderRadius,
+				isContainer: true,
+				containerBg: c.backgroundColor,
+				containerBorder: c.border,
+				containerShadow: c.boxShadow,
+			});
+		}
+		for (const block of blocks) out.push({ ...block, y: block.y + offset });
+	}
+	return out;
 }
 
 export function createResizeObserver(element: Element, callback: () => void): ResizeObserver {

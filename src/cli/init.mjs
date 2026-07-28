@@ -83,25 +83,35 @@ export function readDeps(root) {
 	}
 }
 
+// Order matters: the first entry whose packages appear in the dependency list wins.
+const FRAMEWORKS = [
+	["react", ["react", "next", "@remix-run/react"]],
+	["solid", ["solid-js"]],
+	["qwik", ["@builder.io/qwik"]],
+	["vue", ["vue", "nuxt"]],
+	["svelte", ["svelte", "@sveltejs/kit"]],
+	["angular", ["@angular/core"]],
+];
+
+const SSR_FRAMEWORKS = [
+	["next", ["next"]],
+	["remix", ["@remix-run/react"]],
+	["nuxt", ["nuxt"]],
+	["sveltekit", ["@sveltejs/kit"]],
+	["qwik", ["@builder.io/qwik"]],
+];
+
+function detect(deps, table) {
+	const match = table.find(([, pkgs]) => pkgs.some((pkg) => deps.includes(pkg)));
+	return match ? match[0] : null;
+}
+
 export function detectFramework(deps) {
-	const has = (name) => deps.includes(name);
-	if (has("react") || has("next") || has("@remix-run/react")) return "react";
-	if (has("solid-js")) return "solid";
-	if (has("@builder.io/qwik")) return "qwik";
-	if (has("vue") || has("nuxt")) return "vue";
-	if (has("svelte") || has("@sveltejs/kit")) return "svelte";
-	if (has("@angular/core")) return "angular";
-	return null;
+	return detect(deps, FRAMEWORKS);
 }
 
 export function detectSSRFramework(deps) {
-	const has = (name) => deps.includes(name);
-	if (has("next")) return "next";
-	if (has("@remix-run/react")) return "remix";
-	if (has("nuxt")) return "nuxt";
-	if (has("@sveltejs/kit")) return "sveltekit";
-	if (has("@builder.io/qwik")) return "qwik";
-	return null;
+	return detect(deps, SSR_FRAMEWORKS);
 }
 
 export function findSrcDir(root) {
@@ -145,7 +155,7 @@ export function injectIntoSFC(filePath, content, ext) {
 		return true;
 	}
 
-	// No <script> block — create one
+	// No <script> block - create one
 	const tag = ext === "vue" ? "<script setup>" : "<script>";
 	writeFileSync(filePath, `${tag}\n${CSS_IMPORT}\n</script>\n\n${content}`);
 	return true;
