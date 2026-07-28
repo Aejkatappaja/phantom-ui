@@ -48,6 +48,7 @@
 		"test:cli": "bun test test/cli/",
 		"test:watch": "web-test-runner --watch",
 		"test:all": "web-test-runner --all-browsers",
+		"test:coverage": "web-test-runner --coverage",
 		"playground": "bunx --bun serve -l 4444 --no-clipboard"
 	},
 	"keywords": [

@@ -1,0 +1,16 @@
+{
+  "name": "phantom-ui-stencil-example",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "stencil build",
+    "dev": "stencil build --dev --watch --serve",
+    "preview": "serve www -l 8080 --no-clipboard"
+  },
+  "devDependencies": {
+    "@aejkatappaja/phantom-ui": "file:../..",
+    "@stencil/core": "^4.43.5",
+    "serve": "^14.2.4"
+  }
+}

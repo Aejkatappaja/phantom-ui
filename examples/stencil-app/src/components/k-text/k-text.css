@@ -1,0 +1,19 @@
+:host {
+  display: block;
+}
+
+p {
+  margin: 0;
+  color: #c0caf5;
+}
+
+.body {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.heading {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+}

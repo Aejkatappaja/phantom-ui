@@ -51,9 +51,16 @@ export interface PhantomUiAttributes {
 	[key: `data-${string}`]: string | undefined;
 }
 
+/**
+ * Solid's `attr:` prefix writes an HTML attribute rather than a property, so the value
+ * is stringified and `null` removes the attribute. Booleans are set by presence, which
+ * in that form means `""` or `null`.
+ */
+type AttrValue<T> = T extends boolean ? boolean | "" | null : T | null;
+
 /** Solid uses `attr:` prefix to set HTML attributes. This maps all PhantomUiAttributes to their `attr:` equivalents. */
 export type SolidPhantomUiAttributes = PhantomUiAttributes & {
-	[K in keyof PhantomUiAttributes as `attr:${K & string}`]?: PhantomUiAttributes[K];
+	[K in keyof PhantomUiAttributes as `attr:${K & string}`]?: AttrValue<PhantomUiAttributes[K]>;
 };
 
 declare global {
