@@ -274,6 +274,30 @@ describe("phantom-ui", () => {
 				expect(el.shimmerDirection).to.equal(dir);
 			});
 		}
+
+		const SWEEPS = {
+			ltr: { name: "shimmer-horizontal", direction: "normal", size: "200% 100%" },
+			rtl: { name: "shimmer-horizontal", direction: "reverse", size: "200% 100%" },
+			ttb: { name: "shimmer-vertical", direction: "normal", size: "100% 200%" },
+			btt: { name: "shimmer-vertical", direction: "reverse", size: "100% 200%" },
+		} as const;
+
+		for (const [dir, sweep] of Object.entries(SWEEPS)) {
+			it(`sweeps ${dir} with the matching keyframes and direction`, async () => {
+				const el = await fixture<PhantomUi>(html`
+					<phantom-ui loading shimmer-direction="${dir}">
+						<div style="width:100px;height:50px;">Text</div>
+					</phantom-ui>
+				`);
+				await nextFrame();
+				await el.updateComplete;
+				const block = query(shadowOf(el), ".shimmer-block");
+				const style = getComputedStyle(block, "::after");
+				expect(style.animationName).to.equal(sweep.name);
+				expect(style.animationDirection).to.equal(sweep.direction);
+				expect(style.backgroundSize).to.equal(sweep.size);
+			});
+		}
 	});
 
 	describe("debug mode", () => {
