@@ -82,39 +82,10 @@ export const phantomUiStyles = css`
 			var(--shimmer-bg) 70%
 		);
 		background-size: 200% 100%;
-		animation: shimmer-ltr var(--shimmer-duration) linear infinite;
+		animation: shimmer-horizontal var(--shimmer-duration) linear infinite;
 	}
 
-	@keyframes shimmer-ltr {
-		0% { background-position: 200% 0; }
-		100% { background-position: -200% 0; }
-	}
-
-	:host([shimmer-direction="rtl"]) .shimmer-block::after {
-		animation-name: shimmer-rtl;
-	}
-
-	@keyframes shimmer-rtl {
-		0% { background-position: -200% 0; }
-		100% { background-position: 200% 0; }
-	}
-
-	:host([shimmer-direction="ttb"]) .shimmer-block::after {
-		background: linear-gradient(
-			180deg,
-			var(--shimmer-bg) 30%,
-			var(--shimmer-color) 50%,
-			var(--shimmer-bg) 70%
-		);
-		background-size: 100% 200%;
-		animation-name: shimmer-ttb;
-	}
-
-	@keyframes shimmer-ttb {
-		0% { background-position: 0 200%; }
-		100% { background-position: 0 -200%; }
-	}
-
+	:host([shimmer-direction="ttb"]) .shimmer-block::after,
 	:host([shimmer-direction="btt"]) .shimmer-block::after {
 		background: linear-gradient(
 			180deg,
@@ -123,12 +94,25 @@ export const phantomUiStyles = css`
 			var(--shimmer-bg) 70%
 		);
 		background-size: 100% 200%;
-		animation-name: shimmer-btt;
+		animation-name: shimmer-vertical;
 	}
 
-	@keyframes shimmer-btt {
-		0% { background-position: 0 -200%; }
-		100% { background-position: 0 200%; }
+	/* rtl and btt sweep the same track as ltr/ttb, just the other way. The timing
+	   function is linear, so reversing the animation is equivalent to a mirrored
+	   set of keyframes. */
+	:host([shimmer-direction="rtl"]) .shimmer-block::after,
+	:host([shimmer-direction="btt"]) .shimmer-block::after {
+		animation-direction: reverse;
+	}
+
+	@keyframes shimmer-horizontal {
+		0% { background-position: 200% 0; }
+		100% { background-position: -200% 0; }
+	}
+
+	@keyframes shimmer-vertical {
+		0% { background-position: 0 200%; }
+		100% { background-position: 0 -200%; }
 	}
 
 	:host([animation="pulse"]) .shimmer-block {
