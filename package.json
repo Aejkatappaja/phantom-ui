@@ -50,6 +50,7 @@
 		"test:all": "web-test-runner --all-browsers",
 		"test:coverage": "web-test-runner --coverage",
 		"smoke": "node scripts/smoke-playground.mjs",
+		"verify:package": "node scripts/verify-package.mjs",
 		"playground": "bunx --bun serve -l 4444 --no-clipboard"
 	},
 	"keywords": [
