@@ -33,7 +33,7 @@
 	],
 	"scripts": {
 		"build": "npm run build:esm && npm run build:cdn && npm run build:types && npm run build:ssr && cem analyze",
-		"build:ssr": "cp src/ssr.css dist/ssr.css",
+		"build:ssr": "bun scripts/generate-ssr-css.ts && biome format --write src/ssr.css && cp src/ssr.css dist/ssr.css",
 		"build:esm": "esbuild src/phantom-ui.ts --bundle --format=esm --outfile=dist/phantom-ui.js --minify --target=es2022 --packages=external",
 		"build:cdn": "esbuild src/phantom-ui.ts --bundle --format=iife --outfile=dist/phantom-ui.cdn.js --minify --target=es2022",
 		"build:types": "tsc --emitDeclarationOnly --declaration --outDir dist",
