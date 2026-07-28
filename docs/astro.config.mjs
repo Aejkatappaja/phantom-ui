@@ -102,6 +102,7 @@ export default defineConfig({
 						{ label: "CSS Custom Properties", slug: "reference/css-custom-properties" },
 						{ label: "TypeScript", slug: "reference/typescript" },
 						{ label: "How It Works", slug: "reference/how-it-works" },
+						{ label: "Content Security Policy", slug: "reference/csp" },
 						{ label: "API Stability", slug: "reference/api-stability" },
 					],
 				},
