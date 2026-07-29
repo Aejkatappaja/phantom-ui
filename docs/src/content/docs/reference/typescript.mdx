@@ -14,10 +14,10 @@ The package ships full type definitions and exports the following types:
 
 ## Optional setup
 
-Nothing runs on install — the library has no `postinstall` hook, so your source is never modified unless you ask for it. The bundled `init` command detects your project setup and handles two things:
+Nothing runs on install: the library has no `postinstall` hook, so your source is never modified unless you ask for it. The bundled `init` command detects your project setup and handles two things:
 
-- **JSX type declarations** — For React, Solid, and Qwik, it generates a `phantom-ui.d.ts` in your `src/` directory.
-- **SSR pre-hydration CSS** — For Next.js, Nuxt, SvelteKit, Remix, and Qwik, it adds `import "@aejkatappaja/phantom-ui/ssr.css"` to your layout file to prevent content flash before hydration (see [SSR Frameworks](/frameworks/ssr/#pre-hydration-css)).
+- **JSX type declarations**: For React, Solid, and Qwik, it generates a `phantom-ui.d.ts` in your `src/` directory.
+- **SSR pre-hydration CSS**: For Next.js, Nuxt, SvelteKit, Remix, and Qwik, it adds `import "@aejkatappaja/phantom-ui/ssr.css"` to your layout file to prevent content flash before hydration (see [SSR Frameworks](/phantom-ui/frameworks/ssr/#pre-hydration-css)).
 
 Run it once from your project root:
 

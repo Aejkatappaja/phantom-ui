@@ -27,9 +27,9 @@ These are not part of the stability guarantee:
 
 ## Versioning policy
 
-- **Patch** (`1.0.x`) — bug fixes, no API change
-- **Minor** (`1.x.0`) — new attributes or features, fully backward compatible
-- **Major** (`2.0.0`) — breaking changes to any of the guarantees above, announced in the changelog with a migration note
+- **Patch** (`1.0.x`): bug fixes, no API change
+- **Minor** (`1.x.0`): new attributes or features, fully backward compatible
+- **Major** (`2.0.0`): breaking changes to any of the guarantees above, announced in the changelog with a migration note
 
 ## Reporting
 

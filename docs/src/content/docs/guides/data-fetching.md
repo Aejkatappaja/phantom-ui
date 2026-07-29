@@ -3,9 +3,9 @@ title: Data Fetching
 description: How phantom-ui works with TanStack Query, SWR, and other data fetching libraries.
 ---
 
-phantom-ui generates skeletons by measuring real DOM elements at runtime. You don't need to build separate skeleton components — your existing layout **is** the template.
+phantom-ui generates skeletons by measuring real DOM elements at runtime. You don't need to build separate skeleton components: your existing layout **is** the template.
 
-The only requirement is that your elements have dimensions during loading. In most cases, your markup already provides this via headings, paragraphs (which have `line-height`), and images with `width`/`height`. When content is fully conditional (e.g. `user?.name`), provide a short fallback so the element has a size to measure — the text itself is invisible during loading.
+The only requirement is that your elements have dimensions during loading. In most cases, your markup already provides this via headings, paragraphs (which have `line-height`), and images with `width`/`height`. When content is fully conditional (e.g. `user?.name`), provide a short fallback so the element has a size to measure. The text itself is invisible during loading.
 
 ## TanStack Query
 
@@ -33,11 +33,11 @@ function UserProfile({ userId }: { userId: string }) {
 
 While `isLoading` is true:
 
-1. `user` is undefined — the `??` fallbacks ensure each element has a size in the DOM
+1. `user` is undefined: the `??` fallbacks ensure each element has a size in the DOM
 2. phantom-ui hides the text (CSS `transparent`) and measures element positions
 3. Shimmer blocks are drawn at the exact same coordinates
 
-The fallback text doesn't matter — `"x"` would work just as well as `"Placeholder Name"`. It only exists so the element isn't empty and has dimensions to measure.
+The fallback text doesn't matter: `"x"` would work just as well as `"Placeholder Name"`. It only exists so the element isn't empty and has dimensions to measure.
 
 When the query resolves, `isLoading` becomes false, `loading` is removed, and the real content appears.
 
@@ -160,4 +160,4 @@ Unlike build-time approaches that capture skeletons via a headless browser, phan
 - Works with any framework, including vanilla HTML and CDN usage
 - No separate skeleton components to maintain
 
-The only requirement is that elements have dimensions during loading. Static markup (headings, labels, containers with CSS sizing) works out of the box. For conditional content like `user?.name`, a simple `??` fallback gives the element a size — the text itself is never visible.
+The only requirement is that elements have dimensions during loading. Static markup (headings, labels, containers with CSS sizing) works out of the box. For conditional content like `user?.name`, a simple `??` fallback gives the element a size. The text itself is never visible.
