@@ -15,7 +15,7 @@ Before JavaScript loads, content inside `<phantom-ui loading>` can briefly flash
 import "@aejkatappaja/phantom-ui/ssr.css";
 ```
 
-Running `npx @aejkatappaja/phantom-ui init` detects SSR frameworks and adds this import to your layout file — or add it manually to your root layout (e.g. `app/layout.tsx`, `app.vue`, `+layout.svelte`). Nothing runs on install.
+Running `npx @aejkatappaja/phantom-ui init` detects SSR frameworks and adds this import to your layout file, or add it manually to your root layout (e.g. `app/layout.tsx`, `app.vue`, `+layout.svelte`). Nothing runs on install.
 
 For the CDN build, add the rules directly in your `<head>`:
 

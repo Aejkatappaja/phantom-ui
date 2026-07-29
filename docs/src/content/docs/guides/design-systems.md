@@ -49,7 +49,7 @@ It works with nested shadow roots and with icons drawn via CSS `mask-image` (a c
 ## Stencil example
 
 ```tsx
-// k-text.tsx — a typical shadow:true component
+// k-text.tsx, a typical shadow:true component
 @Component({ tag: "k-text", shadow: true })
 export class KText {
   render() {

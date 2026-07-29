@@ -48,7 +48,7 @@ Without `data-shimmer-no-children`, each `<span>` would get its own shimmer bloc
 
 Override the measured dimensions (in pixels) of an element. By default, phantom-ui uses `getBoundingClientRect()` and skips elements with zero dimensions. These attributes let you force a skeleton block with explicit sizing.
 
-Use this for dynamically sized elements that have no dimensions yet when the skeleton is generated — images without explicit `width`/`height`, containers filled by JavaScript, or any element whose size depends on data that hasn't loaded.
+Use this for dynamically sized elements that have no dimensions yet when the skeleton is generated: images without explicit `width`/`height`, containers filled by JavaScript, or any element whose size depends on data that hasn't loaded.
 
 ```html
 <phantom-ui loading>
