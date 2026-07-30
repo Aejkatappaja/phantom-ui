@@ -19,6 +19,14 @@ bun run lint            # biome check
 bun run lint:fix        # biome auto-fix
 bun run test            # browser tests (Chromium)
 bun run test:all        # browser tests (Chromium + Firefox + WebKit)
+bun run smoke           # drive the built bundle in a real page
+bun run verify:package  # pack, install into a temp project, type-check it
+```
+
+To check that an example app still renders (not just compiles), build it and run:
+
+```bash
+node scripts/assert-example-rendering.mjs react-app examples/react-app/dist
 ```
 
 The component source lives in `src/`. The docs site (Astro/Starlight) lives in `docs/`.

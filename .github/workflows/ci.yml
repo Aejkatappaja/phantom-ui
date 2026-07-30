@@ -61,6 +61,44 @@ jobs:
       - run: cd examples/${{ matrix.app }} && bun install
       - run: cd examples/${{ matrix.app }} && bun run build
 
+  render:
+    name: Assert rendering
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Two apps, not six. The check is framework-independent by design, and the four
+        # light-DOM examples render the same markup, so they produce identical counts:
+        # 7 blocks, 6 hidden texts, 1 image each. stencil-app is the only structurally
+        # different one (shadow DOM, pierce-shadow, two hosts), and react-app is where
+        # binding bugs have actually landed. vue, solid and angular were measured and add
+        # no signal; add a leg back the day one of them diverges.
+        # qwik-app cannot be covered here at all: it builds for SSR and emits no
+        # index.html, so there is nothing to serve statically.
+        include:
+          - app: react-app
+            dir: examples/react-app/dist
+          - app: stencil-app
+            dir: examples/stencil-app/www
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      # The examples resolve phantom-ui through `file:../..`, so dist/ has to exist first.
+      - run: bun run build
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('bun.lock') }}
+      - run: npx playwright install --with-deps chromium
+      - run: cd examples/${{ matrix.app }} && bun install
+      - run: cd examples/${{ matrix.app }} && bun run build
+      - name: Assert the app actually renders
+        run: node scripts/assert-example-rendering.mjs ${{ matrix.app }} ${{ matrix.dir }}
+
   test:
     name: Test
     runs-on: ubuntu-latest
