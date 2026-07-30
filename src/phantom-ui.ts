@@ -221,9 +221,14 @@ export class PhantomUi extends LitElement {
 		}
 
 		if (changedProperties.has("loading") || changedProperties.has("loadingLabel")) {
-			this.setAttribute("aria-busy", String(this.loading));
+			// React sets properties rather than attributes on custom elements, so
+			// loading={cond || undefined} assigns undefined and String(undefined) would
+			// write the literal "undefined" into aria-busy. Every other branch here reads
+			// `loading` for its truthiness, so read it the same way.
+			const isLoading = Boolean(this.loading);
+			this.setAttribute("aria-busy", String(isLoading));
 
-			if (this.loading) {
+			if (isLoading) {
 				this.setAttribute("aria-label", this.loadingLabel);
 			} else {
 				this.removeAttribute("aria-label");

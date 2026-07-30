@@ -104,6 +104,47 @@ describe("phantom-ui", () => {
 		expect(el.getAttribute("aria-busy")).to.equal("false");
 	});
 
+	describe("aria-busy", () => {
+		// React assigns properties rather than attributes on custom elements, so
+		// loading={cond || undefined} hands the element undefined rather than false.
+		// String(undefined) used to write the literal "undefined" into the attribute.
+		for (const [label, value] of [
+			["undefined", undefined],
+			["null", null],
+		]) {
+			it(`reports false when loading is set to ${label}`, async () => {
+				const el = await fixture<PhantomUi>(html`
+					<phantom-ui loading>
+						<div style="width:100px;height:50px;">Text</div>
+					</phantom-ui>
+				`);
+				await el.updateComplete;
+				expect(el.getAttribute("aria-busy")).to.equal("true");
+
+				// Assigning the property is what a framework binding does.
+				Reflect.set(el, "loading", value);
+				await el.updateComplete;
+				expect(el.getAttribute("aria-busy")).to.equal("false");
+				expect(el.hasAttribute("aria-label")).to.be.false;
+			});
+		}
+
+		it('reports false for the attribute loading="false"', async () => {
+			// Documented behaviour: the attribute converter treats the string as falsy.
+			// This is the attribute path, so it never reaches the property as a string.
+			const el = await fixture<PhantomUi>(html`
+				<phantom-ui loading>
+					<div style="width:100px;height:50px;">Text</div>
+				</phantom-ui>
+			`);
+			await el.updateComplete;
+			el.setAttribute("loading", "false");
+			await el.updateComplete;
+			expect(el.loading).to.be.false;
+			expect(el.getAttribute("aria-busy")).to.equal("false");
+		});
+	});
+
 	describe("loading-label", () => {
 		it("sets a default aria-label while loading", async () => {
 			const el = await fixture<PhantomUi>(html`
