@@ -67,9 +67,21 @@ If you cannot install from a registry, or you would rather keep a copy in your r
 import "@aejkatappaja/phantom-ui/standalone";
 ```
 
-Or copy `dist/phantom-ui.standalone.js` straight into your project and import it by path. The element registers itself on import, so `<phantom-ui>` works from that point on with no package manager involved.
+Or, if you cannot reach a registry at all, copy two files into your project and import by path:
 
-One caveat if you vendor the file into a TypeScript project: the element's public type extends `LitElement`, so typed access to properties such as `host.loading` still needs Lit's declarations (`npm i -D lit`, types only, since the runtime is already inside the bundle). Without them the element works but is untyped. JSX attribute typing through `PhantomUiAttributes` does not depend on Lit.
+```
+phantom-ui.standalone.js    # the component, Lit included
+phantom-ui.standalone.d.ts  # its types, no imports of any kind
+```
+
+```ts
+import "./phantom-ui.standalone.js";
+import type { PhantomUi } from "./phantom-ui.standalone.js";
+```
+
+That is the whole install. The element registers itself on import, and the declarations reference nothing external, so a project with no `node_modules` at all still type-checks under `strict` with `skipLibCheck: false`.
+
+The declared class extends `HTMLElement` rather than `LitElement`, which is a narrower view of the same object, so `updateComplete` is declared explicitly and the rest of the public API is unchanged.
 
 The library is MIT, so vendoring is fine. Note the version you copied somewhere near the file, since a vendored copy does not get updates.
 

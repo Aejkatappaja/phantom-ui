@@ -52,13 +52,19 @@ import "@aejkatappaja/phantom-ui/standalone";
 
 Or copy `dist/phantom-ui.standalone.js` into your project and import it by path. The element registers itself on import, so `<phantom-ui>` works from that point on with no package manager involved at runtime.
 
-One caveat for TypeScript. The element's public type extends `LitElement`, so typed property access (`host.loading`) needs Lit's declarations even though its runtime code is already inside the bundle. Install them as a dev-only dependency:
+If you cannot reach a registry at all, copy two files instead and import by path:
 
-```sh
-npm i -D lit
+```
+phantom-ui.standalone.js    # the component, Lit included
+phantom-ui.standalone.d.ts  # its types, no imports of any kind
 ```
 
-Without them the element still works, it is just untyped. JSX attribute typing through `PhantomUiAttributes` does not depend on Lit.
+```ts
+import "./phantom-ui.standalone.js";
+import type { PhantomUi } from "./phantom-ui.standalone.js";
+```
+
+Nothing else is needed. The declarations reference no external module, so a project with no `node_modules` still type-checks under `strict` with `skipLibCheck: false`. The declared class extends `HTMLElement` rather than `LitElement`, a narrower view of the same object, so `updateComplete` is declared explicitly and the rest of the public API is unchanged.
 
 The library is MIT, so vendoring is fine. Record the version you copied next to the file: a vendored copy receives no updates, and it is easy to spend time on a bug that is already fixed upstream.
 
@@ -70,6 +76,7 @@ node_modules/@aejkatappaja/phantom-ui/
     phantom-ui.js             # ES module (Lit as external)
     phantom-ui.cdn.js         # IIFE standalone (Lit included)
     phantom-ui.standalone.js  # ES module standalone (Lit included)
+    phantom-ui.standalone.d.ts # its declarations, no imports
     phantom-ui.d.ts           # TypeScript declarations
   custom-elements.json        # IDE/Storybook manifest
   package.json
