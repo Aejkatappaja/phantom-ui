@@ -55,8 +55,9 @@ Or copy `dist/phantom-ui.standalone.js` into your project and import it by path.
 If you cannot reach a registry at all, copy two files instead and import by path:
 
 ```
-phantom-ui.standalone.js    # the component, Lit included
-phantom-ui.standalone.d.ts  # its types, no imports of any kind
+phantom-ui.standalone.js      # the component, Lit included, minified
+phantom-ui.standalone.dev.js  # the same thing unminified, if you have to read it
+phantom-ui.standalone.d.ts    # its types, no imports of any kind
 ```
 
 ```ts
@@ -76,6 +77,7 @@ node_modules/@aejkatappaja/phantom-ui/
     phantom-ui.js             # ES module (Lit as external)
     phantom-ui.cdn.js         # IIFE standalone (Lit included)
     phantom-ui.standalone.js  # ES module standalone (Lit included)
+    phantom-ui.standalone.dev.js # the same, unminified
     phantom-ui.standalone.d.ts # its declarations, no imports
     phantom-ui.d.ts           # TypeScript declarations
   custom-elements.json        # IDE/Storybook manifest

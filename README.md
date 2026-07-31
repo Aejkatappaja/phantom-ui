@@ -70,8 +70,9 @@ import "@aejkatappaja/phantom-ui/standalone";
 Or, if you cannot reach a registry at all, copy two files into your project and import by path:
 
 ```
-phantom-ui.standalone.js    # the component, Lit included
-phantom-ui.standalone.d.ts  # its types, no imports of any kind
+phantom-ui.standalone.js      # the component, Lit included, minified
+phantom-ui.standalone.dev.js  # the same thing unminified, if you have to read it
+phantom-ui.standalone.d.ts    # its types, no imports of any kind
 ```
 
 ```ts
@@ -82,6 +83,8 @@ import type { PhantomUi } from "./phantom-ui.standalone.js";
 That is the whole install. The element registers itself on import, and the declarations reference nothing external, so a project with no `node_modules` at all still type-checks under `strict` with `skipLibCheck: false`.
 
 The declared class extends `HTMLElement` rather than `LitElement`, which is a narrower view of the same object, so `updateComplete` is declared explicitly and the rest of the public API is unchanged.
+
+Both builds are the same code and either one works. Reach for the unminified one when a review has to read what it is approving, and note that it is bundled output rather than the original TypeScript: the sources import Lit, so they cannot be compiled on their own.
 
 The library is MIT, so vendoring is fine. Note the version you copied somewhere near the file, since a vendored copy does not get updates.
 
