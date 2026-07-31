@@ -55,10 +55,12 @@ Or copy `dist/phantom-ui.standalone.js` into your project and import it by path.
 If you cannot reach a registry at all, copy two files instead and import by path:
 
 ```
-phantom-ui.standalone.js      # the component, Lit included, minified
-phantom-ui.standalone.dev.js  # the same thing unminified, if you have to read it
+phantom-ui.standalone.js      # the component, unminified so a review can read it
+phantom-ui.standalone.min.js  # the same code, minified
 phantom-ui.standalone.d.ts    # its types, no imports of any kind
 ```
+
+Take the first and the third: TypeScript pairs a declaration to a module by exact filename, so those two names belong together.
 
 ```ts
 import "./phantom-ui.standalone.js";
