@@ -3,6 +3,11 @@ name: Deploy Docs
 on:
   push:
     branches: [main]
+  # The changelog page is generated from the GitHub releases at build time, and
+  # publishing a release pushes nothing to main, so without this the site keeps
+  # showing the previous version until something else lands.
+  release:
+    types: [published]
   workflow_dispatch:
 
 permissions:
@@ -18,6 +23,10 @@ jobs:
   build:
     name: Build Docs
     runs-on: ubuntu-latest
+    # Prereleases are filtered out of the changelog, so republishing the site for one
+    # would deploy an identical build. Null on every non-release event, so this stays
+    # true for pushes and manual runs.
+    if: ${{ !github.event.release.prerelease }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
