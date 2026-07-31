@@ -9,7 +9,8 @@ jobs:
     name: Publish
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      # contents: write so the vendorable files can be attached to the release.
+      contents: write
       id-token: write
     steps:
       - uses: actions/checkout@v4
@@ -30,3 +31,14 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_TAG: ${{ github.event.release.prerelease && 'beta' || 'latest' }}
+      # Some users cannot reach a registry at all, so the files they would vendor are
+      # attached to the release itself. GitHub is reachable where npm often is not.
+      - name: Attach the vendorable files to the release
+        run: >
+          gh release upload "${{ github.event.release.tag_name }}"
+          dist/phantom-ui.standalone.js
+          dist/phantom-ui.standalone.dev.js
+          dist/phantom-ui.standalone.d.ts
+          --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
