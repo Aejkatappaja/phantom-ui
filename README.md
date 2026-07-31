@@ -70,10 +70,13 @@ import "@aejkatappaja/phantom-ui/standalone";
 Or, if you cannot reach a registry at all, copy two files into your project and import by path:
 
 ```
-phantom-ui.standalone.js      # the component, Lit included, minified
-phantom-ui.standalone.dev.js  # the same thing unminified, if you have to read it
+phantom-ui.standalone.js      # the component, unminified so a review can read it
+phantom-ui.standalone.min.js  # the same code, minified
 phantom-ui.standalone.d.ts    # its types, no imports of any kind
 ```
+
+Take the first and the third. TypeScript pairs a declaration to a module by exact
+filename, so those two names go together and the types apply with nothing to configure.
 
 ```ts
 import "./phantom-ui.standalone.js";
@@ -84,7 +87,7 @@ That is the whole install. The element registers itself on import, and the decla
 
 The declared class extends `HTMLElement` rather than `LitElement`, which is a narrower view of the same object, so `updateComplete` is declared explicitly and the rest of the public API is unchanged.
 
-Both builds are the same code and either one works. Reach for the unminified one when a review has to read what it is approving, and note that it is bundled output rather than the original TypeScript: the sources import Lit, so they cannot be compiled on their own.
+Those are the release assets, which is the channel for people who cannot reach a registry at all. Inside the npm package the same builds are `phantom-ui.standalone.js` and `phantom-ui.standalone.dev.js`, resolved through the exports map rather than by filename. Either build is the same code, and both are bundled output rather than the original TypeScript: the sources import Lit, so they cannot be compiled on their own.
 
 The library is MIT, so vendoring is fine. Note the version you copied somewhere near the file, since a vendored copy does not get updates.
 

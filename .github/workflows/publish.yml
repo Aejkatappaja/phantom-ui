@@ -33,12 +33,19 @@ jobs:
           NPM_TAG: ${{ github.event.release.prerelease && 'beta' || 'latest' }}
       # Some users cannot reach a registry at all, so the files they would vendor are
       # attached to the release itself. GitHub is reachable where npm often is not.
+      #
+      # TypeScript pairs a declaration file to a module by exact filename, so whichever
+      # build someone vendors has to be named phantom-ui.standalone.js for the .d.ts to
+      # apply. This channel exists for people who must read what they are approving, so
+      # the readable build takes that name and the minified one is suffixed. Renaming
+      # happens here rather than in dist/, where both builds coexist and are resolved
+      # through the exports map instead.
       - name: Attach the vendorable files to the release
-        run: >
-          gh release upload "${{ github.event.release.tag_name }}"
-          dist/phantom-ui.standalone.js
-          dist/phantom-ui.standalone.dev.js
-          dist/phantom-ui.standalone.d.ts
-          --clobber
+        run: |
+          mkdir -p vendor
+          cp dist/phantom-ui.standalone.dev.js vendor/phantom-ui.standalone.js
+          cp dist/phantom-ui.standalone.js vendor/phantom-ui.standalone.min.js
+          cp dist/phantom-ui.standalone.d.ts vendor/phantom-ui.standalone.d.ts
+          gh release upload "${{ github.event.release.tag_name }}" vendor/* --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
