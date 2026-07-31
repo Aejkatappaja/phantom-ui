@@ -5,9 +5,14 @@ import { bundledThemes } from "shiki";
 
 const tokyoNight = (await bundledThemes["tokyo-night"]()).default;
 
+const site = "https://aejkatappaja.github.io";
+const base = "/phantom-ui";
+// og:image must be absolute, relative paths are ignored by crawlers
+const socialPreview = `${site}${base}/social-preview.png`;
+
 export default defineConfig({
-	site: "https://aejkatappaja.github.io",
-	base: "/phantom-ui",
+	site,
+	base,
 	prefetch: {
 		prefetchAll: true,
 		defaultStrategy: "viewport",
@@ -27,6 +32,31 @@ export default defineConfig({
 			logo: {
 				src: "./src/assets/logo.svg",
 			},
+			head: [
+				{
+					tag: "meta",
+					attrs: { property: "og:image", content: socialPreview },
+				},
+				{
+					tag: "meta",
+					attrs: { property: "og:image:width", content: "1280" },
+				},
+				{
+					tag: "meta",
+					attrs: { property: "og:image:height", content: "640" },
+				},
+				{
+					tag: "meta",
+					attrs: {
+						property: "og:image:alt",
+						content: "phantom-ui, structure-aware skeleton loader",
+					},
+				},
+				{
+					tag: "meta",
+					attrs: { name: "twitter:image", content: socialPreview },
+				},
+			],
 			social: [
 				{
 					icon: "github",
