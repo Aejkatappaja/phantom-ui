@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a1b26"/>
+      <stop offset="100%" stop-color="#13141c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#7aa2f7" stop-opacity="0.3"/>
+      <stop offset="60%" stop-color="#7aa2f7" stop-opacity="0.07"/>
+      <stop offset="100%" stop-color="#7aa2f7" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ghostFill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f0f0fa"/>
+      <stop offset="100%" stop-color="#a9b1d6"/>
+    </linearGradient>
+    <linearGradient id="shimmer" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2a2f45"/>
+      <stop offset="45%" stop-color="#3d4566"/>
+      <stop offset="100%" stop-color="#2a2f45"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)"/>
+  <ellipse cx="330" cy="300" rx="360" ry="330" fill="url(#glow)"/>
+
+  <!-- phantom -->
+  <g transform="translate(322,296) scale(2.75) translate(-96.5,-49)">
+    <path d="M100 8 C78 8, 64 26, 64 46 L64 82 L64 90 C68 85, 73 85, 77 90 C81 85, 86 85, 90 90 C94 85, 99 85, 103 90 C107 85, 112 85, 116 90 C120 85, 125 85, 129 90 L129 82 L129 46 C129 26, 115 8, 100 8 Z" fill="url(#ghostFill)"/>
+    <ellipse cx="88" cy="46" rx="7" ry="7.5" fill="#1a1a2e"/>
+    <ellipse cx="112" cy="46" rx="7" ry="7.5" fill="#1a1a2e"/>
+    <ellipse cx="100" cy="64" rx="5" ry="6" fill="#1a1a2e"/>
+  </g>
+
+  <!-- floating particles -->
+  <rect x="120" y="200" width="34" height="10" rx="5" fill="#2a2a5e" opacity="0.85"/>
+  <rect x="140" y="392" width="26" height="9" rx="4.5" fill="#2a2a5e" opacity="0.7"/>
+  <circle cx="512" cy="212" r="7" fill="#2a2a5e" opacity="0.8"/>
+  <rect x="486" y="404" width="30" height="9" rx="4.5" fill="#2a2a5e" opacity="0.65"/>
+
+  <text x="322" y="500" text-anchor="middle" font-family="'SF Pro Display','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="72" font-weight="700" letter-spacing="-3" fill="#c0caf5">phantom-ui</text>
+  <text x="322" y="544" text-anchor="middle" font-family="'SF Mono','Menlo',monospace" font-size="19" fill="#565f89">@aejkatappaja/phantom-ui</text>
+
+  <!-- vertical divider -->
+  <line x1="648" y1="120" x2="648" y2="520" stroke="#292e42" stroke-width="2"/>
+
+  <!-- right column -->
+  <text x="712" y="186" font-family="'SF Pro Display','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="38" font-weight="700" letter-spacing="-1" fill="#c0caf5">Structure-aware</text>
+  <text x="712" y="234" font-family="'SF Pro Display','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="38" font-weight="700" letter-spacing="-1" fill="#7aa2f7">skeleton loader</text>
+  <text x="712" y="286" font-family="'SF Pro Display','Helvetica Neue',Helvetica,Arial,sans-serif" font-size="22" fill="#565f89">One Web Component. Every framework.</text>
+
+  <!-- card mockup -->
+  <rect x="712" y="326" width="452" height="196" rx="16" fill="#24283b" stroke="#292e42" stroke-width="2"/>
+  <circle cx="756" cy="378" r="22" fill="url(#shimmer)"/>
+  <rect x="792" y="362" width="128" height="15" rx="7" fill="url(#shimmer)"/>
+  <rect x="792" y="386" width="88" height="12" rx="6" fill="url(#shimmer)"/>
+  <line x1="736" y1="422" x2="1140" y2="422" stroke="#292e42" stroke-width="2"/>
+  <rect x="736" y="442" width="404" height="12" rx="6" fill="url(#shimmer)"/>
+  <rect x="736" y="466" width="276" height="12" rx="6" fill="url(#shimmer)"/>
+  <rect x="1044" y="462" width="96" height="30" rx="8" fill="#7aa2f7"/>
+
+  <rect x="24" y="24" width="1232" height="592" rx="20" fill="none" stroke="#292e42" stroke-width="2"/>
+</svg>
