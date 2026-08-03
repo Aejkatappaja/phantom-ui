@@ -1,6 +1,11 @@
 import { css, unsafeCSS } from "lit";
 import { DEFAULT_DURATION, DEFAULT_SHIMMER_BG, DEFAULT_SHIMMER_COLOR } from "./constants.js";
 
+// No ::slotted() copy of the hiding rules here. It cannot act as a CSP fallback: Lit's
+// own feature test for constructed stylesheets is stricter than ours, so whenever our
+// light-DOM sheet is blocked, Lit has fallen back to a <style> element and these rules
+// are blocked too. Verified under a real style-src header.
+
 export const phantomUiStyles = css`
 	:host {
 		display: block;
@@ -9,21 +14,6 @@ export const phantomUiStyles = css`
 		--shimmer-color: ${unsafeCSS(DEFAULT_SHIMMER_COLOR)};
 		--shimmer-duration: ${DEFAULT_DURATION}s;
 		--shimmer-bg: ${unsafeCSS(DEFAULT_SHIMMER_BG)};
-	}
-
-	:host([loading]:not([mode="overlay"])) ::slotted(*) {
-		-webkit-text-fill-color: transparent !important;
-		pointer-events: none;
-		user-select: none;
-	}
-
-	:host([loading]:not([mode="overlay"])) ::slotted(img),
-	:host([loading]:not([mode="overlay"])) ::slotted(svg),
-	:host([loading]:not([mode="overlay"])) ::slotted(video),
-	:host([loading]:not([mode="overlay"])) ::slotted(canvas),
-	:host([loading]:not([mode="overlay"])) ::slotted(button),
-	:host([loading]:not([mode="overlay"])) ::slotted([role="button"]) {
-		opacity: 0 !important;
 	}
 
 	/*

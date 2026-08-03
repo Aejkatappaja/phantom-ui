@@ -450,6 +450,8 @@ Before JavaScript loads, content inside `<phantom-ui loading>` can briefly flash
 import "@aejkatappaja/phantom-ui/ssr.css";
 ```
 
+It is also the simplest answer under a strict Content Security Policy, since a real stylesheet is never blocked (see [Content Security Policy](https://aejkatappaja.github.io/phantom-ui/reference/csp/)).
+
 Running `npx @aejkatappaja/phantom-ui init` detects SSR frameworks and adds this import to your layout file (e.g. `app/layout.tsx` for Next.js, `app.vue` for Nuxt, `+layout.svelte` for SvelteKit). Or add the line yourself. If you use the CDN build, add the rules directly in your `<head>`:
 
 ```html
