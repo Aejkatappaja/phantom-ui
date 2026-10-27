@@ -77,18 +77,18 @@
 		"lit": "^3.3.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.5.4",
+		"@biomejs/biome": "^2.6.3",
 		"@custom-elements-manifest/analyzer": "^0.11.0",
 		"@open-wc/testing": "^5.0.0",
-		"@storybook/addon-docs": "^10.5.0",
-		"@storybook/web-components-vite": "^10.5.0",
+		"@storybook/addon-docs": "^10.6.4",
+		"@storybook/web-components-vite": "^10.6.4",
 		"@web/dev-server-esbuild": "^2.0.0",
 		"@web/test-runner": "^1.0.0",
 		"@web/test-runner-playwright": "^1.0.0",
 		"husky": "^9.1.7",
-		"lint-staged": "^17.0.8",
+		"lint-staged": "^17.6.0",
 		"playwright": "1.59.1",
-		"storybook": "^10.5.0",
+		"storybook": "^10.6.4",
 		"typescript": "^7.0.2"
 	},
 	"customElements": "custom-elements.json",
