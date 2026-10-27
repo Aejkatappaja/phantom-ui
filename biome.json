@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.5.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.6.3/schema.json",
 	"plugins": ["./biome-plugins/no-mixed-type-imports.grit"],
 	"assist": { "actions": { "source": { "organizeImports": "on" } } },
 	"linter": {
@@ -18,6 +18,11 @@
 		"enabled": true,
 		"indentStyle": "tab",
 		"lineWidth": 100
+	},
+	"markdown": {
+		"formatter": {
+			"enabled": false
+		}
 	},
 	"javascript": {
 		"formatter": {
